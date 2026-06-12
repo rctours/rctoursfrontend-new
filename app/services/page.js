@@ -1,0 +1,754 @@
+import { FaWhatsapp } from "react-icons/fa";
+
+export const metadata = {
+  title:
+    "Taxi Services In Nagpur | Airport Taxi, Outstation Cab | RC Tours & Travels",
+
+  description:
+    "Book airport taxi, local cab booking, outstation taxi, Tempo Traveller rental and corporate travel services in Nagpur. Call RC Tours & Travels at +91 9172271464.",
+
+  keywords:
+    "Taxi Service Nagpur, Airport Taxi Nagpur, Cab Booking Nagpur, Outstation Taxi Nagpur, Tempo Traveller Nagpur, Nagpur To Pune Taxi, Nagpur To Hyderabad Taxi, RC Tours And Travels",
+};
+
+export default function ServicesPage() {
+  return (
+    <main className="bg-white">
+
+      {/* Hero Section */}
+      <section className="bg-white pt-32 pb-24">
+        <div className="max-w-7xl mx-auto px-6 md:px-8 text-center">
+
+          <span className="bg-blue-100 text-blue-700 px-5 py-2 rounded-full text-sm font-semibold">
+            RC TOURS & TRAVELS NAGPUR
+          </span>
+
+          <h1 className="text-5xl md:text-7xl font-black text-slate-900 mt-8">
+            Taxi Services In Nagpur
+          </h1>
+
+          <p className="max-w-4xl mx-auto text-xl text-gray-600 mt-8 leading-9">
+            Airport Taxi, Local Cab Booking, Outstation Taxi, Corporate Travel,
+            Tempo Traveller Rental and Tour Packages from Nagpur.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
+
+            <a
+              href="tel:+919172271464"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold"
+            >
+              📞 Call Now
+            </a>
+
+            <a
+              href="https://wa.me/919172271464"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-2xl font-bold"
+            >
+              💬 WhatsApp Booking
+            </a>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* Services */}
+<section className="border-t border-slate-200 py-10 relative overflow-hidden">
+  <div className="max-w-7xl mx-auto px-6 md:px-8">
+
+    <h2 className="text-5xl font-black text-center text-slate-900 mb-16">
+      Our Taxi Services
+    </h2>
+
+    <div className="grid md:grid-cols-3 gap-8">
+
+      {/* Airport Taxi */}
+      <div className="bg-white shadow-xl rounded-3xl overflow-hidden border">
+        <img
+          src="/services/airport-taxi.jpeg"
+          alt="Airport Taxi Service Nagpur"
+          className="w-full h-56 object-cover"
+        />
+
+        <div className="p-8">
+          <h3 className="text-2xl font-bold mb-4">
+            Airport Taxi Service
+          </h3>
+
+          <p className="text-gray-600 leading-8">
+            Reliable airport pickup and drop taxi service in Nagpur with
+            professional drivers and clean vehicles.
+          </p>
+        </div>
+      </div>
+
+      {/* Local Cab */}
+      <div className="bg-white shadow-xl rounded-3xl overflow-hidden border">
+        <img
+          src="/services/local-cab.jpg"
+          alt="Local Cab Booking Nagpur"
+          className="w-full h-56 object-cover"
+        />
+
+        <div className="p-8">
+          <h3 className="text-2xl font-bold mb-4">
+            Local Cab Booking
+          </h3>
+
+          <p className="text-gray-600 leading-8">
+            Affordable local taxi services for city travel, shopping,
+            meetings and daily transportation.
+          </p>
+        </div>
+      </div>
+
+      {/* Outstation Taxi */}
+      <div className="bg-white shadow-xl rounded-3xl overflow-hidden border">
+        <img
+          src="/services/outstation-taxi.jpeg"
+          alt="Outstation Taxi Nagpur"
+          className="w-full h-56 object-cover"
+        />
+
+        <div className="p-8">
+          <h3 className="text-2xl font-bold mb-4">
+            Outstation Taxi
+          </h3>
+
+          <p className="text-gray-600 leading-8">
+            Comfortable outstation taxi service from Nagpur to Pune,
+            Mumbai, Hyderabad, Indore and more cities.
+          </p>
+        </div>
+      </div>
+
+      {/* Corporate Travel */}
+      <div className="bg-white shadow-xl rounded-3xl overflow-hidden border">
+        <img
+          src="/services/corporate-travel.png"
+          alt="Corporate Travel Nagpur"
+          className="w-full h-56 object-cover"
+        />
+
+        <div className="p-8">
+          <h3 className="text-2xl font-bold mb-4">
+            Corporate Travel
+          </h3>
+
+          <p className="text-gray-600 leading-8">
+            Professional transportation solutions for companies,
+            business meetings and corporate events.
+          </p>
+        </div>
+      </div>
+
+      {/* Tempo Traveller */}
+      <div className="bg-white shadow-xl rounded-3xl overflow-hidden border">
+        <img
+          src="/services/tempo-traveller.png"
+          alt="Tempo Traveller Rental Nagpur"
+          className="w-full h-56 object-cover"
+        />
+
+        <div className="p-8">
+          <h3 className="text-2xl font-bold mb-4">
+            Tempo Traveller Rental
+          </h3>
+
+          <p className="text-gray-600 leading-8">
+            Comfortable Tempo Traveller rental for family tours,
+            group travel and pilgrimage trips.
+          </p>
+        </div>
+      </div>
+
+      {/* Tour Packages */}
+      <div className="bg-white shadow-xl rounded-3xl overflow-hidden border">
+        <img
+          src="/services/tour-packages.jpg"
+          alt="Tour Packages Nagpur"
+          className="w-full h-56 object-cover"
+        />
+
+        <div className="p-8">
+          <h3 className="text-2xl font-bold mb-4">
+            Tour Packages
+          </h3>
+
+          <p className="text-gray-600 leading-8">
+            Customized tour packages for Pench, Tadoba,
+            Chikhaldara, Shirdi, Goa and more.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+            {/* Vehicles Available */}
+
+      <section className="border-t border-slate-200 py-10">
+
+        <div className="max-w-7xl mx-auto px-6 md:px-8">
+
+          <h2 className="text-4xl font-black text-center text-slate-900 mb-10">
+            Vehicles Available
+          </h2>
+
+          <div className="grid md:grid-cols-4 gap-5">
+
+            {[
+              "Swift Dzire",
+              "Maruti Ertiga",
+              "Toyota Innova Crysta",
+              "Tempo Traveller",
+            ].map((car) => (
+              <div
+                key={car}
+                className="bg-slate-100 rounded-2xl p-5 text-center border"
+              >
+                {car}
+              </div>
+            ))}
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="border-t border-white/10 py-10 relative overflow-hidden">
+
+        <div className="max-w-7xl mx-auto px-6 md:px-8">
+
+          <h2 className="text-5xl font-black text-center text-slate-900 mb-16">
+            Why Choose RC Tours & Travels
+          </h2>
+
+          <div className="grid md:grid-cols-4 gap-8">
+
+            <div className="bg-white p-8 rounded-3xl text-center border shadow-lg">
+              <div className="text-5xl mb-4">🚖</div>
+              <h3 className="font-bold text-xl">
+                Professional Drivers
+              </h3>
+            </div>
+
+            <div className="bg-white p-8 rounded-3xl text-center border shadow-lg">
+              <div className="text-5xl mb-4">💰</div>
+              <h3 className="font-bold text-xl">
+                Transparent Pricing
+              </h3>
+            </div>
+
+            <div className="bg-white p-8 rounded-3xl text-center border shadow-lg">
+              <div className="text-5xl mb-4">🛡️</div>
+              <h3 className="font-bold text-xl">
+                Safe Journey
+              </h3>
+            </div>
+
+            <div className="bg-white p-8 rounded-3xl text-center border shadow-lg">
+              <div className="text-5xl mb-4">📞</div>
+              <h3 className="font-bold text-xl">
+                24×7 Support
+              </h3>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* Popular Routes */}
+      <section className="border-t border-white/10 py-10 relative overflow-hidden">
+
+        <div className="max-w-7xl mx-auto px-6 md:px-8">
+
+          <h2 className="text-5xl font-black text-center text-slate-900 mb-16">
+            Popular Routes From Nagpur
+          </h2>
+
+          <div className="grid md:grid-cols-4 gap-5">
+
+            {[
+              "Nagpur → Pench",
+              "Nagpur → Tadoba",
+              "Nagpur → Chikhaldara",
+              "Nagpur → Shirdi",
+              "Nagpur → Hyderabad",
+              "Nagpur → Pune",
+              "Nagpur → Mumbai",
+              "Nagpur → Goa",
+              "Nagpur → Bhopal",
+              "Nagpur → Indore",
+              "Nagpur → Raipur",
+              "Nagpur → Jabalpur",
+            ].map((route) => (
+              <div
+                key={route}
+                className="bg-slate-100 rounded-2xl p-5 text-center border"
+              >
+                {route}
+              </div>
+            ))}
+
+          </div>
+
+        </div>
+
+      </section>
+
+{/* Service Areas */}
+
+<section className="border-t border-slate-200 py-10">
+
+  <div className="max-w-7xl mx-auto px-6 md:px-8">
+
+    <h2 className="text-4xl font-black text-center text-slate-900 mb-6">
+      Taxi Service Available Across Nagpur & Nearby Areas
+    </h2>
+
+    <p className="text-center text-gray-600 max-w-4xl mx-auto mb-10">
+      RC Tours & Travels provides airport taxi, local cab booking,
+      outstation taxi and Tempo Traveller services across Nagpur city,
+      MIHAN, Hingna, Wardha Road, Besa, Manewada, Dighori, Narsala,
+      Kamptee, Wadi, Butibori, Ramtek and nearby locations.
+    </p>
+
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+      {[
+        "Nagpur City",
+        "Sitabuldi",
+        "Dharampeth",
+        "Ramdaspeth",
+        "Sadar",
+        "Civil Lines",
+        "Wardha Road",
+        "Airport Area",
+        "Manish Nagar",
+        "Pratap Nagar",
+        "Trimurti Nagar",
+        "Laxmi Nagar",
+        "Bajaj Nagar",
+        "Hingna",
+        "MIDC Hingna",
+        "MIHAN",
+        "Besa",
+        "Manewada",
+        "Dighori",
+        "Narsala",
+        "Hudkeshwar",
+        "Kamptee",
+        "Koradi",
+        "Katol Road",
+        "Amravati Road",
+        "Wadi",
+        "Friends Colony",
+        "Jaripatka",
+        "Pardi",
+        "Kalamna",
+        "Nandanvan",
+        "Medical Square",
+        "Mahal",
+        "Itwari",
+        "Gittikhadan",
+        "Zingabai Takli",
+        "Pachpaoli",
+        "Mankapur",
+        "Omkar Nagar",
+        "Narendra Nagar",
+        "Wardhaman Nagar",
+        "Ajni",
+        "Chhatrapati Square",
+        "Shankar Nagar",
+        "Beltarodi",
+        "Pipla",
+        "Butibori",
+        "Umred Road",
+        "Ramtek",
+        "Savner",
+        "Kuhi",
+        "Bhandara Road"
+      ].map((area) => (
+        <div
+          key={area}
+          className="bg-slate-100 rounded-xl p-4 text-center border hover:shadow-lg transition"
+        >
+          {area}
+        </div>
+      ))}
+
+    </div>
+
+  </div>
+
+</section>
+
+{/* FAQ Section */}
+
+<section className="border-t border-slate-200 py-10">
+
+  <div className="max-w-5xl mx-auto px-6 md:px-8">
+
+    <h2 className="text-4xl font-black text-center text-slate-900 mb-10">
+      Frequently Asked Questions
+    </h2>
+
+    <div className="space-y-5">
+
+      <div className="bg-slate-100 p-6 rounded-2xl">
+        <h3 className="font-bold text-xl mb-2">
+          What is the taxi fare from Nagpur Airport?
+        </h3>
+        <p className="text-gray-600">
+          Taxi fare depends on pickup and drop location. Contact RC Tours &
+          Travels for an instant fare quote.
+        </p>
+      </div>
+
+      <div className="bg-slate-100 p-6 rounded-2xl">
+        <h3 className="font-bold text-xl mb-2">
+          Do you provide outstation taxi service from Nagpur?
+        </h3>
+        <p className="text-gray-600">
+          Yes, we provide outstation taxi service from Nagpur to Pune,
+          Mumbai, Hyderabad, Indore, Bhopal, Shirdi and many more destinations.
+        </p>
+      </div>
+
+      <div className="bg-slate-100 p-6 rounded-2xl">
+        <h3 className="font-bold text-xl mb-2">
+          Is Tempo Traveller available in Nagpur?
+        </h3>
+        <p className="text-gray-600">
+          Yes, we provide Tempo Traveller rental for family trips,
+          corporate tours, pilgrimages and group travel.
+        </p>
+      </div>
+
+      <div className="bg-slate-100 p-6 rounded-2xl">
+        <h3 className="font-bold text-xl mb-2">
+          Do you offer one-way taxi service?
+        </h3>
+        <p className="text-gray-600">
+          Yes, one-way and round-trip taxi services are available for
+          local and outstation routes.
+        </p>
+      </div>
+
+      <div className="bg-slate-100 p-6 rounded-2xl">
+        <h3 className="font-bold text-xl mb-2">
+          How can I book a taxi in Nagpur?
+        </h3>
+        <p className="text-gray-600">
+          You can call us directly at +91 9172271464 or book through WhatsApp.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+{/* Contact Information */}
+
+<section className="border-t border-slate-200 py-12">
+
+  <div className="max-w-6xl mx-auto px-6 md:px-8">
+
+    <h2 className="text-4xl md:text-5xl font-black text-center text-slate-900 mb-4">
+      Contact RC Tours & Travels
+    </h2>
+
+    <p className="text-center text-gray-600 max-w-3xl mx-auto mb-12">
+      Looking for Airport Taxi, Local Cab, Outstation Taxi or Tempo Traveller
+      in Nagpur? Contact our team today for instant booking and fare details.
+    </p>
+
+    <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+
+      {/* Call */}
+
+      <div className="bg-white border shadow-lg rounded-3xl p-8 text-center">
+
+        <div className="text-5xl mb-4">
+          📞
+        </div>
+
+        <h3 className="text-2xl font-bold mb-3">
+          Call Us
+        </h3>
+
+        <p className="text-gray-600 mb-4">
+          Quick booking and fare information.
+        </p>
+
+        <a
+          href="tel:+919172271464"
+          className="text-blue-600 font-bold text-lg"
+        >
+          +91 9172271464
+        </a>
+
+      </div>
+
+      {/* WhatsApp */}
+
+      <div className="bg-white border shadow-lg rounded-3xl p-8 text-center">
+
+        <div className="text-5xl mb-4">
+          💬
+        </div>
+
+        <h3 className="text-2xl font-bold mb-3">
+          WhatsApp Booking
+        </h3>
+
+        <p className="text-gray-600 mb-4">
+          Instant response for taxi booking.
+        </p>
+
+        <a
+          href="https://wa.me/919172271464"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-green-600 font-bold text-lg"
+        >
+          Chat On WhatsApp
+        </a>
+
+      </div>
+
+      {/* Location */}
+
+      <div className="bg-white border shadow-lg rounded-3xl p-8 text-center">
+
+        <div className="text-5xl mb-4">
+          📍
+        </div>
+
+        <h3 className="text-2xl font-bold mb-3">
+          Our Location
+        </h3>
+
+        <p className="text-gray-600">
+          New Narsala Rd, Beldar Nagar,
+          Dighori, Nagpur,
+          Maharashtra 440034
+        </p>
+
+      </div>
+
+    </div>
+
+    <div className="mt-10 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-3xl p-10 text-center shadow-xl">
+
+      <p className="max-w-3xl mx-auto text-lg">
+        Airport Pickup & Drop • Local Cab Service • Outstation Taxi • Tempo Traveller • Corporate Travel • Tour Packages
+    </p>
+
+      <p className="text-gray-600 max-w-3xl mx-auto">
+        Airport Pickup & Drop • Local Cab Service • Outstation Taxi •
+        Tempo Traveller Rental • Corporate Travel • Tour Packages
+      </p>
+
+    </div>
+
+  </div>
+  
+  </section>
+
+      {/* SEO Content */}
+      <section className="border-t border-white/10 py-10 relative overflow-hidden">
+
+        <div className="max-w-6xl mx-auto px-6 md:px-8">
+
+          <h2 className="text-5xl font-black text-center text-slate-900 mb-12">
+            Best Taxi Service In Nagpur
+          </h2>
+
+          <div className="bg-white rounded-3xl shadow-xl p-10">
+
+            <p className="text-lg text-gray-600 leading-9 mb-6">
+              RC Tours & Travels is a trusted taxi service provider in Nagpur
+              offering airport taxi, local cab booking, outstation taxi,
+              corporate travel and Tempo Traveller rental services.
+            </p>
+
+            <p className="text-lg text-gray-600 leading-9 mb-6">
+              We provide transportation services from Nagpur to Pench,
+              Tadoba, Chikhaldara, Wardha, Amravati, Pune, Mumbai,
+              Hyderabad, Indore, Bhopal, Shirdi and many other destinations.
+            </p>
+
+            <p className="text-lg text-gray-600 leading-9">
+              Our focus is on customer satisfaction, clean vehicles,
+              experienced drivers, transparent pricing and safe travel.
+              Whether you need a local cab or an outstation taxi,
+              RC Tours & Travels is ready to serve you.
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* CTA */}
+<section className="border-t border-white/10 py-10 relative overflow-hidden">
+
+  <div className="max-w-5xl mx-auto px-6 md:px-8 text-center">
+
+    <h2 className="text-5xl font-black mb-6">
+      Need A Taxi In Nagpur?
+      <br />
+      Call RC Tours & Travels Now
+    </h2>
+
+    <p className="text-xl mb-10">
+      24×7 Airport Taxi • Outstation Cab • Tempo Traveller Booking
+    </p>
+
+    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+
+      <a
+    href="tel:+919172271464"
+    className="bg-cyan-500 hover:bg-cyan-600 text-white px-8 py-4 rounded-2xl font-bold"
+    >
+    📞 Call Now
+    </a>
+
+      <a
+        href="https://wa.me/919172271464"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="bg-green-500 px-8 py-4 rounded-2xl font-bold"
+      >
+        💬 WhatsApp Booking
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+{/* Footer */}
+<footer className="border-t border-white/10 py-10 relative overflow-hidden">
+
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    className="absolute inset-0 w-full h-full object-cover"
+  >
+    <source src="/footer-video.mp4" type="video/mp4" />
+  </video>
+
+  <div className="absolute inset-0 bg-black/50"></div>
+
+  <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10">
+
+    <div className="grid md:grid-cols-4 gap-10">
+
+      <div>
+        <h3 className="text-2xl font-bold mb-4 text-cyan-400">
+          RC Tours & Travels
+        </h3>
+
+        <p className="text-gray-200">
+          Premium Taxi Service In Nagpur For Airport Transfers,
+          Local Rentals, Outstation Trips And Tour Packages.
+        </p>
+      </div>
+
+      <div>
+        <h3 className="text-2xl font-bold mb-4 text-cyan-400">
+          Quick Links
+        </h3>
+
+        <ul className="space-y-2 text-gray-200">
+          <li><a href="/">Home</a></li>
+          <li><a href="/fleet">Fleet</a></li>
+          <li><a href="/tour-packages">Tour Packages</a></li>
+          <li><a href="/blog">Blog</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 className="text-2xl font-bold mb-4 text-cyan-400">
+          Services
+        </h3>
+
+        <ul className="space-y-2 text-gray-200">
+          <li>Airport Transfer</li>
+          <li>Local Rental</li>
+          <li>Outstation Taxi</li>
+          <li>Corporate Cab</li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 className="text-2xl font-bold mb-4 text-cyan-400">
+          Contact Us
+        </h3>
+
+        <ul className="space-y-3 text-gray-200">
+          <li>📞 +91 9172271464</li>
+          <li>📍 Nagpur, Maharashtra</li>
+          <li>✉️ info@rctoursandtravels.in</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div className="border-t border-white/10 mt-10 pt-6 text-center text-gray-200">
+      © 2026 RC Tours & Travels. All Rights Reserved.
+      Designed by Rupesh Chavhan
+    </div>
+
+  </div>
+
+</footer>
+
+{/* Floating Buttons */}
+<div className="fixed bottom-6 right-0 z-50 flex flex-col items-center gap-1">
+
+  <a
+    href="tel:+919172271464"
+    className="bg-cyan-500 hover:bg-cyan-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl"
+  >
+    📞
+  </a>
+
+  <a
+    href="https://wa.me/919172271464"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="bg-green-500 hover:bg-green-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-4xl"
+  >
+    <FaWhatsapp />
+  </a>
+
+  <div className="bg-green-500 text-white px-3 py-2 rounded-xl shadow-xl animate-pulse">
+    <p className="text-[11px] font-bold text-center whitespace-nowrap">
+      🎁 Get Discount
+    </p>
+  </div>
+
+</div>
+
+</main>
+  );
+}
