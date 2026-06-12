@@ -1,5 +1,7 @@
 "use client";
 
+import { Suspense } from "react";
+export const dynamic = "force-dynamic";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
@@ -7,7 +9,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaWhatsapp } from "react-icons/fa";
 
-export default function BookCabPage() {
+function BookCabContent() {
   const searchParams = useSearchParams();
 
   const router = useRouter();
@@ -67,9 +69,9 @@ const searchLocation = async (
     const data = await res.json();
 
     const results =
-      data.features?.map(
-        (item: any) => item.properties.label
-      ) || [];
+    data.features?.map(
+    (item: any) => item.properties.label
+  ) || [];
 
     if (type === "pickup") {
       setPickupSuggestions(results);
@@ -613,5 +615,13 @@ useEffect(() => {
 
 
     </main>
+  );
+}
+
+export default function BookCabPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BookCabContent />
+    </Suspense>
   );
 }

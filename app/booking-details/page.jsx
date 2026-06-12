@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -47,7 +48,7 @@ const vehicleRates = {
   "Toyota Hycross": 20,
 };
 
-export default function BookingDetailsPage() {
+function BookingDetailsContent() {
 
   const searchParams = useSearchParams();
 
@@ -847,6 +848,14 @@ console.log("BOOKING SAVE RESULT:", result);
       
       </div>
 
-    </main>
+        </main>
+  );
+}
+
+export default function BookingDetailsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BookingDetailsContent />
+    </Suspense>
   );
 }

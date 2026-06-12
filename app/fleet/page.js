@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 const cars = [
@@ -115,7 +116,7 @@ const cars = [
   },
 ];
 
-export default function FleetPage() {
+function FleetContent() {
 
   const searchParams = useSearchParams();
 
@@ -1009,5 +1010,12 @@ Please send best fare.`
       </div>
       
     </div>
+  );
+}
+export default function FleetPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <FleetContent />
+    </Suspense>
   );
 }
