@@ -966,45 +966,136 @@ Please send best fare.`
 
         </div>
 
-        {/* Sticky Booking Bar */}
+{/* Sticky Booking Bar */}
 
-<div className="fixed bottom-0 left-0 w-full bg-black/90 backdrop-blur-md border-t border-cyan-500 z-40">
+<div className="fixed bottom-0 left-0 w-full bg-slate-950/95 backdrop-blur-xl border-t border-cyan-500/20 z-40 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
 
-  <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+  <div className="max-w-7xl mx-auto px-4 py-3">
 
-    <div>
-      <p className="text-white font-bold">
-        Need a Cab Right Now?
-      </p>
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
 
-      <p className="text-gray-400 text-sm">
-        Instant Booking Available 24×7
-      </p>
-    </div>
+      <div className="text-center sm:text-left">
 
-    <div className="flex gap-3">
+        <p className="text-white font-bold text-lg">
+          Need a Cab Right Now?
+        </p>
 
-      <a
-        href="tel:+919172271464"
-        className="bg-white text-black px-4 py-2 rounded-xl font-bold"
-      >
-        📞 Call
-      </a>
+        <p className="text-gray-400 text-sm">
+          Instant Booking Available 24×7
+        </p>
 
-      <a
-        href="https://wa.me/919172271464"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-cyan-500 text-black px-4 py-2 rounded-xl font-bold"
-      >
-        💬 WhatsApp
-      </a>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 w-full sm:w-auto">
+
+        <a
+          href="tel:+919172271464"
+          className="flex items-center justify-center gap-2 bg-white hover:bg-gray-100 text-black px-6 py-3 rounded-2xl font-bold transition-all"
+        >
+          📞 Call Now
+        </a>
+
+        <a
+          href="https://wa.me/919172271464"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-2xl font-bold transition-all"
+        >
+          💬 WhatsApp
+        </a>
+
+      </div>
 
     </div>
 
   </div>
 
 </div>
+
+{/* Footer */}
+<footer
+  className="border-t border-white/10 py-10 mt-24 relative overflow-hidden"
+>
+
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    className="absolute inset-0 w-full h-full object-cover"
+  >
+    <source src="/footer-video.mp4" type="video/mp4" />
+  </video>
+
+  <div className="absolute inset-0 bg-black/50"></div>
+
+  <div className="relative z-10 max-w-[1800px] mx-auto px-10 md:px-20">
+
+    <div className="grid md:grid-cols-4 gap-16 justify-between">
+
+      {/* Company */}
+      <div>
+        <h3 className="text-2xl font-bold mb-4 text-cyan-400 drop-shadow-[0_0_15px_#06b6d4]">
+          RC Tours & Travels
+        </h3>
+
+        <p className="text-gray-200">
+          Premium Taxi Service In Nagpur For Airport Transfers,
+          Local Rentals, Outstation Trips And Tour Packages.
+        </p>
+      </div>
+
+      {/* Quick Links */}
+      <div>
+        <h3 className="text-2xl font-bold mb-4 text-cyan-400 drop-shadow-[0_0_15px_#06b6d4]">
+          Quick Links
+        </h3>
+
+        <ul className="space-y-2 text-gray-200">
+          <li><a href="/">Home</a></li>
+          <li><a href="/fleet">Fleet</a></li>
+          <li><a href="/tour-packages">Tour Packages</a></li>
+          <li><a href="/blog">Blog</a></li>
+        </ul>
+      </div>
+
+      {/* Services */}
+      <div>
+        <h3 className="text-2xl font-bold mb-4 text-cyan-400 drop-shadow-[0_0_15px_#06b6d4]">
+          Services
+        </h3>
+
+        <ul className="space-y-2 text-gray-200">
+          <li>Airport Transfer</li>
+          <li>Local Rental</li>
+          <li>Outstation Taxi</li>
+          <li>Corporate Cab</li>
+        </ul>
+      </div>
+
+      {/* Contact */}
+      <div>
+        <h3 className="text-2xl font-bold mb-4 text-cyan-400 drop-shadow-[0_0_15px_#06b6d4]">
+          Contact Us
+        </h3>
+
+        <ul className="space-y-3 text-gray-200">
+          <li>📞 +91 9172271464</li>
+          <li>📍 Nagpur, Maharashtra</li>
+          <li>✉️ info@rctoursandtravels.in</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div className="border-t border-white/10 mt-10 pt-6 text-center text-gray-200">
+      © 2026 RC Tours & Travels. All Rights Reserved.
+      Designed by Rupesh Chavhan
+    </div>
+
+  </div>
+
+</footer>
 
 
       </div>

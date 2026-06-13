@@ -52,6 +52,8 @@ function PaymentContent() {
     console.log("ORDER AMOUNT:", order.amount);
     console.log("ORDER STATUS:", order.status);
 
+    console.log("ORDER:", order);
+
     console.log(
   "RAZORPAY KEY:",
   process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
@@ -76,6 +78,25 @@ const options = {
   description: "Cab Booking Payment",
 
   order_id: order.id,
+
+  config: {
+  display: {
+    blocks: {
+      upi: {
+        name: "Pay using UPI",
+        instruments: [
+          {
+            method: "upi",
+          },
+        ],
+      },
+    },
+    sequence: ["block.upi"],
+    preferences: {
+      show_default_blocks: true,
+    },
+  },
+},
 
   handler: async function (response) {
 

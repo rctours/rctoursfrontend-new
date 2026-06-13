@@ -43,6 +43,8 @@ const [distance, setDistance] = useState(
   Number(searchParams.get("distance")) || 0
 );
 
+const [rentalPackage, setRentalPackage] = useState("40 KM / 4 Hrs");
+
 const [pickupSuggestions, setPickupSuggestions] = useState<string[]>([]);
 const [dropSuggestions, setDropSuggestions] = useState<string[]>([]);
 
@@ -161,43 +163,61 @@ useEffect(() => {
   }
 }, [pickup, drop, pickupDate, returnDate, tripType]);
 
+const includedKm =
+  rentalPackage === "40 KM / 4 Hrs"
+    ? 40
+    : rentalPackage === "80 KM / 8 Hrs"
+    ? 80
+    : 120;
+
+const includedHours =
+  rentalPackage === "40 KM / 4 Hrs"
+    ? 4
+    : rentalPackage === "80 KM / 8 Hrs"
+    ? 8
+    : 12;
+
   const cabs = [
   {
-    name: "Swift Dzire",
-    seats: 4,
-    bags: 2,
-    rate: 11,
-    image: "/cars/dzire.jpg",
+  name: "Swift Dzire",
+  seats: 4,
+  bags: 2,
+  rate: 11,
+  extraHour: 150,
+  image: "/cars/dzire.jpg",
   },
   {
-    name: "Ertiga",
-    seats: 6,
-    bags: 3,
-    rate: 13,
-    image: "/cars/ertiga.jpg",
+  name: "Ertiga",
+  seats: 6,
+  bags: 3,
+  rate: 13,
+  extraHour: 250,
+  image: "/cars/ertiga.jpg",
   },
   {
-    name: "Toyota Rumion",
-    seats: 6,
-    bags: 3,
-    rate: 13,
-    image: "/cars/rumion.jpg",
+  name: "Toyota Rumion",
+  seats: 6,
+  bags: 3,
+  rate: 13,
+  extraHour: 250,
+  image: "/cars/rumion.jpg",
   },
 
   {
-    name: "Innova Crysta",
-    seats: 7,
-    bags: 4,
-    rate: 17,
-    image: "/cars/crysta.jpg",
+  name: "Innova Crysta",
+  seats: 7,
+  bags: 4,
+  rate: 17,
+  extraHour: 350,
+  image: "/cars/crysta.jpg",
   },
 ];
 
   return (
     <main className="min-h-screen bg-slate-100">
-      <section className="bg-gradient-to-r from-blue-950 to-blue-700 pt-24 pb-10">
+      <section className="bg-gradient-to-r from-blue-950 to-blue-700 pt-36 pb-10">
         <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-5xl font-black text-center text-white">Book Your Cab</h1>
+          <h1 className="text-3xl md:text-5xl font-black text-center text-white">Book Your Cab</h1>
           <p className="text-center text-blue-100 mt-3 mb-8">
             Local • Airport • Outstation Taxi Service
           </p>
@@ -214,6 +234,18 @@ useEffect(() => {
                 <option>Local Rental</option>
                 <option>Outstation Trip</option>
               </select>
+
+              {tripType === "Local Rental" && (
+    <select
+    value={rentalPackage}
+    onChange={(e) => setRentalPackage(e.target.value)}
+    className="h-[72px] w-full border border-gray-300 rounded-2xl px-5"
+    >
+    <option>40 KM / 4 Hrs</option>
+    <option>80 KM / 8 Hrs</option>
+    <option>120 KM / 12 Hrs</option>
+  </select>
+  )}
 
               <div className="relative">
   <input
@@ -325,8 +357,8 @@ useEffect(() => {
             {cabs.map((cab, i) => (
               <div key={i} className="bg-white rounded-2xl shadow border px-4 py-2">
                 <div className="flex flex-col lg:flex-row justify-between gap-4">
-                  <div className="flex gap-4">
-                    <div className="relative w-56 h-32">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="relative w-32 h-20 md:w-56 md:h-32">
                       <Image src={cab.image} alt={cab.name} fill className="object-contain scale-110" />
                     </div>
 
@@ -385,25 +417,61 @@ useEffect(() => {
   </div>
 
   <p className="text-gray-500 mt-2">
-    40 Kms Included
-  </p>
+
+{tripType === "Local Rental" && (
+  <>
+    {rentalPackage} Included • Extra KM ₹{cab.rate}/KM
+  </>
+)}
+
+{tripType === "Outstation Trip" && (
+  <>
+    {distance} KM Included • Extra KM ₹{cab.rate}/KM
+  </>
+)}
+
+{tripType === "One Way Trip" && (
+  <>
+    {distance} KM Included • Extra KM ₹{cab.rate}/KM
+  </>
+)}
+
+{tripType === "Airport Pick-Up & Drop" && (
+  <>
+    {distance} KM Included • Extra KM ₹{cab.rate}/KM
+  </>
+)}
+
+</p>
+
+<p className="text-xs text-red-500 mt-1">
+  Extra Hour ₹{cab.extraHour}/Hour
+</p>
+
 
 </div>
+                  
                   </div>
 
                   <div className="text-right">
+
                     <h3 className="text-3xl font-bold">
-                    ₹{
-                    tripType === "One Way Trip"
-                    ? Math.round(distance * cab.rate * 2)
-                    : Math.round(distance * cab.rate)
-                    }
-                    </h3>
+                  ₹{
+                  tripType === "Local Rental"
+                  ? includedKm * cab.rate
+                  : tripType === "One Way Trip"
+                  ? Math.round(distance * cab.rate * 2)
+                  : Math.round(distance * cab.rate)
+                  }
+                  </h3>
 
                   <p className="text-sm text-gray-500">
-                  Distance: {distance} KM
+                  {tripType === "Local Rental"
+                  ? `${includedKm} KM / ${includedHours} Hrs`
+                  : `Distance: ${distance} KM`}
                   </p>
                   </div>
+
                 </div>
 
                 <div className="border-t mt-3 pt-3 flex justify-between items-center">
@@ -411,7 +479,9 @@ useEffect(() => {
 
                   <Link
                   href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=0&fare=${
-                  tripType === "One Way Trip"
+                  tripType === "Local Rental"
+                  ? includedKm * cab.rate
+                  : tripType === "One Way Trip"
                   ? Math.round(distance * cab.rate * 2)
                   : Math.round(distance * cab.rate)
                   }`}
@@ -584,7 +654,7 @@ useEffect(() => {
 </footer>
 
 {/* Floating Call Button */}
-<div className="fixed bottom-6 right-0 z-50 flex flex-col items-center gap-1">
+<div className="fixed bottom-24 md:bottom-6 right-3 md:right-0 z-50 flex flex-col items-center gap-1">
 
   {/* Call */}
   <a
