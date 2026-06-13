@@ -122,9 +122,33 @@ useEffect(() => {
       if (data.success) {
 
   if (tripType === "Outstation Trip") {
-  setDistance(data.distance * 2);
+
+  let totalDistance = data.distance * 2;
+
+  if (pickupDate && returnDate) {
+
+    const start = new Date(pickupDate);
+    const end = new Date(returnDate);
+
+    const diffTime = end.getTime() - start.getTime();
+
+    const days =
+      Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+    const minimumKm = days * 300;
+
+    totalDistance = Math.max(
+      totalDistance,
+      minimumKm
+    );
+  }
+
+  setDistance(totalDistance);
+
 } else {
+
   setDistance(data.distance);
+
 }
 }
     } catch (error) {
@@ -369,7 +393,11 @@ useEffect(() => {
 
                   <div className="text-right">
                     <h3 className="text-3xl font-bold">
-                    ₹{Math.round(distance * cab.rate)}
+                    ₹{
+                    tripType === "One Way Trip"
+                    ? Math.round(distance * cab.rate * 2)
+                    : Math.round(distance * cab.rate)
+                    }
                     </h3>
 
                   <p className="text-sm text-gray-500">
@@ -382,7 +410,11 @@ useEffect(() => {
                   <span>Book with ₹476 now</span>
 
                   <Link
-                  href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=0&fare=${Math.round(distance * cab.rate)}`}
+                  href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=0&fare=${
+                  tripType === "One Way Trip"
+                  ? Math.round(distance * cab.rate * 2)
+                  : Math.round(distance * cab.rate)
+                  }`}
                   className="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold"
                   >
                   Book Now
