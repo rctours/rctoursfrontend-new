@@ -59,6 +59,11 @@ export async function POST(req) {
 
     const routeData = await routeRes.json();
 
+    console.log(
+  "ROUTE DISTANCE KM =",
+  routeData.routes?.[0]?.summary?.distance / 1000
+  );
+
     const distanceMeters =
       routeData.routes[0].summary.distance;
 

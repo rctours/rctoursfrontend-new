@@ -121,36 +121,11 @@ useEffect(() => {
 
       if (data.success) {
 
-  if (
-    tripType === "Outstation Trip" &&
-    pickupDate &&
-    returnDate
-  ) {
-
-    const start = new Date(pickupDate);
-    const end = new Date(returnDate);
-
-    const totalDays =
-      Math.floor(
-        (end.getTime() - start.getTime()) /
-        (1000 * 60 * 60 * 24)
-      ) + 1;
-
-    if (totalDays > 1) {
-
-      setDistance(totalDays * 300);
-
-    } else {
-
-      setDistance(data.distance * 2);
-
-    }
-
-  } else {
-
-    setDistance(data.distance);
-
-  }
+  if (tripType === "Outstation Trip") {
+  setDistance(data.distance * 2);
+} else {
+  setDistance(data.distance);
+}
 }
     } catch (error) {
       console.log(error);
@@ -394,14 +369,7 @@ useEffect(() => {
 
                   <div className="text-right">
                     <h3 className="text-3xl font-bold">
-                    ₹{
-                      Math.round(
-                      (tripType === "Outstation Trip"
-                      ? distance / 2
-                      : distance) *
-                      (cab.rate * 2)
-                      )
-                      }
+                    ₹{Math.round(distance * cab.rate)}
                     </h3>
 
                   <p className="text-sm text-gray-500">
@@ -414,7 +382,7 @@ useEffect(() => {
                   <span>Book with ₹476 now</span>
 
                   <Link
-                  href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=0&fare=${Math.round((tripType === "Outstation Trip" ? distance / 2 : distance) * cab.rate * 2)}`}
+                  href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=0&fare=${Math.round(distance * cab.rate)}`}
                   className="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold"
                   >
                   Book Now
