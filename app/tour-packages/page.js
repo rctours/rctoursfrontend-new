@@ -551,23 +551,23 @@ export default function TourPackagesPage() {
 );
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 overflow-x-hidden">
       {/* Hero */}
       <section className="pt-40 pb-24 bg-gradient-to-r from-blue-900 via-blue-700 to-indigo-800 text-white">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-5xl md:text-7xl font-black mb-6">
+          <h1 className="text-3xl md:text-7xl font-black mb-6 leading-tight">
             Explore Popular Travel Destinations from Nagpur
           </h1>
 
-          <p className="text-xl md:text-2xl text-white/90 max-w-4xl mx-auto mb-8">
+          <p className="text-base md:text-2xl text-white/90 max-w-4xl mx-auto mb-8">
           Premium Cab Rental Service from Nagpur for Family Trips,
           Religious Tours, Wildlife Safaris and Outstation Travel.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
             <a
               href="tel:9172271464"
-              className="bg-white text-blue-700 px-8 py-4 rounded-xl font-bold"
+              className="bg-white text-blue-700 px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold w-full sm:w-auto text-center"
             >
               📞 Call Now
             </a>
@@ -575,7 +575,7 @@ export default function TourPackagesPage() {
             <a
               href="https://wa.me/919172271464"
               target="_blank"
-              className="bg-green-500 text-white px-8 py-4 rounded-xl font-bold"
+              className="bg-green-500 text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold w-full sm:w-auto text-center"
             >
               💬 WhatsApp Quote
             </a>
@@ -597,7 +597,7 @@ export default function TourPackagesPage() {
       </section>
 
       {/* Stats */}
-      <section className="max-w-7xl mx-auto px-6 py-12">
+      <section className="max-w-7xl mx-auto px-6 py-8 md:py-8 md:py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <div className="bg-white rounded-3xl p-6 shadow-lg text-center">
             <h3 className="text-4xl font-black text-blue-600">1000+</h3>
@@ -622,9 +622,9 @@ export default function TourPackagesPage() {
       </section>
 
       {/* Packages */}
-      <section className="max-w-7xl mx-auto px-6 py-12">
+      <section className="max-w-7xl mx-auto px-6 py-8 md:py-12">
         <div className="text-center mb-14">
-          <h2 className="text-5xl font-black text-slate-900 mb-4">
+          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 leading-tight">
             Explore Our Tour Packages
           </h2>
 
@@ -643,12 +643,12 @@ export default function TourPackagesPage() {
           {filteredPackages.map((pkg, index) => (
             <div
             key={index}
-            className="min-w-[320px] max-w-[320px] bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 snap-start flex-shrink-0"
+            className="min-w-[260px] sm:min-w-[300px] max-w-[300px] bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 snap-start flex-shrink-0"
             >
               <img
                 src={pkg.image}
                 alt={pkg.title}
-                className="w-full h-60 object-cover"
+                className="w-full h-48 sm:h-60 object-cover"
               />
 
               <div className="p-6">
@@ -656,7 +656,7 @@ export default function TourPackagesPage() {
 
                 <p className="text-gray-600 mb-4">{pkg.duration}</p>
 
-                <div className="space-y-2 mb-5">
+                <div className="space-y-1 sm:space-y-2 mb-4 sm:mb-5">
                 <p>✅ Best Price Guaranteed</p>
                 <p>✅ Clean & Comfortable Vehicles</p>
                 <p>✅ Experienced Drivers</p>
@@ -687,9 +687,9 @@ export default function TourPackagesPage() {
       </section>
 
       {/* Madhya Pradesh Tours */}
-<section className="max-w-7xl mx-auto px-6 py-12">
+<section className="max-w-7xl mx-auto px-6 py-8 md:py-12">
   <div className="mb-10">
-    <h2 className="text-4xl md:text-5xl font-black text-slate-900">
+    <h2 className="text-2xl md:text-5xl font-black text-slate-900 leading-tight">
       Explore Madhya Pradesh
     </h2>
 
@@ -708,12 +708,12 @@ export default function TourPackagesPage() {
     {mpPackages.map((pkg, index) => (
       <div
         key={index}
-        className="min-w-[320px] max-w-[320px] bg-white rounded-3xl shadow-lg overflow-hidden snap-start flex-shrink-0"
+        className="min-w-[260px] sm:min-w-[300px] max-w-[300px] bg-white rounded-3xl shadow-lg overflow-hidden snap-start flex-shrink-0"
       >
         <img
           src={pkg.image}
           alt={pkg.title}
-          className="w-full h-60 object-cover"
+          className="w-full h-48 sm:h-60 object-cover"
         />
 
         <div className="p-6">
@@ -725,7 +725,7 @@ export default function TourPackagesPage() {
             {pkg.duration}
           </p>
 
-          <div className="space-y-2 mb-5">
+          <div className="space-y-1 sm:space-y-2 mb-4 sm:mb-5">
             <p>✅ Best Price Guaranteed</p>
             <p>✅ Clean & Comfortable Vehicles</p>
             <p>✅ Experienced Drivers</p>
@@ -756,7 +756,7 @@ export default function TourPackagesPage() {
 </section>
 
 {/* Uttar Pradesh Tours */}
-<section className="max-w-7xl mx-auto px-6 py-12">
+<section className="max-w-7xl mx-auto px-6 py-8 md:py-12">
 
   <div className="mb-10">
     <h2 className="text-4xl md:text-5xl font-black text-slate-900">
@@ -779,12 +779,12 @@ export default function TourPackagesPage() {
     {upPackages.map((pkg, index) => (
       <div
         key={index}
-        className="min-w-[320px] max-w-[320px] bg-white rounded-3xl shadow-lg overflow-hidden snap-start flex-shrink-0"
+        className="min-w-[260px] sm:min-w-[300px] max-w-[300px] bg-white rounded-3xl shadow-lg overflow-hidden snap-start flex-shrink-0"
       >
         <img
           src={pkg.image}
           alt={pkg.title}
-          className="w-full h-60 object-cover"
+          className="w-full h-48 sm:h-60 object-cover"
         />
 
         <div className="p-6">
@@ -796,7 +796,7 @@ export default function TourPackagesPage() {
             {pkg.duration}
           </p>
 
-          <div className="space-y-2 mb-5">
+          <div className="space-y-1 sm:space-y-2 mb-4 sm:mb-5">
             <p>✅ Best Price Guaranteed</p>
             <p>✅ Clean & Comfortable Vehicles</p>
             <p>✅ Experienced Drivers</p>
@@ -827,7 +827,7 @@ export default function TourPackagesPage() {
 </section>
 
 {/* Rajasthan Tours */}
-<section className="max-w-7xl mx-auto px-6 py-12">
+<section className="max-w-7xl mx-auto px-6 py-8 md:py-12">
 
   <div className="mb-10">
     <h2 className="text-4xl md:text-5xl font-black text-slate-900">
@@ -849,12 +849,12 @@ export default function TourPackagesPage() {
     {rajasthanPackages.map((pkg, index) => (
       <div
         key={index}
-        className="min-w-[320px] max-w-[320px] bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 snap-start flex-shrink-0"
+        className="mmin-w-[260px] sm:min-w-[300px] max-w-[300px] bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 snap-start flex-shrink-0"
       >
         <img
           src={pkg.image}
           alt={pkg.title}
-          className="w-full h-60 object-cover"
+          className="w-full h-48 sm:h-60 object-cover"
         />
 
         <div className="p-6">
@@ -866,7 +866,7 @@ export default function TourPackagesPage() {
             {pkg.duration}
           </p>
 
-          <div className="space-y-2 mb-5">
+          <div className="space-y-1 sm:space-y-2 mb-4 sm:mb-5">
             {pkg.features.map((feature, i) => (
               <p key={i}>{feature}</p>
             ))}
@@ -896,7 +896,7 @@ export default function TourPackagesPage() {
 </section>
 
 {/* South India Spiritual Tours */}
-<section className="max-w-7xl mx-auto px-6 py-12">
+<section className="max-w-7xl mx-auto px-6 py-8 md:py-12">
 
   <div className="mb-10">
     <h2 className="text-4xl md:text-5xl font-black text-slate-900">
@@ -918,12 +918,12 @@ export default function TourPackagesPage() {
     {southIndiaPackages.map((pkg, index) => (
       <div
         key={index}
-        className="min-w-[320px] max-w-[320px] bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 snap-start flex-shrink-0"
+        className="mmin-w-[260px] sm:min-w-[300px] max-w-[300px] bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 snap-start flex-shrink-0"
       >
         <img
           src={pkg.image}
           alt={pkg.title}
-          className="w-full h-60 object-cover"
+          className="w-full h-48 sm:h-60 object-cover"
         />
 
         <div className="p-6">
@@ -935,7 +935,7 @@ export default function TourPackagesPage() {
             {pkg.duration}
           </p>
 
-          <div className="space-y-2 mb-5">
+          <div className="space-y-1 sm:space-y-2 mb-4 sm:mb-5">
             {pkg.features.map((feature, i) => (
               <p key={i}>{feature}</p>
             ))}
@@ -965,7 +965,7 @@ export default function TourPackagesPage() {
 </section>
 
 {/* Goa Karnataka Kerala Tours */}
-<section className="max-w-7xl mx-auto px-6 py-12">
+<section className="max-w-7xl mx-auto px-6 py-8 md:py-12">
 
   <div className="mb-10">
     <h2 className="text-4xl md:text-5xl font-black text-slate-900">
@@ -987,12 +987,12 @@ export default function TourPackagesPage() {
     {premiumPackages.map((pkg, index) => (
       <div
         key={index}
-        className="min-w-[320px] max-w-[320px] bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 snap-start flex-shrink-0"
+        className="mmin-w-[260px] sm:min-w-[300px] max-w-[300px] bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 snap-start flex-shrink-0"
       >
         <img
           src={pkg.image}
           alt={pkg.title}
-          className="w-full h-60 object-cover"
+          className="w-full h-48 sm:h-60 object-cover"
         />
 
         <div className="p-6">
@@ -1004,7 +1004,7 @@ export default function TourPackagesPage() {
             {pkg.duration}
           </p>
 
-          <div className="space-y-2 mb-5">
+          <div className="space-y-1 sm:space-y-2 mb-4 sm:mb-5">
             {pkg.features.map((feature, i) => (
               <p key={i}>{feature}</p>
             ))}
@@ -1034,7 +1034,7 @@ export default function TourPackagesPage() {
 </section>
 
 {/* Gujarat Tours */}
-<section className="max-w-7xl mx-auto px-6 py-12">
+<section className="max-w-7xl mx-auto px-6 py-8 md:py-12">
 
   <div className="mb-10">
     <h2 className="text-4xl md:text-5xl font-black text-slate-900">
@@ -1056,12 +1056,12 @@ export default function TourPackagesPage() {
     {gujaratPackages.map((pkg, index) => (
       <div
         key={index}
-        className="min-w-[320px] max-w-[320px] bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 snap-start flex-shrink-0"
+        className="min-w-[260px] sm:min-w-[300px] max-w-[300px] bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 snap-start flex-shrink-0"
       >
         <img
           src={pkg.image}
           alt={pkg.title}
-          className="w-full h-60 object-cover"
+          className="w-full h-48 sm:h-60 object-cover"
         />
 
         <div className="p-6">
@@ -1073,7 +1073,7 @@ export default function TourPackagesPage() {
             {pkg.duration}
           </p>
 
-          <div className="space-y-2 mb-5">
+          <div className="space-y-1 sm:space-y-2 mb-4 sm:mb-5">
             {pkg.features.map((feature, i) => (
               <p key={i}>{feature}</p>
             ))}
@@ -1103,99 +1103,91 @@ export default function TourPackagesPage() {
 </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-r from-blue-900 to-indigo-900 text-white">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-5xl font-black mb-6">
-            Can't Find Your Destination?
-          </h2>
+<section className="py-20 md:py-20 bg-gradient-to-r from-blue-900 to-indigo-900 text-white">
+  <div className="max-w-7xl mx-auto px-6 text-center">
 
-          <p className="text-2xl mb-10">
-          Need a Cab for Your Next Trip? Contact RC Tours & Travels
-          for Comfortable and Reliable Outstation Travel.
-          </p>
+    <h2 className="text-3xl md:text-5xl font-black mb-6 leading-tight">
+      Can't Find Your Destination?
+    </h2>
 
-          <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="tel:9172271464"
-              className="bg-white text-blue-700 px-8 py-4 rounded-xl font-bold"
-            >
-              📞 Call Now
-            </a>
+    <p className="text-base md:text-2xl mb-10">
+      Need a Cab for Your Next Trip? Contact RC Tours & Travels
+      for Comfortable and Reliable Outstation Travel.
+    </p>
 
-            <a
-              href="https://wa.me/919172271464"
-              target="_blank"
-              className="bg-green-500 px-8 py-4 rounded-xl font-bold"
-            >
-              💬 WhatsApp Now
-            </a>
-          </div>
-        </div>
-      </section>
+    <div className="flex flex-col sm:flex-row justify-center gap-4">
 
-      {/* Tour Booking Process */}
-<section className="py-24 bg-slate-50">
+      <a
+        href="tel:9172271464"
+        className="bg-white text-blue-700 px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold w-full sm:w-auto text-center"
+      >
+        📞 Call Now
+      </a>
+
+      <a
+        href="https://wa.me/919172271464"
+        target="_blank"
+        className="bg-green-500 px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold w-full sm:w-auto text-center"
+      >
+        💬 WhatsApp Now
+      </a>
+
+    </div>
+
+  </div>
+</section>
+
+{/* Tour Booking Process */}
+<section className="py-12 md:py-18 bg-slate-50">
   <div className="max-w-7xl mx-auto px-6">
 
-    <div className="text-center mb-16">
-      <h2 className="text-5xl font-black text-slate-900 mb-4">
+    <div className="text-center mb-12 md:mb-16">
+      <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4">
         Easy Booking Process
       </h2>
 
-      <p className="text-slate-600 text-xl">
+      <p className="text-slate-600 text-base md:text-xl">
         Book Your Trip in Just 4 Simple Steps
       </p>
     </div>
 
-    <div className="grid md:grid-cols-4 gap-8">
+    <div className="space-y-10">
 
-      <div className="bg-white rounded-3xl p-8 shadow-lg text-center">
-        <div className="w-16 h-16 mx-auto rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-black mb-5">
-          1
-        </div>
-        <h3 className="text-2xl font-bold mb-3">
-          Contact Us
-        </h3>
-        <p className="text-slate-600">
-          Call or WhatsApp us with your travel requirements.
-        </p>
-      </div>
+      {[
+        { num: 1, title: "Contact Us", desc: "Call or WhatsApp us with your travel requirements." },
+        { num: 2, title: "Get Quote", desc: "Receive a customized trip quotation." },
+        { num: 3, title: "Confirm Booking", desc: "Confirm your vehicle and travel dates." },
+        { num: 4, title: "Enjoy Your Trip", desc: "Relax and travel comfortably with RC Tours & Travels." }
+      ].map((step, i) => {
 
-      <div className="bg-white rounded-3xl p-8 shadow-lg text-center">
-        <div className="w-16 h-16 mx-auto rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-black mb-5">
-          2
-        </div>
-        <h3 className="text-2xl font-bold mb-3">
-          Get Quote
-        </h3>
-        <p className="text-slate-600">
-          Receive a customized trip quotation.
-        </p>
-      </div>
+        const isLeft = i % 2 === 0;
 
-      <div className="bg-white rounded-3xl p-8 shadow-lg text-center">
-        <div className="w-16 h-16 mx-auto rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-black mb-5">
-          3
-        </div>
-        <h3 className="text-2xl font-bold mb-3">
-          Confirm Booking
-        </h3>
-        <p className="text-slate-600">
-          Confirm your vehicle and travel dates.
-        </p>
-      </div>
+        return (
+          <div
+            key={i}
+            className={`flex items-center gap-4 md:gap-8 ${
+              isLeft ? "flex-row" : "flex-row-reverse"
+            }`}
+          >
 
-      <div className="bg-white rounded-3xl p-8 shadow-lg text-center">
-        <div className="w-16 h-16 mx-auto rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-black mb-5">
-          4
-        </div>
-        <h3 className="text-2xl font-bold mb-3">
-          Enjoy Your Trip
-        </h3>
-        <p className="text-slate-600">
-          Relax and travel comfortably with RC Tours & Travels.
-        </p>
-      </div>
+            {/* Number Circle */}
+            <div className="shrink-0 w-14 h-14 md:w-16 md:h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl md:text-2xl font-black shadow-lg">
+              {step.num}
+            </div>
+
+            {/* Card */}
+            <div className="bg-white rounded-3xl p-5 md:p-8 shadow-lg flex-1 hover:shadow-2xl transition">
+              <h3 className="text-lg md:text-2xl font-bold mb-2">
+                {step.title}
+              </h3>
+              <p className="text-slate-600 text-sm md:text-base">
+                {step.desc}
+              </p>
+            </div>
+
+          </div>
+        );
+      })}
 
     </div>
 
@@ -1203,141 +1195,142 @@ export default function TourPackagesPage() {
 </section>
 
 {/* We Travel Across India */}
-<section className="py-24 bg-white">
+<section className="py-8 md:py-16 bg-white">
   <div className="max-w-7xl mx-auto px-6">
 
-    <div className="text-center mb-16">
-      <h2 className="text-5xl font-black text-slate-900 mb-4">
+    <div className="text-center mb-12 md:mb-16">
+      <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 leading-tight">
         We Travel Across India
       </h2>
 
-      <p className="text-slate-600 text-xl">
+      <p className="text-slate-600 text-base md:text-xl">
         Comfortable Cab Services for Religious Tours, Wildlife Safaris,
         Hill Stations and Family Trips Across India.
       </p>
     </div>
 
-    <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
 
-      <div className="bg-slate-50 rounded-3xl p-6 text-center shadow-lg">
-        <div className="text-5xl mb-3">🏛️</div>
-        <h3 className="font-bold text-lg">Maharashtra</h3>
-      </div>
+      {[
+        ["🏛️", "Maharashtra"],
+        ["🐅", "Madhya Pradesh"],
+        ["🙏", "Uttar Pradesh"],
+        ["🏰", "Rajasthan"],
+        ["🌊", "Gujarat"],
+        ["🛕", "South India"],
+      ].map((item, i) => (
+        <div key={i} className="bg-slate-50 rounded-3xl p-4 md:p-6 text-center shadow-lg">
 
-      <div className="bg-slate-50 rounded-3xl p-6 text-center shadow-lg">
-        <div className="text-5xl mb-3">🐅</div>
-        <h3 className="font-bold text-lg">Madhya Pradesh</h3>
-      </div>
+          <div className="text-3xl md:text-5xl mb-3">{item[0]}</div>
 
-      <div className="bg-slate-50 rounded-3xl p-6 text-center shadow-lg">
-        <div className="text-5xl mb-3">🙏</div>
-        <h3 className="font-bold text-lg">Uttar Pradesh</h3>
-      </div>
+          <h3 className="font-bold text-base md:text-lg">
+            {item[1]}
+          </h3>
 
-      <div className="bg-slate-50 rounded-3xl p-6 text-center shadow-lg">
-        <div className="text-5xl mb-3">🏰</div>
-        <h3 className="font-bold text-lg">Rajasthan</h3>
-      </div>
-
-      <div className="bg-slate-50 rounded-3xl p-6 text-center shadow-lg">
-        <div className="text-5xl mb-3">🌊</div>
-        <h3 className="font-bold text-lg">Gujarat</h3>
-      </div>
-
-      <div className="bg-slate-50 rounded-3xl p-6 text-center shadow-lg">
-        <div className="text-5xl mb-3">🛕</div>
-        <h3 className="font-bold text-lg">South India</h3>
-      </div>
+        </div>
+      ))}
 
     </div>
 
-    <div className="mt-14 bg-blue-50 rounded-3xl p-8 text-center border border-blue-100">
-      <h3 className="text-3xl font-bold text-blue-900 mb-4">
+    <div className="mt-10 md:mt-14 bg-blue-50 rounded-3xl p-6 md:p-8 text-center border border-blue-100">
+
+      <h3 className="text-2xl md:text-3xl font-bold text-blue-900 mb-4">
         50+ Popular Destinations Covered
       </h3>
 
-      <p className="text-slate-700 text-lg">
+      <p className="text-slate-700 text-sm md:text-lg">
         Shirdi • Mahurgad • Tuljapur • Pandharpur • Tadoba • Pench • Kanha • Pachmarhi •
         Ujjain • Omkareshwar • Ayodhya • Varanasi • Jaipur • Udaipur • Khatu Shyam •
         Tirupati • Srisailam • Dwarka • Somnath • Statue of Unity and many more.
       </p>
+
     </div>
 
   </div>
 </section>
 
-    {/* Why Choose RC Tours & Travels */}
-<section className="bg-white py-20">
-  <div className="max-w-7xl mx-auto px-6">
+   {/* Why Choose RC Tours & Travels */}
+<section className="bg-white py-6 md:py-12">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
-    <div className="text-center mb-14">
-      <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4">
+    {/* Heading */}
+    <div className="text-center mb-10 md:mb-14">
+
+      <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 leading-tight">
         Why Choose RC Tours & Travels?
       </h2>
 
-      <p className="text-slate-600 text-lg">
+      <p className="text-slate-600 text-base md:text-lg">
         Trusted Cab Rental Service from Nagpur for Comfortable and Hassle-Free Travel
       </p>
+
     </div>
 
-    <div className="grid md:grid-cols-3 gap-8">
+    {/* Cards */}
+    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
 
-      <div className="bg-slate-50 rounded-3xl p-8 shadow-lg text-center">
-        <div className="text-5xl mb-4">🚖</div>
-        <h3 className="text-2xl font-bold mb-3">
+      {/* Card 1 */}
+      <div className="bg-slate-50 rounded-3xl p-4 md:p-8 shadow-lg text-center hover:shadow-2xl transition">
+        <div className="text-3xl md:text-5xl mb-3">🚖</div>
+        <h3 className="text-base md:text-2xl font-bold mb-2">
           Clean Vehicles
         </h3>
-        <p className="text-slate-600">
+        <p className="text-slate-600 text-xs md:text-base">
           Well-maintained and comfortable vehicles for every journey.
         </p>
       </div>
 
-      <div className="bg-slate-50 rounded-3xl p-8 shadow-lg text-center">
-        <div className="text-5xl mb-4">👨‍✈️</div>
-        <h3 className="text-2xl font-bold mb-3">
+      {/* Card 2 */}
+      <div className="bg-slate-50 rounded-3xl p-4 md:p-8 shadow-lg text-center hover:shadow-2xl transition">
+        <div className="text-3xl md:text-5xl mb-3">👨‍✈️</div>
+        <h3 className="text-base md:text-2xl font-bold mb-2">
           Experienced Drivers
         </h3>
-        <p className="text-slate-600">
+        <p className="text-slate-600 text-xs md:text-base">
           Professional drivers with excellent route knowledge.
         </p>
       </div>
 
-      <div className="bg-slate-50 rounded-3xl p-8 shadow-lg text-center">
-        <div className="text-5xl mb-4">📞</div>
-        <h3 className="text-2xl font-bold mb-3">
+      {/* Card 3 */}
+      <div className="bg-slate-50 rounded-3xl p-4 md:p-8 shadow-lg text-center hover:shadow-2xl transition">
+        <div className="text-3xl md:text-5xl mb-3">📞</div>
+        <h3 className="text-base md:text-2xl font-bold mb-2">
           24×7 Support
         </h3>
-        <p className="text-slate-600">
+        <p className="text-slate-600 text-xs md:text-base">
           Quick assistance before, during and after your trip.
         </p>
       </div>
 
-      <div className="bg-slate-50 rounded-3xl p-8 shadow-lg text-center">
-        <div className="text-5xl mb-4">⏰</div>
-        <h3 className="text-2xl font-bold mb-3">
+      {/* Card 4 */}
+      <div className="bg-slate-50 rounded-3xl p-4 md:p-8 shadow-lg text-center hover:shadow-2xl transition">
+        <div className="text-3xl md:text-5xl mb-3">⏰</div>
+        <h3 className="text-base md:text-2xl font-bold mb-2">
           On-Time Pickup
         </h3>
-        <p className="text-slate-600">
+        <p className="text-slate-600 text-xs md:text-base">
           Punctual pickup and reliable travel experience.
         </p>
       </div>
 
-      <div className="bg-slate-50 rounded-3xl p-8 shadow-lg text-center">
-        <div className="text-5xl mb-4">🛣️</div>
-        <h3 className="text-2xl font-bold mb-3">
+      {/* Card 5 */}
+      <div className="bg-slate-50 rounded-3xl p-4 md:p-8 shadow-lg text-center hover:shadow-2xl transition">
+        <div className="text-3xl md:text-5xl mb-3">🛣️</div>
+        <h3 className="text-base md:text-2xl font-bold mb-2">
           All India Tours
         </h3>
-        <p className="text-slate-600">
+        <p className="text-slate-600 text-xs md:text-base">
           Travel comfortably to destinations across India.
         </p>
       </div>
 
-      <div className="bg-slate-50 rounded-3xl p-8 shadow-lg text-center">
-        <div className="text-5xl mb-4">💰</div>
-        <h3 className="text-2xl font-bold mb-3">
+      {/* Card 6 */}
+      <div className="bg-slate-50 rounded-3xl p-4 md:p-8 shadow-lg text-center hover:shadow-2xl transition">
+        <div className="text-3xl md:text-5xl mb-3">💰</div>
+        <h3 className="text-base md:text-2xl font-bold mb-2">
           Best Pricing
         </h3>
-        <p className="text-slate-600">
+        <p className="text-slate-600 text-xs md:text-base">
           Transparent pricing with no hidden charges.
         </p>
       </div>
@@ -1348,67 +1341,47 @@ export default function TourPackagesPage() {
 </section>
 
 {/* Our Premium Fleet */}
-<section className="py-20 bg-slate-50">
-  <div className="max-w-7xl mx-auto px-6">
+<section className="py-6 md:py-12 bg-slate-50">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
-    <div className="text-center mb-14">
-      <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4">
+    {/* Heading */}
+    <div className="text-center mb-10 md:mb-14">
+
+      <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4">
         Our Premium Fleet
       </h2>
 
-      <p className="text-slate-600 text-lg">
+      <p className="text-slate-600 text-base md:text-lg">
         Comfortable Vehicles for Family Trips, Religious Tours and Outstation Travel
       </p>
+
     </div>
 
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {/* GRID */}
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
 
-      <div className="bg-white rounded-3xl p-8 shadow-lg text-center">
-        <div className="text-5xl mb-4">🚗</div>
-        <h3 className="text-2xl font-bold mb-2">Swift Dzire</h3>
-        <p className="text-slate-600">
-          Comfortable sedan for small family trips and outstation travel.
-        </p>
+      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-lg text-center">
+        🚗 <h3 className="font-bold mt-2">Swift Dzire</h3>
       </div>
 
-      <div className="bg-white rounded-3xl p-8 shadow-lg text-center">
-        <div className="text-5xl mb-4">🚙</div>
-        <h3 className="text-2xl font-bold mb-2">Maruti Ertiga</h3>
-        <p className="text-slate-600">
-          Spacious vehicle ideal for family tours and airport transfers.
-        </p>
+      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-lg text-center">
+        🚙 <h3 className="font-bold mt-2">Ertiga</h3>
       </div>
 
-      <div className="bg-white rounded-3xl p-8 shadow-lg text-center">
-        <div className="text-5xl mb-4">🚘</div>
-        <h3 className="text-2xl font-bold mb-2">Toyota Innova</h3>
-        <p className="text-slate-600">
-          Premium comfort for long-distance journeys.
-        </p>
+      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-lg text-center">
+        🚘 <h3 className="font-bold mt-2">Innova</h3>
       </div>
 
-      <div className="bg-white rounded-3xl p-8 shadow-lg text-center">
-        <div className="text-5xl mb-4">✨</div>
-        <h3 className="text-2xl font-bold mb-2">Innova Crysta</h3>
-        <p className="text-slate-600">
-          Luxury travel experience with extra comfort.
-        </p>
+      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-lg text-center">
+        ✨ <h3 className="font-bold mt-2">Crysta</h3>
       </div>
 
-      <div className="bg-white rounded-3xl p-8 shadow-lg text-center">
-        <div className="text-5xl mb-4">🚌</div>
-        <h3 className="text-2xl font-bold mb-2">Tempo Traveller</h3>
-        <p className="text-slate-600">
-          Best option for group tours and corporate travel.
-        </p>
+      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-lg text-center">
+        🚌 <h3 className="font-bold mt-2">Tempo Traveller</h3>
       </div>
 
-      <div className="bg-white rounded-3xl p-8 shadow-lg text-center">
-        <div className="text-5xl mb-4">🚐</div>
-        <h3 className="text-2xl font-bold mb-2">Force Urbania</h3>
-        <p className="text-slate-600">
-          Premium luxury van for large families and groups.
-        </p>
+      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-lg text-center">
+        🚐 <h3 className="font-bold mt-2">Urbania</h3>
       </div>
 
     </div>
@@ -1417,59 +1390,58 @@ export default function TourPackagesPage() {
 </section>
 
 {/* Customer Reviews */}
-<section className="py-20 bg-white">
+<section className="py-8 md:py-12 bg-white">
   <div className="max-w-7xl mx-auto px-6">
 
-    <div className="text-center mb-14">
-      <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4">
+    <div className="text-center mb-10 md:mb-14">
+
+      <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 leading-tight">
         What Our Customers Say
       </h2>
 
-      <p className="text-slate-600 text-lg">
+      <p className="text-slate-600 text-base md:text-lg">
         Trusted by Hundreds of Happy Travelers
       </p>
+
     </div>
 
-    <div className="grid md:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
 
-      <div className="bg-slate-50 rounded-3xl p-8 shadow-lg">
-        <div className="text-yellow-500 text-2xl mb-4">
+      {/* Review 1 */}
+      <div className="bg-slate-50 rounded-3xl p-6 md:p-8 shadow-lg">
+        <div className="text-yellow-500 text-xl md:text-2xl mb-4">
           ⭐⭐⭐⭐⭐
         </div>
-
-        <p className="text-slate-700 mb-4">
+        <p className="text-slate-700 text-sm md:text-base mb-4">
           Excellent service for our Shirdi trip. Vehicle was clean and driver was very professional.
         </p>
-
-        <h4 className="font-bold text-lg">
+        <h4 className="font-bold text-base md:text-lg">
           Rajesh P.
         </h4>
       </div>
 
-      <div className="bg-slate-50 rounded-3xl p-8 shadow-lg">
-        <div className="text-yellow-500 text-2xl mb-4">
+      {/* Review 2 */}
+      <div className="bg-slate-50 rounded-3xl p-6 md:p-8 shadow-lg">
+        <div className="text-yellow-500 text-xl md:text-2xl mb-4">
           ⭐⭐⭐⭐⭐
         </div>
-
-        <p className="text-slate-700 mb-4">
+        <p className="text-slate-700 text-sm md:text-base mb-4">
           Booked Innova for family tour. Comfortable journey and timely pickup.
         </p>
-
-        <h4 className="font-bold text-lg">
+        <h4 className="font-bold text-base md:text-lg">
           Amit K.
         </h4>
       </div>
 
-      <div className="bg-slate-50 rounded-3xl p-8 shadow-lg">
-        <div className="text-yellow-500 text-2xl mb-4">
+      {/* Review 3 */}
+      <div className="bg-slate-50 rounded-3xl p-6 md:p-8 shadow-lg">
+        <div className="text-yellow-500 text-xl md:text-2xl mb-4">
           ⭐⭐⭐⭐⭐
         </div>
-
-        <p className="text-slate-700 mb-4">
+        <p className="text-slate-700 text-sm md:text-base mb-4">
           Best cab service from Nagpur. Highly recommended for outstation travel.
         </p>
-
-        <h4 className="font-bold text-lg">
+        <h4 className="font-bold text-base md:text-lg">
           Priya S.
         </h4>
       </div>
@@ -1480,65 +1452,72 @@ export default function TourPackagesPage() {
 </section>
 
 {/* FAQ Section */}
-<section className="py-24 bg-white">
+<section className="py-6 md:py-12 bg-white">
   <div className="max-w-5xl mx-auto px-6">
 
-    <div className="text-center mb-16">
-      <h2 className="text-5xl font-black text-slate-900 mb-4">
+    <div className="text-center mb-10 md:mb-16">
+
+      <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 leading-tight">
         Frequently Asked Questions
       </h2>
 
-      <p className="text-slate-600 text-lg">
+      <p className="text-slate-600 text-base md:text-lg">
         Everything You Need To Know Before Booking
       </p>
+
     </div>
 
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
 
-      <div className="bg-slate-50 rounded-2xl p-6 shadow">
-        <h3 className="font-bold text-xl mb-2">
+      {/* FAQ 1 */}
+      <div className="bg-slate-50 rounded-2xl p-5 md:p-6 shadow">
+        <h3 className="font-bold text-lg md:text-xl mb-2">
           Do you provide only cab service?
         </h3>
-        <p className="text-slate-600">
+        <p className="text-slate-600 text-sm md:text-base">
           Yes. RC Tours & Travels provides cab rental services for tours,
           outstation trips, airport transfers and religious travel.
         </p>
       </div>
 
-      <div className="bg-slate-50 rounded-2xl p-6 shadow">
-        <h3 className="font-bold text-xl mb-2">
+      {/* FAQ 2 */}
+      <div className="bg-slate-50 rounded-2xl p-5 md:p-6 shadow">
+        <h3 className="font-bold text-lg md:text-xl mb-2">
           Are hotel bookings included?
         </h3>
-        <p className="text-slate-600">
+        <p className="text-slate-600 text-sm md:text-base">
           No. We provide transportation services only.
         </p>
       </div>
 
-      <div className="bg-slate-50 rounded-2xl p-6 shadow">
-        <h3 className="font-bold text-xl mb-2">
+      {/* FAQ 3 */}
+      <div className="bg-slate-50 rounded-2xl p-5 md:p-6 shadow">
+        <h3 className="font-bold text-lg md:text-xl mb-2">
           Can I customize my travel plan?
         </h3>
-        <p className="text-slate-600">
+        <p className="text-slate-600 text-sm md:text-base">
           Yes. We can arrange travel according to your preferred destinations
           and schedule.
         </p>
       </div>
 
-      <div className="bg-slate-50 rounded-2xl p-6 shadow">
-        <h3 className="font-bold text-xl mb-2">
+      {/* FAQ 4 */}
+      <div className="bg-slate-50 rounded-2xl p-5 md:p-6 shadow">
+        <h3 className="font-bold text-lg md:text-xl mb-2">
           Which vehicles are available?
         </h3>
-        <p className="text-slate-600">
+        <p className="text-slate-600 text-sm md:text-base">
           Swift Dzire, Ertiga, Innova, Innova Crysta, Tempo Traveller and
           Force Urbania.
         </p>
       </div>
 
-      <div className="bg-slate-50 rounded-2xl p-6 shadow">
-        <h3 className="font-bold text-xl mb-2">
+      {/* FAQ 5 */}
+      <div className="bg-slate-50 rounded-2xl p-5 md:p-6 shadow">
+        <h3 className="font-bold text-lg md:text-xl mb-2">
           How can I book a trip?
         </h3>
-        <p className="text-slate-600">
+        <p className="text-slate-600 text-sm md:text-base">
           Simply call us or send a WhatsApp message and our team will assist
           you with booking.
         </p>

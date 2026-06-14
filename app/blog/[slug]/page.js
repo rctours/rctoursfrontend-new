@@ -2543,8 +2543,8 @@ export default async function BlogDetailsPage({ params }) {
   }}
 />
 
-      <div className="max-w-5xl mx-auto px-6 py-32">
-        <h1 className="text-5xl font-black mb-6">
+      <div className="max-w-5xl mx-auto px-4 md:px-6 py-16 md:py-32">
+        <h1 className="text-3xl md:text-5xl font-black mb-6 leading-tight">
           {blog.title}
         </h1>
 
@@ -2558,7 +2558,7 @@ export default async function BlogDetailsPage({ params }) {
         src={blog.image}
         alt={blog.title}
         loading="eager"
-        className="w-full h-[450px] object-contain rounded-3xl mb-8 bg-gray-100"
+        className="w-full h-[220px] md:h-[450px] object-cover rounded-3xl mb-8 bg-gray-100"
         />
 
         <div className="prose max-w-none">
@@ -2567,7 +2567,7 @@ export default async function BlogDetailsPage({ params }) {
             </div>
         </div>
 
-        <div className="mt-10 flex flex-wrap gap-4">
+        <div className="mt-10 flex flex-col sm:flex-row gap-4">
           <a
             href="tel:9172271464"
             className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold"
@@ -2616,7 +2616,7 @@ export default async function BlogDetailsPage({ params }) {
     Related Articles
   </h2>
 
-  <div className="grid md:grid-cols-2 gap-6">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
     {relatedBlogs.map(([blogSlug, item]) => (
       <Link
         key={blogSlug}

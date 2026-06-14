@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 export const dynamic = "force-dynamic";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,7 +12,15 @@ import { FaWhatsapp } from "react-icons/fa";
 function BookCabContent() {
   const searchParams = useSearchParams();
 
+  const selectedVehicle = searchParams.get("vehicle");
+
+  const fromHome = false;
+
   const router = useRouter();
+
+  const [showMobileSearch, setShowMobileSearch] = useState(true);
+
+const footerRef = useRef(null);
 
 const [tripType, setTripType] = useState(
   searchParams.get("tripType")?.trim() || "One Way"
@@ -163,6 +171,23 @@ useEffect(() => {
   }
 }, [pickup, drop, pickupDate, returnDate, tripType]);
 
+useEffect(() => {
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      setShowMobileSearch(!entry.isIntersecting);
+    },
+    {
+      threshold: 0.1,
+    }
+  );
+
+  if (footerRef.current) {
+    observer.observe(footerRef.current);
+  }
+
+  return () => observer.disconnect();
+}, []);
+
 const includedKm =
   rentalPackage === "40 KM / 4 Hrs"
     ? 40
@@ -182,52 +207,92 @@ const includedHours =
   name: "Swift Dzire",
   seats: 4,
   bags: 2,
+  fuel: "CNG / Petrol",
   rate: 11,
   extraHour: 150,
   image: "/cars/dzire.jpg",
+
+  packageFare: {
+    "40 KM / 4 Hrs": 1200,
+    "80 KM / 8 Hrs": 2200,
+    "120 KM / 12 Hrs": 3000,
   },
+  },
+
   {
   name: "Ertiga",
   seats: 6,
   bags: 3,
+  fuel: "CNG / Petrol",
   rate: 13,
   extraHour: 250,
   image: "/cars/ertiga.jpg",
+
+    packageFare: {
+    "40 KM / 4 Hrs": 1500,
+    "80 KM / 8 Hrs": 2500,
+    "120 KM / 12 Hrs": 3100,
   },
+  },
+
   {
   name: "Toyota Rumion",
   seats: 6,
   bags: 3,
+  fuel: "CNG / Petrol",
   rate: 13,
   extraHour: 250,
-  image: "/cars/rumion.jpg",
+  image: "/cars/rumion.png",
+
+   packageFare: {
+    "40 KM / 4 Hrs": 1600,
+    "80 KM / 8 Hrs": 2600,
+    "120 KM / 12 Hrs": 3200,
+  },
   },
 
   {
   name: "Innova Crysta",
   seats: 7,
   bags: 4,
+  fuel: "Diesel",
   rate: 17,
   extraHour: 350,
   image: "/cars/crysta.jpg",
+
+  packageFare: {
+    "40 KM / 4 Hrs": 3500,
+    "80 KM / 8 Hrs": 4200,
+    "120 KM / 12 Hrs": 5000,
   },
+  },
+  
 ];
 
+const sortedCabs = [...cabs].sort((a, b) => {
+  if (a.name === selectedVehicle) return -1;
+  if (b.name === selectedVehicle) return 1;
+  return 0;
+});
+
   return (
-    <main className="min-h-screen bg-slate-100">
-      <section className="bg-gradient-to-r from-blue-950 to-blue-700 pt-36 pb-10">
+  <main className="min-h-screen bg-slate-100">
+
+    {!fromHome && (
+
+      <section className="bg-gradient-to-r from-blue-950 to-blue-700 pt-24 pb-3 md:pt-36 md:pb-10">
         <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-3xl md:text-5xl font-black text-center text-white">Book Your Cab</h1>
+          <h1 className="text-xl md:text-5xl font-black text-center text-white">Book Your Cab</h1>
           <p className="text-center text-blue-100 mt-3 mb-8">
             Local • Airport • Outstation Taxi Service
           </p>
 
-          <div className="bg-white rounded-[35px] shadow-2xl px-5 py-5">
-          <div className="grid grid-cols-1 lg:grid-cols-6 gap-3">
+          <div className="bg-white rounded-2xl shadow-xl px-3 py-3 md:px-5 md:py-5">
+          <div className="grid grid-cols-1 lg:grid-cols-6 gap-2">
               <select
                 value={tripType}
                 onChange={(e) => setTripType(e.target.value)}
-                className="h-[72px] w-full border border-gray-300 rounded-2xl px-5"
+                className="h-[52px] md:h-[72px] w-full border border-gray-300 rounded-xl md:rounded-2xl px-4 md:px-5"
               >
                 <option>Airport Pick-Up & Drop</option>
                 <option>One Way Trip</option>
@@ -239,7 +304,7 @@ const includedHours =
     <select
     value={rentalPackage}
     onChange={(e) => setRentalPackage(e.target.value)}
-    className="h-[72px] w-full border border-gray-300 rounded-2xl px-5"
+    className="h-[52px] md:h-[72px] w-full border border-gray-300 rounded-xl md:rounded-2xl px-4 md:px-5"
     >
     <option>40 KM / 4 Hrs</option>
     <option>80 KM / 8 Hrs</option>
@@ -256,7 +321,7 @@ const includedHours =
       setPickup(e.target.value);
       searchLocation(e.target.value, "pickup");
     }}
-    className="h-[72px] w-full border border-gray-300 rounded-2xl px-5"
+    className="h-[52px] md:h-[72px] w-full border border-gray-300 rounded-xl md:rounded-2xl px-4 md:px-5"
   />
 
   {pickupSuggestions.length > 0 && (
@@ -286,7 +351,7 @@ const includedHours =
       setDrop(e.target.value);
       searchLocation(e.target.value, "drop");
     }}
-    className="h-[72px] w-full border border-gray-300 rounded-2xl px-5"
+    className="h-[52px] md:h-[72px] w-full border border-gray-300 rounded-xl md:rounded-2xl px-4 md:px-5"
   />
 
   {dropSuggestions.length > 0 && (
@@ -312,7 +377,7 @@ const includedHours =
   title="Journey Date"
   value={pickupDate}
   onChange={(e) => setPickupDate(e.target.value)}
-  className="h-[72px] w-full border border-gray-300 rounded-2xl px-5"
+  className="h-[52px] md:h-[72px] w-full border border-gray-300 rounded-xl md:rounded-2xl px-4 md:px-5"
 />
 
 {tripType === "Outstation Trip" ? (
@@ -321,50 +386,60 @@ const includedHours =
   title="Return Date"
   value={returnDate}
   onChange={(e) => setReturnDate(e.target.value)}
-  className="h-[72px] w-full border border-gray-300 rounded-2xl px-5"
+  className="h-[52px] md:h-[72px] w-full border border-gray-300 rounded-xl md:rounded-2xl px-4 md:px-5"
 />
 ) : (
   <input
     type="time"
     value={pickupTime}
     onChange={(e) => setPickupTime(e.target.value)}
-    className="h-[72px] w-full border border-gray-300 rounded-2xl px-5"
+    className="h-[52px] md:h-[72px] w-full border border-gray-300 rounded-xl md:rounded-2xl px-4 md:px-5"
   />
 )}
 
               <button
               onClick={handleSearch}
-              className="h-[72px] w-full bg-blue-600 text-white rounded-2xl font-bold text-xl"
+              className="hidden md:block h-[72px] w-full bg-blue-600 text-white rounded-2xl font-bold text-xl"
               >
               Search Cabs
               </button>
+
             </div>
           </div>
         </div>
       </section>
+      )}
 
-      <section className="max-w-7xl mx-auto px-4 py-6">
+  <section
+  className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3 space-y-6">
-            <div className="bg-blue-900 rounded-3xl p-4">
-              <div className="grid grid-cols-3 text-center text-white">
+            <div className="bg-blue-900 rounded-2xl p-3 md:p-4">
+              <div className="grid grid-cols-3 text-center text-white text-xs md:text-base">
                 <div>🛡️<p>Verified Drivers</p></div>
                 <div>✅<p>Free Cancellation</p></div>
                 <div>🏷️<p>Fixed Fare</p></div>
               </div>
             </div>
 
-            {cabs.map((cab, i) => (
-              <div key={i} className="bg-white rounded-2xl shadow border px-4 py-2">
+            {sortedCabs.map((cab, i) => (
+              <div key={i} className="bg-white rounded-2xl shadow border px-3 py-2 md:px-4">
                 <div className="flex flex-col lg:flex-row justify-between gap-4">
                   <div className="flex flex-col md:flex-row gap-4">
-                    <div className="relative w-32 h-20 md:w-56 md:h-32">
-                      <Image src={cab.image} alt={cab.name} fill className="object-contain scale-110" />
+                    <div className="relative w-full h-32 md:w-56 md:h-32">
+                      
+                      <Image
+                      src={cab.image}
+                      alt={cab.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 300px"
+                      className="object-contain scale-110"
+                      />
                     </div>
 
                     <div className="flex-1 flex flex-col justify-center">
 
-  <div className="flex items-center gap-3">
+  <div className="flex flex-wrap items-center gap-2">
 
     <h2 className="text-xl font-bold">
       {cab.name}
@@ -386,28 +461,28 @@ const includedHours =
 
   <div className="flex flex-wrap gap-2 mt-2">
 
-    <span className="bg-gray-100 px-2 py-1 text-xs rounded-lg text-sm">
-      👤 4 Seater
-    </span>
+  <span className="bg-gray-100 px-2 py-1 text-xs rounded-lg text-sm">
+    👤 {cab.seats} Seater
+  </span>
 
-    <span className="bg-gray-100 px-2 py-1 text-xs rounded-lg text-sm">
-      ❄️ AC
-    </span>
+  <span className="bg-gray-100 px-2 py-1 text-xs rounded-lg text-sm">
+    ❄️ AC
+  </span>
 
-    <span className="bg-gray-100 px-2 py-1 text-xs rounded-lg text-sm">
-      🧳 2 Bags
-    </span>
+  <span className="bg-gray-100 px-2 py-1 text-xs rounded-lg text-sm">
+    🧳 {cab.bags} Bags
+  </span>
 
-    <span className="bg-gray-100 px-2 py-1 text-xs rounded-lg text-sm">
-      🧼 Clean Cab
-    </span>
+  <span className="bg-gray-100 px-2 py-1 text-xs rounded-lg text-sm">
+    🧼 Clean Cab
+  </span>
 
-  </div>
+</div>
 
   <div className="flex flex-wrap gap-2 mt-3">
 
     <span className="border border-orange-400 text-orange-500 px-2 py-1 text-xs rounded-lg">
-      ⛽ CNG
+      ⛽ {cab.fuel}
     </span>
 
     <span className="border border-green-500 text-green-600 px-2 py-1 text-xs rounded-lg">
@@ -420,33 +495,35 @@ const includedHours =
 
 {tripType === "Local Rental" && (
   <>
-    {rentalPackage} Included • Extra KM ₹{cab.rate}/KM
+    {rentalPackage} Included
   </>
 )}
 
 {tripType === "Outstation Trip" && (
   <>
-    {distance} KM Included • Extra KM ₹{cab.rate}/KM
+    {distance} KM Included
   </>
 )}
 
 {tripType === "One Way Trip" && (
   <>
-    {distance} KM Included • Extra KM ₹{cab.rate}/KM
+    {distance} KM Included
   </>
 )}
 
 {tripType === "Airport Pick-Up & Drop" && (
   <>
-    {distance} KM Included • Extra KM ₹{cab.rate}/KM
+    {distance} KM Included
   </>
 )}
 
 </p>
 
-<p className="text-xs text-red-500 mt-1">
-  Extra Hour ₹{cab.extraHour}/Hour
-</p>
+{tripType === "Local Rental" && (
+  <p className="text-xs text-red-500 mt-1">
+    Extra Hour ₹{cab.extraHour}/Hour
+  </p>
+)}
 
 
 </div>
@@ -455,7 +532,7 @@ const includedHours =
 
                   <div className="text-right">
 
-                    <h3 className="text-3xl font-bold">
+                    <h3 className="text-2xl md:text-3xl font-bold">
                   ₹{
                   tripType === "Local Rental"
                   ? includedKm * cab.rate
@@ -480,12 +557,15 @@ const includedHours =
                   <Link
                   href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=0&fare=${
                   tripType === "Local Rental"
-                  ? includedKm * cab.rate
+                  ? cab.packageFare[
+                  rentalPackage as keyof typeof cab.packageFare
+                  ]
                   : tripType === "One Way Trip"
                   ? Math.round(distance * cab.rate * 2)
                   : Math.round(distance * cab.rate)
-                  }`}
-                  className="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold"
+                  }`
+                  }
+                  className="bg-blue-600 text-white px-5 md:px-8 py-3 rounded-full font-semibold text-sm md:text-base"
                   >
                   Book Now
                   </Link>
@@ -570,6 +650,7 @@ const includedHours =
 
 {/* Footer */}
 <footer
+  ref={footerRef}
   className="border-t border-white/10 py-10 relative overflow-hidden"
 >
 
@@ -653,13 +734,26 @@ const includedHours =
 
 </footer>
 
+{/* Mobile Sticky Search Button */}
+
+{showMobileSearch && (
+  <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t p-3 shadow-2xl">
+    <button
+      onClick={handleSearch}
+      className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg"
+    >
+      🔍 Search Cabs
+    </button>
+  </div>
+)}
+
 {/* Floating Call Button */}
-<div className="fixed bottom-24 md:bottom-6 right-3 md:right-0 z-50 flex flex-col items-center gap-1">
+<div className="fixed bottom-20 md:bottom-6 right-3 md:right-0 z-50 flex flex-col items-center gap-1">
 
   {/* Call */}
   <a
     href="tel:+919172271464"
-    className="bg-cyan-500 hover:bg-cyan-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl"
+    className="bg-cyan-500 hover:bg-cyan-600 text-white w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center text-xl md:text-2xl"
   >
     📞
   </a>
@@ -669,14 +763,14 @@ const includedHours =
     href="https://wa.me/919172271464"
     target="_blank"
     rel="noopener noreferrer"
-    className="bg-green-500 hover:bg-green-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-4xl"
+    className="bg-green-500 hover:bg-green-600 text-white w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center text-3xl md:text-4xl"
   >
     <FaWhatsapp />
   </a>
 
   {/* Discount Badge */}
-  <div className="bg-green-500 text-white px-3 py-2 rounded-xl shadow-xl animate-pulse">
-    <p className="text-[11px] font-bold text-center whitespace-nowrap">
+  <div className="bg-green-500 text-white px-2 py-1 md:px-3 md:py-2 rounded-xl shadow-xl animate-pulse">
+    <p className="text-[9px] md:text-[11px] font-bold text-center whitespace-nowrap">
       🎁 Get Discount
     </p>
   </div>

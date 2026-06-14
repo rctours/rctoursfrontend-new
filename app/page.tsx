@@ -17,7 +17,13 @@ import {
 
 export default function Home() {
 
-  const [isRouteHovered, setIsRouteHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+useEffect(() => {
+  setIsMobile(window.innerWidth < 768);
+}, []);
+
+const [isRouteHovered, setIsRouteHovered] = useState(false);
 
 const [pickup, setPickup] = useState("");
 const [drop, setDrop] = useState("");
@@ -30,6 +36,8 @@ const [journeyDate, setJourneyDate] = useState("");
 const [returnDate, setReturnDate] = useState("");
 
 const [tripType, setTripType] = useState("");
+
+const [selectedVehicle, setSelectedVehicle] = useState("Swift Dzire");
 
 const [cabType, setCabType] = useState("Sedan");
 
@@ -242,11 +250,13 @@ const [ctaIndex, setCtaIndex] = useState(0);
 const [isReviewHovered, setIsReviewHovered] = useState(false);
 
 let bookCabUrl = "";
+
 if (tripType === "Local Rental") {
   bookCabUrl = "#local-rental";
 } else {
   bookCabUrl =
-    `/book-cab?tripType=${encodeURIComponent(tripType)}` +
+    `/book-cab?vehicle=${encodeURIComponent(selectedVehicle)}` +
+    `&tripType=${encodeURIComponent(tripType)}` +
     `&pickup=${encodeURIComponent(pickup)}` +
     `&drop=${encodeURIComponent(drop)}` +
     `&journeyDate=${journeyDate}` +
@@ -477,7 +487,25 @@ useEffect(() => {
 
 <select
   value={cabType}
-  onChange={(e) => setCabType(e.target.value)}
+  onChange={(e) => {
+  const value = e.target.value;
+
+  setCabType(value);
+
+  if (value === "Sedan") {
+    setSelectedVehicle("Swift Dzire");
+  } else if (value === "Ertiga") {
+    setSelectedVehicle("Ertiga");
+  } else if (value === "Toyota Rumion") {
+    setSelectedVehicle("Toyota Rumion");
+  } else if (value === "Innova") {
+    setSelectedVehicle("Innova Crysta");
+  } else if (value === "Innova Crysta") {
+    setSelectedVehicle("Innova Crysta");
+  }
+
+  }}
+
   className="w-full h-10 px-4 rounded-xl bg-black/10 border border-white/20 mb-3 text-white"
 >
   <option style={{ color: "black" }}>
@@ -604,7 +632,7 @@ useEffect(() => {
 
 
 {/* Popular Routes Section */}
-<section className="py-12 bg-slate-50 text-black">
+<section className="pt-4 pb-8 md:py-12 bg-slate-50 text-black">
 
   <div className="max-w-7xl mx-auto px-6 md:px-10">
 
@@ -612,16 +640,16 @@ useEffect(() => {
       Most Booked Routes
     </p>
 
-    <h2 className="text-4xl md:text-5xl font-black text-center mb-4 text-black">
+    <h2 className="text-3xl md:text-5xl font-black text-center mb-3 text-black leading-tight">
       Popular Routes From Nagpur
     </h2>
 
-    <p className="text-center text-gray-600 mb-8">
+    <p className="text-center text-sm md:text-base text-gray-600 mb-5">
       Affordable One Way & Round Trip Taxi Service
     </p>
 
-    <div className="max-w-5xl mx-auto text-center mb-12">
-  <p className="text-black leading-7 text-[16px]">
+    <div className="max-w-5xl mx-auto text-center mb-6 md:mb-12">
+  <p className="text-black text-sm md:text-[16px] leading-7">
     Looking for a reliable taxi service from Nagpur? RC Tours & Travels
     provides safe and affordable cab services for airport transfers,
     local travel, outstation trips, and tour packages. Travel comfortably
@@ -631,7 +659,7 @@ useEffect(() => {
   </p>
 
 </div>
-<div className="flex justify-center items-center gap-5 mb-8">
+<div className="flex justify-center items-center gap-3 md:gap-5 mb-6">
 
   <button
     onClick={() =>
@@ -687,7 +715,7 @@ return (
   key={offset}
   onMouseEnter={() => setIsRouteHovered(true)}
   onMouseLeave={() => setIsRouteHovered(false)}
-  className="rounded-3xl p-5 flex justify-between items-center gap-4 bg-white min-h-[240px] transition-all duration-300 border border-slate-200 shadow-xl hover:border-cyan-400 hover:shadow-cyan-200"
+  className="rounded-3xl p-4 md:p-5 flex flex-col md:flex-row justify-between gap-4 bg-white min-h-auto md:min-h-[240px]"
 >
    {/* Left Side */}
   <div>
@@ -696,7 +724,7 @@ return (
       MOST BOOKED
     </div>
 
-    <h3 className="text-2xl font-bold text-black">
+    <h3 className="text-xl md:text-2xl font-bold text-black">
       Nagpur → {route[0]}
     </h3>
 
@@ -729,13 +757,13 @@ return (
   </div>
 
   {/* Right Side */}
-  <div className="text-right min-w-[170px]">
+  <div className="text-left md:text-right w-full md:min-w-[170px]">
 
     <p className="text-gray-500 text-sm">
       Starting From
     </p>
 
-    <p className="text-4xl font-black text-black mt-1">
+    <p className="text-3xl md:text-4xl font-black text-black mt-1">
       {route[1]}
     </p>
 
@@ -743,7 +771,7 @@ return (
       Best Price Guarantee
     </p>
 
-    <div className="flex flex-col gap-2 mt-5 w-[130px] ml-auto">
+    <div className="flex flex-col gap-2 mt-4 w-full md:w-[130px] md:ml-auto">
 
       <a
         href="tel:+919172271464"
@@ -783,28 +811,29 @@ return (
 </section>
 
 {/* Local Rental Packages */}
+
 <section
   id="local-rental"
-  className="py-15 bg-white text-black"
->
+  className="pt-0 pb-8 md:pb-15 bg-white text-black"
+  >
 
-  <div className="bg-gray-50 border border-gray-200 rounded-3xl p-8 md:p-10">
+  <div className="bg-gray-50 border border-gray-200 rounded-3xl p-5 md:p-10">
 
     <p className="text-cyan-500 uppercase tracking-[6px] text-center mb-3">
       Local Rental
     </p>
 
-    <h2 className="text-4xl md:text-5xl font-black text-center mb-4">
+    <h2 className="text-3xl md:text-5xl font-black text-center mb-3">
       Hourly Cab Packages In Nagpur
     </h2>
 
-    <p className="text-center text-gray-600 mb-12">
+    <p className="text-center text-gray-600 mb-6 md:mb-12">
       Flexible local rental packages for business meetings, shopping,
       city tours and family travel.
     </p>
 
     {/* Package Buttons */}
-    <div className="flex flex-wrap justify-center gap-4 mb-12">
+    <div className="flex flex-wrap justify-center gap-3 mb-6 md:mb-12">
 
       <button
         onClick={() => setSelectedPackage("4hr")}
@@ -844,7 +873,7 @@ return (
 
     {/* Vehicle Cards */}
 <div
-  className="grid md:grid-cols-3 gap-8"
+  className="grid md:grid-cols-3 gap-5 md:gap-8"
   onMouseEnter={() => setIsReviewHovered(true)}
   onMouseLeave={() => setIsReviewHovered(false)}
 >
@@ -857,7 +886,7 @@ return (
       alt="Swift Dzire"
       width={500}
       height={300}
-      className="w-full h-44 object-contain p-3"
+      className="w-full h-36 md:h-44 object-contain p-2"
     />
 
     <div className="p-5 flex-1">
@@ -956,10 +985,10 @@ return (
       alt="Ertiga"
       width={500}
       height={300}
-      className="w-full h-44 object-contain p-3"
+      className="w-full h-36 md:h-44 object-contain p-2"
     />
 
-    <div className="p-5 flex-1">
+    <div className="p-4 md:p-5 flex-1">
 
       <h3 className="text-xl font-bold">
         Ertiga
@@ -1055,7 +1084,7 @@ return (
       alt="Innova Crysta"
       width={500}
       height={300}
-      className="w-full h-44 object-contain p-3"
+      className="w-full h-36 md:h-44 object-contain p-2"
     />
 
     <div className="p-5 flex-1">
@@ -1153,7 +1182,7 @@ return (
 
   {/* Why Choose RC Tours & Travels */}
 
-<section className="py-10 bg-gray-50">
+  <section className="pt-0 pb-0 md:pt-10 md:pb-10 bg-gray-50">
 
   <div className="max-w-7xl mx-auto px-6">
 
@@ -1163,17 +1192,17 @@ return (
         Trusted Taxi Service in Nagpur
       </p>
 
-      <h2 className="text-4xl font-bold text-black">
+      <h2 className="text-3xl md:text-4xl font-bold text-black">
   Why Choose RC Tours & Travels?
 </h2>
 
-      <p className="text-gray-600 mt-4">
+      <p className="text-gray-600 mt-2 text-sm md:text-base">
         Reliable Cabs • Professional Drivers • Transparent Pricing
       </p>
 
     </div>
 
-    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
 
       {/* Card 1 */}
       <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition">
@@ -1183,16 +1212,16 @@ return (
           alt="Wide Fleet"
           width={400}
           height={250}
-          className="w-full h-52 object-cover"
+          className="w-full h-40 md:h-52 object-cover"
         />
 
-        <div className="p-5">
+        <div className="p-4 md:p-5">
 
-          <h3 className="font-bold text-xl mb-3">
+          <h3 className="font-bold text-lg md:text-xl mb-2">
             Large Fleet Availability
           </h3>
 
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-sm md:text-base leading-6">
             From Sedan to SUV and Tempo Traveller, we have vehicles
             available for local, outstation and airport travel.
           </p>
@@ -1285,11 +1314,11 @@ return (
 
 </section>
 
-<section className="py-24 bg-gray-100 overflow-hidden">
+<section className="pt-6 pb-12 md:py-24 bg-gray-100 overflow-hidden">
 
-  <div className="bg-gray-50 border border-gray-200 rounded-3xl p-8 md:p-10">
+  <div className="bg-gray-50 border border-gray-200 rounded-3xl p-5 md:p-10">
 
-    <h2 className="text-5xl md:text-6xl font-black text-center text-blue-900 mb-20">
+    <h2 className="text-3xl md:text-6xl font-black text-center text-blue-900 mb-6 md:mb-20 leading-tight">
       What Our Customers Say
     </h2>
 
@@ -1324,13 +1353,13 @@ return (
 </button>
 
   <div
-  className="grid md:grid-cols-3 gap-8"
+  className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8"
   onMouseEnter={() => setIsReviewHovered(true)}
   onMouseLeave={() => setIsReviewHovered(false)}
   >
     
 
-    {[0,1,2].map((offset) => {
+    {(isMobile ? [0] : [0,1,2]).map((offset) => {
 
       const review =
         reviews[
@@ -1341,7 +1370,7 @@ return (
 
         <div
         key={offset}
-        className="bg-white rounded-3xl shadow-xl p-8 w-full min-h-[300px] flex flex-col justify-between"
+        className="bg-white rounded-3xl shadow-xl p-5 md:p-8 w-full min-h-[260px] md:min-h-[300px] flex flex-col justify-between"
         >
 
           {/* Top */}
@@ -1410,24 +1439,24 @@ return (
 </section>
 
 {/* Areas We Serve */}
-<section className="py-15 bg-white text-black">
+<section className="-mt-6 pt-6 pb-10 md:mt-0 md:py-15 bg-white text-black">
 
-  <div className="bg-gray-50 border border-gray-200 rounded-3xl p-8 md:p-10">
+  <div className="bg-gray-50 border border-gray-200 rounded-3xl p-5 md:p-10">
 
-    <h2 className="text-4xl md:text-5xl font-black mb-4">
+    <h2 className="text-3xl md:text-5xl font-black mb-3">
       Areas We Serve In Nagpur
     </h2>
 
-    <p className="text-gray-600 text-lg mb-10">
+    <p className="text-gray-600 text-base md:text-lg mb-6 md:mb-10">
       We provide airport transfer, local rental and outstation taxi
       services across all major areas of Nagpur.
     </p>
 
-    <div className="bg-gray-50 rounded-3xl border border-gray-200 p-8">
+    <div className="bg-gray-50 rounded-3xl border border-gray-200 p-5 md:p-8">
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
 
-        <div className="space-y-4">
+        <div className="space-y-3 text-sm md:text-base">
           <p>📍 Sitabuldi</p>
           <p>📍 Manish Nagar</p>
           <p>📍 Trimurti Nagar</p>
@@ -1435,7 +1464,7 @@ return (
           <p>📍 Kamptee Road</p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3 text-sm md:text-base">
           <p>📍 Dharampeth</p>
           <p>📍 Pratap Nagar</p>
           <p>📍 Gandhibagh</p>
@@ -1443,7 +1472,7 @@ return (
           <p>📍 Wadi</p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3 text-sm md:text-base">
           <p>📍 Civil Lines</p>
           <p>📍 Bajaj Nagar</p>
           <p>📍 Indora</p>
@@ -1451,7 +1480,7 @@ return (
           <p>📍 MIHAN</p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3 text-sm md:text-base">
           <p>📍 Wardhaman Nagar</p>
           <p>📍 Gokulpeth</p>
           <p>📍 Pardi</p>
@@ -1587,10 +1616,10 @@ return (
   </div>
 </section>
 
-<section className="pt-2 pb-14 bg-gray-50">
+<section className="-mt-20 pt-0 pb-14 md:mt-0 bg-gray-50">
   <div className="bg-gray-50 border border-gray-200 rounded-3xl p-8 md:p-10">
 
-    <h2 className="text-4xl font-bold text-gray-900 mb-10">
+    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 md:mb-10">
   Frequently Asked Questions (FAQ's)
 </h2>
 
@@ -1644,7 +1673,7 @@ return (
 
   {/* Nagpur Taxi Service Content */}
 
-<section className="pt-0 pb-20 bg-white">
+<section className="-mt-10 pt-0 pb-10 md:mt-0 md:pb-20 bg-white">
 
   <div className="max-w-7xl mx-auto px-6">
 
@@ -1654,11 +1683,11 @@ return (
         Taxi Service In Nagpur
       </p>
 
-      <h2 className="text-4xl md:text-5xl font-black text-black mb-4">
+      <h2 className="text-3xl md:text-5xl font-black text-black mb-3">
         Trusted Taxi Service In Nagpur
       </h2>
 
-      <p className="text-gray-600 max-w-3xl mx-auto leading-8">
+      <p className="text-gray-600 max-w-3xl mx-auto leading-7 text-sm md:text-base">
         RC Tours & Travels provides airport transfers, local rental
         and outstation taxi services across Nagpur with professional
         drivers, clean vehicles and transparent pricing.
@@ -1666,20 +1695,20 @@ return (
 
     </div>
 
-    <div className="grid md:grid-cols-3 gap-8">
+    <div className="grid md:grid-cols-3 gap-4 md:gap-8">
 
       {/* Airport Taxi */}
-      <div className="bg-slate-50 border border-gray-200 rounded-3xl p-8 hover:shadow-xl transition">
+      <div className="bg-slate-50 border border-gray-200 rounded-3xl p-5 md:p-8 hover:shadow-xl transition">
 
         <div className="text-5xl mb-4">
           ✈️
         </div>
 
-        <h3 className="text-2xl font-bold text-black mb-4">
+        <h3 className="text-xl md:text-2xl font-bold text-black mb-3">
           Airport Taxi Service
         </h3>
 
-        <p className="text-gray-600 leading-7">
+        <p className="text-gray-600 text-sm md:text-base leading-6">
           24×7 airport pickup and drop service with on-time arrival,
           flight tracking and professional drivers.
         </p>
@@ -1687,17 +1716,17 @@ return (
       </div>
 
       {/* Outstation Taxi */}
-      <div className="bg-slate-50 border border-gray-200 rounded-3xl p-8 hover:shadow-xl transition">
+      <div className="bg-slate-50 border border-gray-200 rounded-3xl p-5 md:p-8 hover:shadow-xl transition">
 
-        <div className="text-5xl mb-4">
+        <div className="text-4xl md:text-5xl mb-3">
           🛣️
         </div>
 
-        <h3 className="text-2xl font-bold text-black mb-4">
+        <h3 className="text-xl md:text-2xl font-bold text-black mb-3">
           Outstation Taxi
         </h3>
 
-        <p className="text-gray-600 leading-7">
+        <p className="text-gray-600 text-sm md:text-base leading-6">
           Travel comfortably from Nagpur to Pune, Mumbai, Shirdi,
           Tadoba, Pench, Chikhaldara and more destinations.
         </p>
@@ -1705,17 +1734,17 @@ return (
       </div>
 
       {/* Local Rental */}
-      <div className="bg-slate-50 border border-gray-200 rounded-3xl p-8 hover:shadow-xl transition">
+      <div className="bg-slate-50 border border-gray-200 rounded-3xl p-5 md:p-8 hover:shadow-xl transition">
 
         <div className="text-5xl mb-4">
           🚕
         </div>
 
-        <h3 className="text-2xl font-bold text-black mb-4">
+        <h3 className="text-xl md:text-2xl font-bold text-black mb-3">
           Local Rental
         </h3>
 
-        <p className="text-gray-600 leading-7">
+        <p className="text-gray-600 text-sm md:text-base leading-6">
           Flexible hourly cab packages for business meetings,
           city tours, shopping and family travel.
         </p>
@@ -1733,35 +1762,35 @@ return (
 
   <div className="bg-gray-50 border border-gray-200 rounded-3xl p-8 md:p-10">
 
-    <div className="text-center mb-10">
+    <div className="text-center mb-5 md:mb-10">
 
       <p className="text-cyan-600 font-semibold uppercase tracking-[4px] mb-3">
         Popular Taxi Services
       </p>
 
-      <h2 className="text-4xl md:text-5xl font-black text-black">
+      <h2 className="text-3xl md:text-5xl font-black text-black">
         Explore Our Most Booked Services
       </h2>
 
-      <p className="text-gray-600 mt-4 max-w-3xl mx-auto">
+      <p className="text-gray-600 text-sm md:text-base mt-3 max-w-3xl mx-auto">
         Click any service below and get an instant quote through our
         booking form.
       </p>
 
     </div>
 
-    <div className="bg-white rounded-3xl border border-gray-200 shadow-lg p-8 text-black">
+    <div className="bg-white rounded-3xl border border-gray-200 shadow-lg p-5 md:p-8 text-black">
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
 
         {/* Column 1 */}
         <div>
 
-          <h3 className="font-bold text-xl text-black mb-5 border-b pb-3">
+          <h3 className="font-bold text-lg md:text-xl text-black mb-3 border-b pb-2">
             🚖 From Nagpur
           </h3>
 
-          <div className="space-y-3 text-black">
+          <div className="space-y-2 text-sm md:text-base text-black">
 
             <a href="#book-ride" className="block hover:text-cyan-600">
               Nagpur → Ramtek Taxi
@@ -1790,11 +1819,11 @@ return (
         {/* Column 2 */}
         <div>
 
-          <h3 className="font-bold text-xl text-black mb-5 border-b pb-3">
+          <h3 className="font-bold text-lg md:text-xl text-black mb-3 border-b pb-2">
             ✈️ Airport Services
           </h3>
 
-          <div className="space-y-3 text-black">
+          <div className="space-y-2 text-sm md:text-base text-black">
 
             <a href="#book-ride" className="block hover:text-cyan-600">
               Airport Pickup
@@ -1823,11 +1852,11 @@ return (
         {/* Column 3 */}
         <div>
 
-          <h3 className="font-bold text-xl text-black mb-5 border-b pb-3">
+          <h3 className="font-bold text-lg md:text-xl text-black mb-3 border-b pb-2">
             🚕 Local Rental
           </h3>
 
-          <div className="space-y-3 text-black">
+          <div className="space-y-2 text-sm md:text-base text-black">
 
             <a href="#book-ride" className="block hover:text-cyan-600">
               4 Hr / 40 KM Package
@@ -1856,11 +1885,11 @@ return (
         {/* Column 4 */}
         <div>
 
-          <h3 className="font-bold text-xl text-black mb-5 border-b pb-3">
+          <h3 className="font-bold text-lg md:text-xl text-black mb-3 border-b pb-2">
             🚌 Fleet Options
           </h3>
 
-          <div className="space-y-3 text-black">
+          <div className="space-y-2 text-sm md:text-base text-black">
 
             <a href="#book-ride" className="block hover:text-cyan-600">
               Sedan Cab
@@ -1893,26 +1922,24 @@ return (
   </div>
   </section>
 
-  
-
 {/* About RC Tours & Travels */}
-<section className="py-10 bg-white">
-  <div className="bg-gray-50 border border-gray-200 rounded-3xl p-8 md:p-10">
+<section className="-mt-8 pt-2 pb-10 md:mt-0 md:py-10 bg-white">
+  <div className="bg-gray-50 border border-gray-200 rounded-3xl p-4 md:p-10">
 
     <div className="grid lg:grid-cols-3 gap-10 items-start">
 
       {/* Left Side */}
       <div className="lg:col-span-2">
 
-        <span className="text-cyan-600 font-semibold uppercase tracking-[4px]">
+        <span className="text-cyan-600 font-semibold uppercase tracking-[3px] text-sm">
           Trusted Taxi Service In Nagpur
         </span>
 
-        <h2 className="text-4xl md:text-5xl font-black text-black mt-3 mb-6">
+        <h2 className="text-3xl md:text-5xl font-black text-black mt-2 mb-4 leading-tight">
           About RC Tours & Travels
         </h2>
 
-        <p className="text-gray-700 text-lg leading-8 mb-6">
+        <p className="text-gray-700 text-base md:text-lg leading-7 mb-6">
           RC Tours & Travels is one of the trusted taxi service providers in
           Nagpur, offering reliable local cab services, airport transfers,
           outstation taxi bookings, corporate travel solutions and tour
@@ -1969,59 +1996,59 @@ return (
       </div>
 
       {/* Right Side */}
-      <div className="bg-gray-50 border border-gray-200 rounded-3xl p-8 md:p-10">
+      <div className="bg-gray-50 border border-gray-200 rounded-3xl p-5 md:p-10">
 
-        <h3 className="text-3xl font-bold text-black mb-8">
+        <h3 className="text-2xl md:text-3xl font-bold text-black mb-5">
           Why Choose RC Tours & Travels?
         </h3>
 
-        <div className="space-y-5">
+        <div className="space-y-3 md:space-y-5">
 
           <div className="flex gap-3">
             <span className="text-green-600 font-bold text-xl">✓</span>
-            <p className="text-gray-700">
+            <p className="text-gray-700 text-sm md:text-base">
               Verified & Experienced Drivers
             </p>
           </div>
 
           <div className="flex gap-3">
             <span className="text-green-600 font-bold text-xl">✓</span>
-            <p className="text-gray-700">
+            <p className="text-gray-700 text-sm md:text-base">
               Airport Pickup & Drop Service
             </p>
           </div>
 
           <div className="flex gap-3">
             <span className="text-green-600 font-bold text-xl">✓</span>
-            <p className="text-gray-700">
+            <p className="text-gray-700 text-sm md:text-base">
               Local, Outstation & One-Way Taxi Service
             </p>
           </div>
 
           <div className="flex gap-3">
             <span className="text-green-600 font-bold text-xl">✓</span>
-            <p className="text-gray-700">
+            <p className="text-gray-700 text-sm md:text-base">
               Clean, Sanitized & Well-Maintained Vehicles
             </p>
           </div>
 
           <div className="flex gap-3">
             <span className="text-green-600 font-bold text-xl">✓</span>
-            <p className="text-gray-700">
+            <p className="text-gray-700 text-sm md:text-base">
               Transparent Pricing — No Hidden Charges
             </p>
           </div>
 
           <div className="flex gap-3">
             <span className="text-green-600 font-bold text-xl">✓</span>
-            <p className="text-gray-700">
+            <p className="text-gray-700 text-sm md:text-base">
               24×7 Booking Assistance via Call & WhatsApp
             </p>
           </div>
 
           <div className="flex gap-3">
             <span className="text-green-600 font-bold text-xl">✓</span>
-            <p className="text-gray-700">
+            <p className="text-gray-700 text-sm md:text-base">
               On-Time Pickup & Reliable Service
             </p>
           </div>
@@ -2038,17 +2065,17 @@ return (
 </section>
 
 {/* Premium CTA Section */}
-<section className="py-16 bg-white">
+<section className="pt-2 pb-2 md:py-16 bg-white">
 
-  <div className="bg-gray-50 border border-gray-200 rounded-3xl p-8 md:p-10">
+  <div className="bg-gray-50 border border-gray-200 rounded-3xl p-2 md:p-10">
 
-    <div className="rounded-[32px] bg-gradient-to-r from-cyan-500 via-blue-600 to-blue-700 p-8 md:p-10 text-center shadow-2xl">
+    <div className="rounded-[32px] bg-gradient-to-r from-cyan-500 via-blue-600 to-blue-700 p-5 md:p-10 text-center shadow-2xl">
 
       <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-white font-medium text-sm">
         🚖 RC Tours & Travels
       </div>
 
-      <h2 className="text-3xl md:text-5xl font-black text-white leading-tight">
+      <h2 className="text-2xl md:text-5xl font-black text-white leading-tight">
       Book Your Taxi In Nagpur Today
     </h2>
 
@@ -2058,7 +2085,7 @@ return (
       </p>
 
       {/* Features */}
-      <div className="flex flex-wrap justify-center gap-3 mt-8">
+      <div className="flex flex-wrap justify-center gap-2 mt-5">
 
         <span className="px-4 py-2 rounded-full bg-white/15 text-white text-sm font-medium">
           ⚡ Instant Booking
@@ -2098,7 +2125,7 @@ return (
       </div>
 
       {/* Bottom Text */}
-      <p className="mt-8 text-white/80 text-sm md:text-base">
+      <p className="mt-4 text-white/80 text-sm md:text-base">
         Trusted Taxi Service In Nagpur • Fast Response • Professional Drivers
       </p>
 
@@ -2110,7 +2137,7 @@ return (
 
 {/* Footer */}
 <footer
-  className="border-t border-white/10 py-10 relative overflow-hidden"
+  className="border-t border-white/10 py-6 md:py-10 relative overflow-hidden"
 >
 
   <video
@@ -2127,15 +2154,15 @@ return (
 
   <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10">
 
-    <div className="grid md:grid-cols-4 gap-10">
+    <div className="grid md:grid-cols-4 gap-6 md:gap-10">
 
       {/* Company */}
       <div>
-        <h3 className="text-2xl font-bold mb-4 text-cyan-400 drop-shadow-[0_0_15px_#06b6d4]">
+        <h3 className="text-xl md:text-2xl font-bold mb-3 text-cyan-400 drop-shadow-[0_0_15px_#06b6d4]">
           RC Tours & Travels
         </h3>
 
-        <p className="text-gray-200">
+        <p className="text-gray-200 text-sm md:text-base">
           Premium Taxi Service In Nagpur For Airport Transfers,
           Local Rentals, Outstation Trips And Tour Packages.
         </p>
@@ -2175,7 +2202,7 @@ return (
           Contact Us
         </h3>
 
-        <ul className="space-y-3 text-gray-200">
+        <ul className="space-y-2 text-gray-200 text-sm md:text-base">
           <li>📞 +91 9172271464</li>
           <li>📍 Nagpur, Maharashtra</li>
           <li>✉️ info@rctoursandtravels.in</li>
@@ -2184,7 +2211,7 @@ return (
 
     </div>
 
-    <div className="border-t border-white/10 mt-10 pt-6 text-center text-gray-200">
+    <div className="border-t border-white/10 mt-6 pt-4 text-center text-xs md:text-base text-gray-200">
       © 2026 RC Tours & Travels. All Rights Reserved.
       Designed by Rupesh Chavhan
     </div>
@@ -2194,12 +2221,12 @@ return (
 </footer>
 
 {/* Floating Call Button */}
-<div className="fixed bottom-6 right-0 z-50 flex flex-col items-center gap-1">
+<div className="fixed bottom-2 md:bottom-6 right-0 z-50 flex flex-col items-center gap-1">
 
   {/* Call */}
   <a
     href="tel:+919172271464"
-    className="bg-cyan-500 hover:bg-cyan-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl"
+    className="bg-cyan-500 hover:bg-cyan-600 text-white w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center text-lg md:text-2xl"
   >
     📞
   </a>
@@ -2209,7 +2236,7 @@ return (
     href="https://wa.me/919172271464"
     target="_blank"
     rel="noopener noreferrer"
-    className="bg-green-500 hover:bg-green-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-4xl"
+    className="bg-green-500 hover:bg-green-600 text-white w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl md:text-4xl"
   >
     <FaWhatsapp />
   </a>

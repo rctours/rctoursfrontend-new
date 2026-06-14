@@ -37,6 +37,21 @@ const vehicleCapacity = {
   "Force Urbania": 17,
 };
 
+const vehicleCategory = {
+  "Swift Dzire": "Sedan",
+  "Hyundai Aura": "Sedan",
+  "Toyota Glanza": "Hatchback",
+  "Maruti Ertiga": "MUV",
+  "Toyota Rumion": "MUV",
+  "Kia Carens": "MUV",
+  "Innova Crysta": "SUV",
+  "Toyota Hycross": "SUV",
+  "Traveller 13 Seater": "Traveller",
+  "Traveller 17 Seater": "Traveller",
+  "Traveller 26 Seater": "Traveller",
+  "Force Urbania": "Urbania",
+};
+
 const vehicleRates = {
   "Swift Dzire": 12,
   "Hyundai Aura": 12,
@@ -255,10 +270,10 @@ console.log("BOOKING SAVE RESULT:", result);
   };
 
   return (
-    <main className="bg-slate-100 min-h-screen pt-32">
-      <div className="max-w-7xl mx-auto flex gap-6 items-start">
+    <main className="bg-slate-100 min-h-screen pt-24 md:pt-32">
+      <div className="max-w-7xl mx-auto px-3 md:px-4">
 
-        <div className="grid lg:grid-cols-[1fr_360px] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-4 md:gap-6">
 
           {/* Left Side */}
           <div>
@@ -266,7 +281,7 @@ console.log("BOOKING SAVE RESULT:", result);
             {/* Car Details */}
             <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
 
-              <div className="grid lg:grid-cols-[320px_1fr]">
+              <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr]">
 
                 {/* Car Image */}
                 <div className="border-r p-6 flex flex-col items-center justify-center">
@@ -280,8 +295,8 @@ console.log("BOOKING SAVE RESULT:", result);
                   className="object-contain"
                   />
 
-                  <div className="mt-5 bg-indigo-100 px-8 py-3 rounded-xl text-xl font-semibold">
-                    Sedan
+                  <div className="mt-3 bg-indigo-100 px-6 py-2 rounded-xl text-base md:text-xl font-semibold">
+                  {vehicleCategory[vehicle] || "Cab"}
                   </div>
 
                 </div>
@@ -289,7 +304,7 @@ console.log("BOOKING SAVE RESULT:", result);
                 {/* Details */}
                 <div className="p-6">
 
-                  <h1 className="text-3xl font-bold">
+                  <h1 className="text-2xl md:text-3xl font-bold">
                   {vehicle || "Cab Selected"}
                   </h1>
 
@@ -297,13 +312,13 @@ console.log("BOOKING SAVE RESULT:", result);
                     ⭐ 4.5 Star Ratings
                   </p>
 
-                  <div className="inline-block mt-4 bg-indigo-200 px-5 py-2 rounded-t-xl font-semibold">
-                    Hourly Rental
+                  <div className="inline-block mt-4 bg-indigo-200 px-4 py-2 rounded-t-xl font-semibold text-sm md:text-base">
+                  {tripType}
                   </div>
 
-                  <div className="bg-indigo-50 rounded-2xl p-6">
+                  <div className="bg-indigo-50 rounded-2xl p-4 md:p-6">
 
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                       <div>
                         <h3 className="font-bold text-2xl mb-3">
@@ -362,14 +377,14 @@ console.log("BOOKING SAVE RESULT:", result);
             </div>
 
             {/* Inclusions & Exclusions */}
-            <div className="grid md:grid-cols-2 gap-6 mt-6">
+            <div className="grid grid-cols-2 gap-3 md:gap-6 mt-6">
 
               <div className="bg-white rounded-3xl shadow p-6">
-                <h2 className="text-2xl font-bold mb-4">
+                <h2 className="text-lg md:text-2xl font-bold mb-3">
                   Inclusions
                 </h2>
 
-                <ul className="space-y-3">
+                <ul className="space-y-2 text-sm md:text-base">
                   <li>✔ Fuel Charges</li>
                   <li>✔ Driver Allowance</li>
                   <li>✔ Toll Included</li>
@@ -378,11 +393,11 @@ console.log("BOOKING SAVE RESULT:", result);
               </div>
 
               <div className="bg-white rounded-3xl shadow p-6">
-                <h2 className="text-2xl font-bold mb-4">
+                <h2 className="text-lg md:text-2xl font-bold mb-3">
                   Exclusions
                 </h2>
 
-                <ul className="space-y-3">
+                <ul className="space-y-2 text-sm md:text-base">
                   <li>✖ Parking Charges</li>
                   <li>✖ State Tax</li>
                   <li>✖ Extra Distance Charges</li>
@@ -419,14 +434,65 @@ console.log("BOOKING SAVE RESULT:", result);
               </div>
             </div>
 
-            {/* Passenger Details */}
-            <div className="bg-white rounded-3xl shadow-lg p-6 mt-6">
+            {/* Mobile Fare Summary */}
+<div className="lg:hidden mt-6">
 
-              <h2 className="text-3xl font-bold mb-6">
+  <div className="bg-white rounded-2xl shadow-lg p-4">
+
+    <div className="bg-blue-600 text-white rounded-xl p-3 text-center font-bold">
+      Free Cancellation Available
+    </div>
+
+    <div className="mt-4 space-y-3">
+
+      <div className="flex justify-between">
+        <span>Distance</span>
+        <span>{displayDistance} KM</span>
+      </div>
+
+      <div className="flex justify-between">
+        <span>Base Fare</span>
+        <span>₹{baseFare}</span>
+      </div>
+
+      <div className="flex justify-between">
+        <span>Driver Allowance</span>
+        <span>₹{driverAllowance}</span>
+      </div>
+
+      <div className="flex justify-between">
+        <span>Toll Charges</span>
+        <span>₹{toll}</span>
+      </div>
+
+      {petRide && (
+        <div className="flex justify-between text-green-600 font-semibold">
+          <span>Pet Friendly Ride</span>
+          <span>₹500</span>
+        </div>
+      )}
+
+    </div>
+
+    <hr className="my-4" />
+
+    <div className="flex justify-between text-xl font-bold">
+      <span>Total</span>
+      <span>₹{totalFare}</span>
+    </div>
+
+  </div>
+
+</div>
+
+            {/* Passenger Details */}
+            <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6 mt-6">
+
+              <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">
                 Passenger Details
               </h2>
 
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                 {/* Pickup Address */}
                 <div className="md:col-span-2">
@@ -439,7 +505,7 @@ console.log("BOOKING SAVE RESULT:", result);
                     value={pickup}
                     onChange={(e) => setPickup(e.target.value)}
                     placeholder="Enter Pickup Address"
-                    className="w-full h-14 border rounded-xl px-4"
+                    className="w-full h-12 md:h-14 border rounded-xl px-4 text-sm md:text-base"
                   />
                 </div>
 
@@ -454,7 +520,7 @@ console.log("BOOKING SAVE RESULT:", result);
                     value={drop}
                     onChange={(e) => setDrop(e.target.value)}
                     placeholder="Enter Drop-off Address"
-                    className="w-full h-14 border rounded-xl px-4"
+                    className="w-full h-12 md:h-14 border rounded-xl px-4 text-sm md:text-base"
                   />
 
                 </div>
@@ -470,13 +536,13 @@ console.log("BOOKING SAVE RESULT:", result);
                   value={pickupDetails}
                   onChange={(e) => setPickupDetails(e.target.value)}
                   placeholder="Flat No, Landmark, Building Name etc."
-                  className="w-full border rounded-xl p-4"
+                  className="w-full border rounded-xl p-3 md:p-4 text-sm md:text-base"
                   />
                 </div>
 
                 {/* Name */}
                 <div>
-                  <label className="font-medium mb-2 block">
+                  <label className="font-medium text-sm md:text-base mb-2 block">
                     Name
                   </label>
 
@@ -485,7 +551,7 @@ console.log("BOOKING SAVE RESULT:", result);
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Full Name"
-                    className="w-full h-14 border rounded-xl px-4"
+                    className="w-full h-12 md:h-14 border rounded-xl px-4 text-sm md:text-base"
                   />
                 </div>
 
@@ -498,7 +564,7 @@ console.log("BOOKING SAVE RESULT:", result);
                   <select
                     value={gender}
                     onChange={(e) => setGender(e.target.value)}
-                    className="w-full h-14 border rounded-xl px-4"
+                    className="w-full h-12 md:h-14 border rounded-xl px-4 text-sm md:text-base"
                   >
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
@@ -518,7 +584,7 @@ console.log("BOOKING SAVE RESULT:", result);
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
                     placeholder="Mobile Number"
-                    className="w-full h-14 border rounded-xl px-4"
+                    className="w-full h-12 md:h-14 border rounded-xl px-4 text-sm md:text-base"
                   />
                 </div>
 
@@ -533,7 +599,7 @@ console.log("BOOKING SAVE RESULT:", result);
             value={whatsapp}
             onChange={(e) => setWhatsapp(e.target.value)}
             placeholder="WhatsApp Number"
-            className="w-full h-14 border rounded-xl px-4"
+            className="w-full h-12 md:h-14 border rounded-xl px-4 text-sm md:text-base"
             />
             </div>
 
@@ -548,7 +614,7 @@ console.log("BOOKING SAVE RESULT:", result);
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter Email"
-                    className="w-full h-14 border rounded-xl px-4"
+                    className="w-full h-12 md:h-14 border rounded-xl px-4 text-sm md:text-base"
                   />
                 </div>
 
@@ -561,7 +627,7 @@ console.log("BOOKING SAVE RESULT:", result);
   <select
     value={passengers}
     onChange={(e) => setPassengers(e.target.value)}
-    className="w-full h-14 border rounded-xl px-4"
+    className="w-full h-12 md:h-14 border rounded-xl px-4 text-sm md:text-base"
   >
     {Array.from({ length: 50 }, (_, i) => (
       <option key={i + 1} value={i + 1}>
@@ -587,7 +653,7 @@ console.log("BOOKING SAVE RESULT:", result);
   <select
     value={luggage}
     onChange={(e) => setLuggage(e.target.value)}
-    className="w-full h-14 border rounded-xl px-4"
+    className="w-full h-12 md:h-14 border rounded-xl px-4 text-sm md:text-base"
   >
     <option value="0">No Luggage</option>
     <option value="1">1 Bag</option>
@@ -617,7 +683,7 @@ console.log("BOOKING SAVE RESULT:", result);
 
             {/* Booking Confirmation Section */}
 
-            <label className="flex items-start gap-3 mt-6 bg-white p-4 rounded-2xl shadow">
+            <label className="flex items-start gap-3 mt-6 bg-white p-3 md:p-4 rounded-2xl shadow">
               <input
                 type="checkbox"
                 checked={confirmed}
@@ -625,20 +691,20 @@ console.log("BOOKING SAVE RESULT:", result);
                 className="mt-1 w-5 h-5"
               />
 
-              <span className="text-gray-700">
+              <span className="text-sm md:text-base text-gray-700">
                 I confirm that all passenger and trip details provided above are correct.
               </span>
             </label>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 mt-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 md:p-5 mt-4">
 
               
 
-              <h3 className="font-bold text-xl text-blue-700 mb-3">
+              <h3 className="font-bold text-lg md:text-xl text-blue-700 mb-3">
                 Review Your Booking Details
               </h3>
 
-              <p className="text-gray-700">
+              <p className="text-sm md:text-base text-gray-700">
                 Please verify your pickup location, drop location,
                 passenger information and fare details before proceeding.
               </p>
@@ -650,8 +716,8 @@ console.log("BOOKING SAVE RESULT:", result);
 
             </div>
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mt-5">
-              <p className="font-semibold text-yellow-700">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-3 md:p-4 mt-5">
+              <p className="font-semibold text-sm md:text-base text-yellow-700">
                 👉 Select payment option from Fare Summary and then click
                 "Confirm Details & Proceed To Payment".
               </p>
@@ -659,7 +725,7 @@ console.log("BOOKING SAVE RESULT:", result);
 
             <button
               onClick={handleProceed}
-              className="w-full mt-5 bg-green-600 hover:bg-green-700 text-white py-4 rounded-2xl font-bold text-xl shadow-lg"
+              className="w-full mt-5 bg-green-600 hover:bg-green-700 text-white py-3 md:py-4 rounded-2xl font-bold text-base md:text-xl shadow-lg"
             >
               Confirm Details & Proceed To Payment
             </button>
@@ -667,11 +733,11 @@ console.log("BOOKING SAVE RESULT:", result);
           </div>
 
           {/* Right Sidebar */}
-          <div>
+          <div className="hidden lg:block">
 
-            <div className="bg-white rounded-3xl shadow-lg p-6 sticky top-28">
+            <div className="bg-white rounded-2xl md:rounded-3xl shadow-lg p-4 md:p-6 lg:sticky lg:top-28">
 
-              <div className="bg-blue-600 text-white rounded-xl p-4 text-center font-bold">
+              <div className="bg-blue-600 text-white rounded-xl p-3 md:p-4 text-center font-bold text-sm md:text-base">
                 Free Cancellation Available
               </div>
 
@@ -759,7 +825,7 @@ console.log("BOOKING SAVE RESULT:", result);
 
               <hr className="my-5" />
 
-              <div className="flex justify-between text-3xl font-bold">
+              <div className="flex justify-between text-2xl md:text-3xl font-bold">
                 <span>Total</span>
                 <span>₹{totalFare}</span>
               </div>
@@ -798,14 +864,14 @@ console.log("BOOKING SAVE RESULT:", result);
 
               <button
               disabled
-              className="w-full mt-5 bg-blue-600 text-white py-5 rounded-2xl font-bold text-lg shadow-lg cursor-not-allowed opacity-80"
+              className="w-full mt-5 bg-blue-600 text-white py-3 md:py-5 rounded-2xl font-bold text-sm md:text-lg shadow-lg cursor-not-allowed opacity-80"
               >
               🚕 Complete Passenger Details To Unlock Payment
               </button>
 
               <Link
                 href="/book-cab"
-                className="block text-center mt-4 text-blue-600 font-semibold"
+                className="block text-center mt-4 text-sm md:text-base text-blue-600 font-semibold"
               >
                 ← Back to Cabs
               </Link>
@@ -819,12 +885,12 @@ console.log("BOOKING SAVE RESULT:", result);
       </div>
 
       {/* Floating Call Button */}
-      <div className="fixed bottom-6 right-0 z-50 flex flex-col items-center gap-1">
+      <div className="fixed bottom-4 md:bottom-6 right-2 md:right-4 z-50 flex flex-col items-center gap-2">
       
         {/* Call */}
         <a
           href="tel:+919172271464"
-          className="bg-cyan-500 hover:bg-cyan-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl"
+          className="bg-cyan-500 hover:bg-cyan-600 text-white w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center text-xl md:text-2xl"
         >
           📞
         </a>
@@ -834,14 +900,14 @@ console.log("BOOKING SAVE RESULT:", result);
           href="https://wa.me/919172271464"
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-green-500 hover:bg-green-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-4xl"
+          className="bg-green-500 hover:bg-green-600 text-white w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl md:text-4xl"
         >
           <FaWhatsapp />
         </a>
       
         {/* Discount Badge */}
-        <div className="bg-green-500 text-white px-3 py-2 rounded-xl shadow-xl animate-pulse">
-          <p className="text-[11px] font-bold text-center whitespace-nowrap">
+        <div className="bg-green-500 text-white px-2 py-1 md:px-3 md:py-2 rounded-xl shadow-xl animate-pulse">
+          <p className="text-[9px] md:text-[11px] font-bold text-center whitespace-nowrap">
             🎁 Get Discount
           </p>
         </div>
