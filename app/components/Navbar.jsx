@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { Menu, X, Phone, MessageCircle } from "lucide-react";
@@ -23,7 +24,7 @@ export default function Navbar() {
                 alt="RC Tours & Travels"
                 width={55}
                 height={55}
-                className="rounded-full object-contain"
+                className="rounded-full object-contain h-auto"
               />
             </div>
 
@@ -42,17 +43,37 @@ export default function Navbar() {
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center gap-5 xl:gap-10 text-white font-semibold text-sm xl:text-base">
 
-            <a href="/" className="hover:text-cyan-400 transition">Home</a>
-            <a href="/about" className="hover:text-cyan-400 transition">About</a>
-            <a href="/services" className="hover:text-cyan-400 transition">Services</a>
-            <a href="/fleet" className="hover:text-cyan-400 transition">Fleet</a>
-            <a href="/tour-packages" className="hover:text-cyan-400 transition">Tour Packages</a>
-            <a href="/blog" className="hover:text-cyan-400 transition">Blog</a>
-            <a href="/contact" className="hover:text-cyan-400 transition">Contact</a>
+          <Link href="/" className="hover:text-cyan-400 transition">
+          Home
+          </Link>
+
+          <Link href="/about" className="hover:text-cyan-400 transition">
+          About
+          </Link>
+
+          <Link href="/services" className="hover:text-cyan-400 transition">
+          Services
+          </Link>
+
+          <Link href="/fleet" className="hover:text-cyan-400 transition">
+          Fleet
+          </Link>
+
+          <Link href="/tour-packages" className="hover:text-cyan-400 transition">
+          Tour Packages
+          </Link>
+
+          <Link href="/blog" className="hover:text-cyan-400 transition">
+          Blog
+          </Link>
+
+          <Link href="/contact" className="hover:text-cyan-400 transition">
+          Contact
+          </Link>
 
           </div>
 
-          {/* Desktop Buttons */}
+            {/* Desktop Buttons */}
           <div className="hidden lg:flex items-center gap-2 xl:gap-3">
 
             <a
@@ -101,10 +122,11 @@ export default function Navbar() {
 
             <div className="bg-white rounded-full p-2">
               <Image
-                src="/logo.png"
-                alt="RC Tours & Travels"
-                width={55}
-                height={55}
+              src="/logo.png"
+              alt="RC Tours & Travels"
+              width={55}
+              height={55}
+              className="h-auto"
               />
             </div>
 

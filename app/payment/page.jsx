@@ -175,13 +175,13 @@ razorpay.open();
   <>
     <Script src="https://checkout.razorpay.com/v1/checkout.js" />
 
-    <main className="min-h-screen bg-slate-100 pt-24 pb-12 px-4">
+    <main className="min-h-screen bg-slate-100 pt-20 md:pt-24 pb-12 px-3 md:px-4">
 
-      <div className="bg-white rounded-3xl shadow-2xl p-8 sticky top-24 border">
+      <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl p-3 md:p-8 border">
 
-        <div className="mb-10">
+        <div className="mb-5 md:mb-10">
 
-        <h1 className="text-5xl font-bold">
+        <h1 className="text-3xl md:text-5xl font-bold">
         Complete Your Booking
         </h1>
 
@@ -191,18 +191,18 @@ razorpay.open();
 
 </div>
 
-        <p className="text-gray-500 mb-8">
+        <p className="text-gray-500 mb-4 md:mb-8">
           Secure payment powered by RC Tours & Travels
         </p>
 
-        <div className="grid xl:grid-cols-[1fr_430px] gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_430px] gap-3 md:gap-8">
 
           {/* LEFT */}
-          <div className="space-y-6">
+          <div className="space-y-3 md:space-y-6">
 
             {/* Booking Summary */}
-            <div className="bg-white rounded-3xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold mb-5">
+            <div className="bg-white rounded-3xl shadow-lg p-4 md:p-6">
+              <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-5">
                 Booking Summary
               </h2>
 
@@ -218,7 +218,7 @@ razorpay.open();
 
             </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-3 md:gap-6">
 
                 <div>
                   <p className="text-gray-500 text-sm">Pickup</p>
@@ -254,13 +254,13 @@ razorpay.open();
             
 
             {/* Customer */}
-            <div className="bg-white rounded-3xl shadow-lg p-6">
+            <div className="bg-white rounded-3xl shadow-lg p-4 md:p-6">
 
               <h2 className="text-2xl font-bold mb-5">
                 Passenger Details
               </h2>
 
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 md:gap-4">
 
                 <div>
                   <p className="text-gray-500 text-sm">
@@ -307,7 +307,7 @@ razorpay.open();
             </div>
 
             {/* Security */}
-            <div className="bg-green-50 border border-green-200 rounded-3xl p-6">
+            <div className="bg-green-50 border border-green-200 rounded-3xl p-4 md:p-6">
 
               <h3 className="text-green-700 text-xl font-bold mb-2">
                 Secure Booking Guarantee
@@ -324,9 +324,9 @@ razorpay.open();
           </div>
 
           {/* RIGHT */}
-          <div className="xl:-mt-40">
+          <div className="xl:-mt-40 mt-3 xl:mt-0">
 
-            <div className="bg-white rounded-3xl shadow-2xl p-8 sticky top-32 border self-start">
+            <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl p-4 md:p-8 xl:sticky xl:top-32 border self-start">
 
               <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl px-5 py-4">
 
@@ -368,22 +368,26 @@ razorpay.open();
 
               <div className="space-y-4">
 
-                <div className="flex justify-between">
-                  <span>Base Fare</span>
-                  <span>₹1020</span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span>Driver Charge</span>
-                  <span>₹300</span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span>Taxes</span>
-                  <span>₹180</span>
-                </div>
-
+              <div className="flex justify-between">
+              <span>Base Fare</span>
+              <span>
+              ₹{bookingData?.baseFare || 0}
+              </span>
               </div>
+
+              <div className="flex justify-between">
+              <span>Driver Charge</span>
+              <span>
+              ₹{bookingData?.driverAllowance || 0}
+              </span>
+              </div>
+
+              <div className="flex justify-between text-red-600 text-sm">
+              <span>Toll, Parking & State Tax</span>
+              <span>Extra</span>
+              </div>
+
+            </div>
 
               <div className="bg-slate-50 rounded-xl p-4">
 
@@ -432,7 +436,7 @@ razorpay.open();
                   Total Amount
                 </span>
 
-                <span className="text-3xl font-bold text-green-600">
+                <span className="text-2xl md:text-3xl font-bold text-green-600">
                 ₹{bookingData?.payableAmount || amount}
                 </span>
 
@@ -479,7 +483,7 @@ razorpay.open();
               <button
               onClick={handlePayment}
               disabled={loading}
-              className="w-full mt-6 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white py-5 rounded-2xl text-2xl font-bold transition-all hover:scale-[1.02]"
+              className="w-full mt-6 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white py-4 md:py-5 rounded-2xl text-lg md:text-2xl font-bold transition-all hover:scale-[1.02]"
               >
               {loading
               ? "Processing Payment..."

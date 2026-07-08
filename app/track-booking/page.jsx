@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function TrackBookingPage() {
@@ -8,6 +8,101 @@ export default function TrackBookingPage() {
   const [mobile, setMobile] = useState("");
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+
+  useEffect(() => {
+  const script = document.createElement("script");
+  script.src = "https://checkout.razorpay.com/v1/checkout.js";
+  script.async = true;
+
+  script.onload = () => {
+    setRazorpayLoaded(true);
+    console.log("Razorpay Loaded");
+  };
+
+  script.onerror = () => {
+    console.log("Razorpay failed to load");
+  };
+
+  document.body.appendChild(script);
+}, []);
+
+  const handlePayRemaining = async () => {
+  if (!booking || booking.remainingAmount <= 0) return;
+
+  // ✅ Razorpay ready check
+  if (!window.Razorpay) {
+  alert("Payment system loading... 2 seconds wait karo aur try karo");
+  return;
+  }
+
+  try {
+    const res = await fetch("/api/create-remaining-payment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        bookingId: booking.bookingId,
+        amount: booking.remainingAmount,
+      }),
+    });
+
+    const data = await res.json();
+
+    const options = {
+      key: data.key,
+      amount: data.amount,
+      currency: data.currency,
+      order_id: data.orderId,
+      name: "RC Tours & Travels",
+      description: "Remaining Payment",
+
+      handler: async function (response) {
+  try {
+    const res = await fetch("/api/verify-remaining-payment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        bookingId: booking.bookingId,
+        paymentId: response.razorpay_payment_id,
+        orderId: response.razorpay_order_id,
+        signature: response.razorpay_signature,
+        amount: booking.remainingAmount,
+      }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+      alert("Payment Successful ✅ Booking Updated");
+
+      // UI update (IMPORTANT)
+      setBooking({
+        ...booking,
+        remainingAmount: 0,
+      });
+      } else {
+      alert("Payment verification failed");
+      }
+    } catch (error) {
+    console.log(error);
+    alert("Payment done but update failed");
+    }
+  },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+
+    } catch (error) {
+    console.log(error);
+    alert("Something went wrong");
+    }
+  };
 
   const handleSearch = async () => {
   if (!bookingId || !mobile) {
@@ -24,8 +119,8 @@ export default function TrackBookingPage() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        bookingId,
-        mobile,
+        bookingId: bookingId.trim().toUpperCase(),
+        mobile: mobile.trim().replace(/\s/g, ""),
       }),
     });
 
@@ -45,7 +140,7 @@ export default function TrackBookingPage() {
   } finally {
     setLoading(false);
   }
-};
+  };
 
   return (
     <main className="min-h-screen bg-slate-100 pt-32 px-4 pb-20">
@@ -94,10 +189,11 @@ export default function TrackBookingPage() {
           </div>
 
           <button
-            onClick={handleSearch}
-            className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold text-lg transition"
+          onClick={handleSearch}
+          disabled={loading}
+          className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold text-lg transition disabled:opacity-50"
           >
-            Search Booking
+          {loading ? "Searching..." : "Search Booking"}
           </button>
 
           {booking && (
@@ -138,11 +234,32 @@ export default function TrackBookingPage() {
       </p>
 
       <p>
-        <strong>Remaining Amount:</strong> ₹{booking.remainingAmount}
+      <strong>Remaining Amount:</strong> ₹{booking.remainingAmount}
       </p>
 
+      {booking.remainingAmount > 0 && (
+      <button
+      onClick={handlePayRemaining}
+      className="mt-3 w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-bold"
+      >
+      Pay Remaining ₹{booking.remainingAmount}
+      </button>
+      )}
+
       <p>
-        <strong>Payment Status:</strong> {booking.paymentStatus}
+      <strong>Payment Status:</strong>{" "}
+
+      <span
+      className={`font-bold ${
+    booking.remainingAmount > 0
+      ? "text-orange-600"
+      : "text-green-600"
+      }`}
+      >
+      {booking.remainingAmount > 0
+      ? "Partially Paid (Advance Received 🟠)"
+      : "Fully Paid 🟢"}
+      </span>
       </p>
 
     </div>

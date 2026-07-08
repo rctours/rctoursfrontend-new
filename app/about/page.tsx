@@ -1,9 +1,18 @@
 "use client";
 
+import Script from "next/script";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
 
+const aboutSchema = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: "About RC Tours & Travels",
+  url: "https://www.rctoursandtravels.in/about",
+  description:
+    "RC Tours & Travels is a trusted taxi service in Nagpur providing airport transfers, local cabs, outstation taxi services, tempo travellers and tour packages.",
+};
 
 export default function AboutPage() {
 
@@ -39,6 +48,14 @@ useEffect(() => {
 
   return (
     <div className="bg-white min-h-screen">
+
+      <Script
+      id="about-schema"
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+      __html: JSON.stringify(aboutSchema),
+      }}
+      />
 
       {/* Premium Hero Section */}
     <section className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 text-white overflow-hidden">

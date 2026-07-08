@@ -319,9 +319,13 @@ useEffect(() => {
             </h1>
 
             <p className="mt-8 text-lg md:text-xl text-gray-300 leading-9 max-w-xl">
-            Book premium taxi service in Nagpur for airport transfers,
-            local rentals, outstation travel and tour packages.
-            Enjoy clean vehicles, professional drivers and transparent pricing.
+            Book the best taxi service in Nagpur for airport transfers, local cab rental,
+            one-way taxi, round trip, outstation travel, corporate cab service, Tempo Traveller
+            rental and tour packages. RC Tours & Travels receives daily taxi booking requests
+            from Nagpur for Pune, Mumbai, Hyderabad, Shirdi, Nashik, Pench, Tadoba,
+            Amravati, Wardha, Chandrapur and many other destinations across Maharashtra
+            and India. Enjoy professional drivers, clean vehicles, transparent pricing and
+            24×7 booking support.
             </p>
 
             <div className="grid grid-cols-3 gap-4 mt-8">

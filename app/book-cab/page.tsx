@@ -269,6 +269,19 @@ const includedHours =
   
 ];
 
+const isNagpurAirportTransfer =
+  tripType === "Airport Pick-Up & Drop" &&
+  distance <= 25;
+
+const isAirportPackageFare =
+  tripType === "Airport Pick-Up & Drop" &&
+  distance > 25 &&
+  distance <= 60;
+
+const isAirportOutstationFare =
+  tripType === "Airport Pick-Up & Drop" &&
+  distance > 60;
+
 const sortedCabs = [...cabs].sort((a, b) => {
   if (a.name === selectedVehicle) return -1;
   if (b.name === selectedVehicle) return 1;
@@ -533,20 +546,40 @@ const sortedCabs = [...cabs].sort((a, b) => {
                   <div className="text-right">
 
                     <h3 className="text-2xl md:text-3xl font-bold">
-                  ₹{
-                  tripType === "Local Rental"
-                  ? includedKm * cab.rate
-                  : tripType === "One Way Trip"
-                  ? Math.round(distance * cab.rate * 2)
-                  : Math.round(distance * cab.rate)
-                  }
-                  </h3>
+                    ₹{
+                    isNagpurAirportTransfer
+                    ? cab.name === "Swift Dzire"
+                    ? 1500
+                    : cab.name === "Ertiga" || cab.name === "Toyota Rumion"
+                    ? 2000
+                    : 2500
+
+                    : isAirportPackageFare
+                    ? Math.round(distance * cab.rate * 4)
+
+                    : isAirportOutstationFare
+                    ? Math.round(distance * cab.rate * 2)
+
+                    : tripType === "Local Rental"
+                    ? includedKm * cab.rate
+
+                    : tripType === "One Way Trip"
+                    ? Math.round(distance * cab.rate * 2)
+
+                    : Math.round(distance * cab.rate)
+                    }
+                    </h3>
 
                   <p className="text-sm text-gray-500">
                   {tripType === "Local Rental"
                   ? `${includedKm} KM / ${includedHours} Hrs`
                   : `Distance: ${distance} KM`}
                   </p>
+
+                  <p className="text-xs text-red-500 font-medium mt-1">
+                  Toll, Parking & State Tax Extra
+                  </p>
+
                   </div>
 
                 </div>
@@ -556,12 +589,27 @@ const sortedCabs = [...cabs].sort((a, b) => {
 
                   <Link
                   href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=0&fare=${
-                  tripType === "Local Rental"
+                  isNagpurAirportTransfer
+                  ? cab.name === "Swift Dzire"
+                  ? 1500
+                  : cab.name === "Ertiga" || cab.name === "Toyota Rumion"
+                  ? 2000
+                  : 2500
+
+                  : isAirportPackageFare
+                  ? Math.round(distance * cab.rate * 4)
+
+                  : isAirportOutstationFare
+                  ? Math.round(distance * cab.rate * 2)
+
+                  : tripType === "Local Rental"
                   ? cab.packageFare[
                   rentalPackage as keyof typeof cab.packageFare
                   ]
+
                   : tripType === "One Way Trip"
                   ? Math.round(distance * cab.rate * 2)
+
                   : Math.round(distance * cab.rate)
                   }`
                   }

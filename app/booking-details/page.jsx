@@ -134,13 +134,15 @@ const totalDays =
     (1000 * 60 * 60 * 24)
   ) + 1;
 
-const driverAllowance =
+  const driverAllowance =
   tripType === "One Way"
     ? 500
     : tripType === "Outstation Trip"
-    ? totalDays * 500
-    : tripType === "Airport Transfer"
-    ? distance > 150
+    ? totalDays <= 1
+      ? 300
+      : 300 + (totalDays - 1) * 500
+    : tripType === "Airport Pick-Up & Drop"
+    ? distance > 60
       ? 300
       : 0
     : 0;
@@ -197,69 +199,72 @@ const driverAllowance =
       "RCT" + Date.now().toString().slice(-8);
 
     const bookingData = {
-  bookingId,
+    bookingId,
 
-  vehicle,
-  tripType,
+    vehicle,
+    tripType,
 
-  pickup,
-  pickupDetails,
-  drop,
+    pickup,
+    pickupDetails,
+    drop,
 
-  pickupDate,
-  returnDate,
-  pickupTime,
+    pickupDate,
+    returnDate,
+    pickupTime,
 
-  distance: displayDistance,
+    distance: displayDistance,
 
-  passengers,
-  luggage,
+    passengers,
+    luggage,
 
-  name,
-  mobile,
-  whatsapp,
-  email,
-  gender,
+    name,
+    mobile,
+    whatsapp,
+    email,
+    gender,
 
-  notes,
+    notes,
 
-  paymentType,
+    baseFare,
+    driverAllowance,
 
-  totalFare,
+    paymentType,
 
-  advancePaid:
+    totalFare,
+
+    advancePaid:
     paymentType === "partial"
       ? advanceAmount
       : totalFare,
 
-  remainingAmount:
+    remainingAmount:
     paymentType === "partial"
       ? totalFare - advanceAmount
       : 0,
 
-  payableAmount:
+    payableAmount:
     paymentType === "partial"
       ? advanceAmount
       : totalFare,
 
-  paymentStatus: "Pending",
-};
+    paymentStatus: "Pending",
+    };
 
     console.log("SAVING BOOKING...");
 
-const res = await fetch("/api/save-booking", {
+  const res = await fetch("/api/save-booking", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
   },
   body: JSON.stringify(bookingData),
-});
+  });
 
-console.log("STATUS:", res.status);
+  console.log("STATUS:", res.status);
 
-const result = await res.json();
+  const result = await res.json();
 
-console.log("BOOKING SAVE RESULT:", result);
+  console.log("BOOKING SAVE RESULT:", result);
 
     localStorage.setItem(
       "bookingData",
@@ -267,7 +272,7 @@ console.log("BOOKING SAVE RESULT:", result);
     );
 
     window.location.href = "/payment";
-  };
+    };
 
   return (
     <main className="bg-slate-100 min-h-screen pt-24 md:pt-32">
@@ -758,9 +763,8 @@ console.log("BOOKING SAVE RESULT:", result);
                   <span>₹{driverAllowance}</span>
                 </div>
 
-                <div className="flex justify-between">
-                <span>Toll Charges</span>
-                <span>₹{toll}</span>
+                <div className="text-red-500 text-sm font-medium">
+                * Toll, Parking & State Tax Extra
                 </div>
                 {petRide && (
                   <div className="flex justify-between text-green-600 font-semibold">

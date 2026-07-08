@@ -1,14 +1,23 @@
 import { NextResponse } from "next/server";
-import connectDB from "@/lib/mongodb";
-import Booking from "@/lib/models/Booking";
+import clientPromise from "@/lib/mongodb";
 
 export async function POST(req) {
   try {
-    await connectDB();
+    const body = await req.json();
 
-    const { bookingId, mobile } = await req.json();
+    const bookingId = (body.bookingId || "")
+      .trim()
+      .toUpperCase();
 
-    const booking = await Booking.findOne({
+    const mobile = (body.mobile || "")
+      .trim()
+      .replace(/\s/g, "");
+
+    const client = await clientPromise;
+
+    const db = client.db("rctours");
+
+    const booking = await db.collection("bookings").findOne({
       bookingId,
       mobile,
     });
@@ -29,12 +38,12 @@ export async function POST(req) {
     });
 
   } catch (error) {
-    console.log(error);
+    console.error("TRACK BOOKING ERROR:", error);
 
     return NextResponse.json(
       {
         success: false,
-        message: "Server Error",
+        message: error.message,
       },
       { status: 500 }
     );
