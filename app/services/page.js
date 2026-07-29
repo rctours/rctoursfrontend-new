@@ -1,4 +1,5 @@
 import { FaWhatsapp } from "react-icons/fa";
+import Footer from "@/components/Footer";
 
 export const metadata = {
   title:
@@ -641,99 +642,7 @@ export default function ServicesPage() {
 
 </section>
 
-{/* Footer */}
-
-<footer className="border-t border-white/10 py-3 md:py-6 relative overflow-hidden">
-
-  <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    className="absolute inset-0 w-full h-full object-cover"
-  >
-    <source src="/footer-video.mp4" type="video/mp4" />
-  </video>
-
-  <div className="absolute inset-0 bg-black/70"></div>
-
-  <div className="relative z-10 max-w-7xl mx-auto px-3 md:px-10">
-
-    <div className="grid md:grid-cols-4 gap-4 md:gap-12 lg:gap-16">
-
-      {/* Company */}
-      <div>
-        <h3 className="text-2xl font-bold mb-3 md:mb-5 text-cyan-400 drop-shadow-[0_0_15px_#06b6d4]">
-          RC Tours & Travels
-        </h3>
-
-        <p className="text-gray-200 leading-6 md:leading-8">
-          Premium Taxi Service In Nagpur For Airport Transfers,
-          Local Rentals, Outstation Trips And Tour Packages.
-        </p>
-      </div>
-
-      {/* Quick Links */}
-      <div>
-        <h3 className="text-2xl font-bold mb-3 md:mb-5 text-cyan-400 drop-shadow-[0_0_15px_#06b6d4]">
-          Quick Links
-        </h3>
-
-        <ul className="space-y-1 md:space-y-2 text-gray-200">
-          <li><a href="/" className="hover:text-cyan-400 transition">Home</a></li>
-          <li><a href="/about" className="hover:text-cyan-400 transition">About</a></li>
-          <li><a href="/fleet" className="hover:text-cyan-400 transition">Fleet</a></li>
-          <li><a href="/tour-packages" className="hover:text-cyan-400 transition">Tour Packages</a></li>
-          <li><a href="/contact" className="hover:text-cyan-400 transition">Contact</a></li>
-        </ul>
-      </div>
-
-      {/* Services */}
-      <div>
-        <h3 className="text-2xl font-bold mb-3 md:mb-5 text-cyan-400 drop-shadow-[0_0_15px_#06b6d4]">
-          Services
-        </h3>
-
-        <ul className="space-y-1 md:space-y-2 text-gray-200">
-          <li>Airport Transfer</li>
-          <li>Local Rental</li>
-          <li>Outstation Taxi</li>
-          <li>Corporate Cab</li>
-          <li>Tempo Traveller</li>
-        </ul>
-      </div>
-
-      {/* Contact */}
-      <div>
-        <h3 className="text-2xl font-bold mb-3 md:mb-5 text-cyan-400 drop-shadow-[0_0_15px_#06b6d4]">
-          Contact Us
-        </h3>
-
-        <ul className="space-y-1 md:space-y-3 text-gray-200">
-          <li>📞 +91 9172271464</li>
-          <li>📍 Nagpur, Maharashtra</li>
-          <li>✉️ info@rctoursandtravels.in</li>
-          <li>🕒 24×7 Available</li>
-        </ul>
-      </div>
-
-    </div>
-
-    <div className="border-t border-white/10 mt-5 md:mt-12 pt-4 md:pt-8 text-center text-gray-300">
-
-      <p>
-        © 2026 RC Tours & Travels. All Rights Reserved.
-      </p>
-
-      <p className="mt-1 text-sm text-gray-400">
-        Designed By Rupesh Chavhan
-      </p>
-
-    </div>
-
-  </div>
-
-</footer>
+<Footer />
 
 {/* Floating Buttons */}
 <div className="fixed bottom-4 md:bottom-6 right-2 md:right-0 z-50 flex flex-col items-center gap-1">

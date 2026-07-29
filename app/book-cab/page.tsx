@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaWhatsapp } from "react-icons/fa";
+import Footer from "@/components/Footer";
 import { ChevronLeft, ChevronRight, BadgeCheck, ShieldCheck, Ticket, Info } from "lucide-react";
 
 function BookCabContent() {
@@ -1443,94 +1444,9 @@ const isFormComplete =
   </div>
 )}
 
-{/* Footer */}
-
-<footer
-  ref={footerRef}
-  className="border-t border-white/10 py-10 relative overflow-hidden"
->
-
-  <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    className="absolute inset-0 w-full h-full object-cover"
-  >
-    <source src="/footer-video.mp4" type="video/mp4" />
-  </video>
-
-  <div className="absolute inset-0 bg-black/50"></div>
-
-  <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 py-4 md:py-0">
-
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-10">
-
-      {/* Company */}
-      <div>
-        <h3 className="text-2xl font-bold mb-2 md:mb-4 text-cyan-400 drop-shadow-[0_0_15px_#06b6d4]">
-          RC Tours & Travels
-        </h3>
-
-        <p className="text-gray-200 leading-7 md:leading-8">
-          Premium Taxi Service In Nagpur For Airport Transfers,
-          Local Rentals, Outstation Trips And Tour Packages.
-        </p>
-      </div>
-
-      {/* Quick Links */}
-      <div>
-        <h3 className="text-2xl font-bold mb-2 md:mb-4 text-cyan-400 drop-shadow-[0_0_15px_#06b6d4]">
-        Quick Links
-        </h3>
-
-        <ul className="space-y-1 md:space-y-2 text-gray-200">
-          <li><a href="/">Home</a></li>
-          <li><a href="/fleet">Fleet</a></li>
-          <li><a href="/tour-packages">Tour Packages</a></li>
-          <li><a href="/blog">Blog</a></li>
-        </ul>
-      </div>
-
-      {/* Services */}
-      <div>
-        <h3 className="text-2xl font-bold mb-2 md:mb-4 text-cyan-400 drop-shadow-[0_0_15px_#06b6d4]">
-        Services
-        </h3>
-
-        <ul className="space-y-1 md:space-y-2 text-gray-200">
-          <li>Airport Transfer</li>
-          <li>Local Rental</li>
-          <li>Outstation Taxi</li>
-          <li>Corporate Cab</li>
-        </ul>
-      </div>
-
-      {/* Contact */}
-      <div>
-        <h3 className="text-2xl font-bold mb-2 md:mb-4 text-cyan-400 drop-shadow-[0_0_15px_#06b6d4]">
-        Contact Us
-        </h3>
-
-        <ul className="space-y-3 text-gray-200">
-          <li>📞 +91 9172271464</li>
-          <li>📍 Nagpur, Maharashtra</li>
-          <li>✉️ info@rctoursandtravels.in</li>
-        </ul>
-      </div>
-
-    </div>
-
-    <div className="border-t border-white/10 mt-10 pt-6 text-center text-gray-200">
-      © 2026 RC Tours & Travels. All Rights Reserved.
-      Designed by Rupesh Chavhan
-    </div>
-
-  </div>
-
-</footer>
-
-
+<div ref={footerRef}>
+  <Footer />
+</div>
 
 {/* Floating Call Button */}
 <div
