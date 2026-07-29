@@ -4,6 +4,7 @@ import Script from "next/script";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
+import PremiumHero from "@/components/about/PremiumHero";
 
 const aboutSchema = {
   "@context": "https://schema.org",
@@ -56,110 +57,17 @@ useEffect(() => {
       __html: JSON.stringify(aboutSchema),
       }}
       />
-
-      {/* Premium Hero Section */}
-    <section className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 text-white overflow-hidden">
-
-
-  <div className="absolute inset-0 bg-black/65"></div>
-
-  <div className="absolute inset-0 overflow-hidden">
-
-  <div className="absolute -top-40 -left-40 w-[700px] h-[700px] bg-blue-600/10 rounded-full blur-[180px] animate-float"></div>
-
-  <div className="absolute top-20 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[180px] animate-float"></div>
-
-  <div className="absolute -bottom-40 left-1/2 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[180px] animate-float"></div>
-
-</div>
-
-    <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 pt-24 md:pt-32 pb-12 md:pb-20">
-    <p className="uppercase tracking-[5px] text-blue-400 font-semibold mb-4">
-      About RC Tours & Travels
-    </p>
-
-    <h1 className="text-3xl md:text-6xl font-black leading-tight max-w-4xl">
-      Trusted Taxi &
-      <span className="text-blue-500"> Travel Partner </span>
-      In Nagpur Since 2018
-    </h1>
-
-    <p className="text-base md:text-xl text-slate-300 mt-6 md:mt-8 max-w-3xl leading-8 md:leading-10">
-  RC Tours & Travels provides reliable taxi services, airport transfers,
-  outstation journeys and customized tour packages across India.
-</p>
-
-<div className="flex flex-col md:flex-row gap-3 md:gap-8 mt-8 md:mt-10 text-sm md:text-lg">
-
-  <div>
-    ⭐ 4.9 Google Rating
-  </div>
-
-  <div>
-    🚖 5000+ Trips
-  </div>
-
-  <div>
-    😊 1000+ Happy Customers
-  </div>
-
-</div>
-
-<div className="flex flex-col sm:flex-row gap-3 mt-8 md:mt-10">
-  <a
-    href="tel:9172271464"
-    className="bg-blue-600 text-center px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold hover:bg-blue-700 hover:scale-105 transition-all duration-300"
-  >
-    Call Now
-  </a>
-
-  <a
-  href="/book-cab"
-  className="bg-orange-500 text-center px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold hover:bg-orange-600 hover:scale-105 transition-all duration-300"
->
-  Book Cab
-</a>
-
-</div>
-    </div>
-    </section>
-
-      {/* Premium Statistics */}
-    <section className="max-w-7xl mx-auto px-4 md:px-8 -mt-6 md:-mt-10 relative z-10">
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-
-    <div className="bg-white shadow-xl hover:shadow-blue-300 hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 rounded-3xl p-4 md:p-8 text-center border border-gray-100">
-      <h3 className="text-3xl md:text-5xl font-black text-blue-600">7+</h3>
-      <p className="text-slate-600 mt-2">Years Experience</p>
-    </div>
-
-    <div className="bg-white shadow-xl hover:shadow-blue-300 hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 rounded-3xl p-4 md:p-8 text-center border border-gray-100">
-      <h3 className="text-3xl md:text-5xl font-black text-blue-600">{trips}+</h3>
-      <p className="text-slate-600 mt-2">Trips Completed</p>
-    </div>
-
-    <div className="bg-white shadow-xl hover:shadow-blue-300 hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 rounded-3xl p-4 md:p-8 text-center border border-gray-100">
-      <h3 className="text-3xl md:text-5xl font-black text-blue-600">{customers}+</h3>
-      <p className="text-slate-600 mt-2">Happy Customers</p>
-    </div>
-
-    <div className="bg-white shadow-xl hover:shadow-blue-300 hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 rounded-3xl p-4 md:p-8 text-center border border-gray-100">
-      <h3 className="text-3xl md:text-5xl font-black text-blue-600">24/7</h3>
-      <p className="text-slate-600 mt-2">Support Available</p>
-    </div>
-
-  </div>
-</section>
+      <PremiumHero />
 
 {/* Our Journey */}
 
-<section className="py-12 md:py-20 bg-white">
+<section className="py-10 md:py-16 bg-gradient-to-b from-white via-slate-50 to-white">
   <div className="max-w-6xl mx-auto px-4 md:px-8">
 
-    <div className="grid md:grid-cols-2 gap-12 items-center">
+    <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
 
       <div>
-        <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6">
+        <h2 className="text-4xl md:text-6xl font-black text-slate-900 leading-tight mb-8">
           Our Journey
         </h2>
 
@@ -181,7 +89,8 @@ useEffect(() => {
         </p>
       </div>
 
-      <div className="bg-white shadow-xl rounded-3xl p-5 md:p-10 border border-gray-200">
+      <div className="relative overflow-hidden bg-white/90 backdrop-blur-xl border border-white rounded-[32px] p-8 md:p-10 shadow-2xl">
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-cyan-400 to-blue-600"></div>
         <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6">
           Why Customers Trust Us
         </h3>
@@ -201,7 +110,8 @@ useEffect(() => {
   </div>
 </section>
 
-<section className="py-6 md:py-10 bg-gradient-to-r from-blue-600 to-cyan-500">
+
+<section className="py-4 md:py-8 bg-gradient-to-r from-blue-600 to-cyan-500">
   <div className="max-w-4xl mx-auto px-4 md:px-8 text-center text-white">
 
     <h2 className="text-xl md:text-3xl font-black leading-tight">
@@ -216,7 +126,7 @@ useEffect(() => {
 </section>
 
       {/* Services Section */}
-<section className="max-w-7xl mx-auto px-4 md:px-8 py-12">
+<section className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-14">
 
   <h2 className="text-3xl md:text-4xl font-black text-slate-900 text-center mb-8 md:mb-12">
     Our Premium Travel Services
@@ -301,13 +211,26 @@ useEffect(() => {
 </section>
 
 {/* Fleet Section */}
-<section className="max-w-7xl mx-auto px-3 md:px-8 py-8 md:py-12">
+<section className="relative py-10 md:py-16 overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-100">
 
-  <h2 className="text-2xl md:text-5xl font-black text-center text-black mb-6 md:mb-12 leading-tight">
+  <div className="text-center mb-5">
+
+  <span className="inline-block bg-blue-100 text-blue-700 px-5 py-2 rounded-full text-sm font-semibold tracking-wider">
+    PREMIUM VEHICLES
+  </span>
+
+</div>
+
+  <h2 className="text-3xl md:text-6xl font-black text-center text-slate-900 mb-4 leading-tight">
   🚖 Our Luxury Fleet Collection
 </h2>
 
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+<p className="text-center text-gray-500 text-lg md:text-xl max-w-3xl mx-auto mb-16 leading-8">
+Choose from our professionally maintained fleet for airport transfers,
+outstation trips, family vacations and corporate travel.
+</p>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-8">
 
     {/* Swift Dzire */}
     <div className="bg-slate-900 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl hover:-translate-y-4 hover:shadow-cyan-500/20 transition duration-300 border border-slate-700 text-white">
@@ -577,7 +500,7 @@ useEffect(() => {
 
 {/* Premium Gallery */}
 
-<section className="py-10 md:py-20 bg-slate-50">
+<section className="py-8 md:py-14 bg-slate-50">
   <div className="max-w-7xl mx-auto px-4 md:px-8">
 
     <h2 className="text-3xl md:text-5xl font-black text-slate-900 text-center mb-3 md:mb-4">
@@ -621,7 +544,7 @@ useEffect(() => {
 
 {/* Popular Routes */}
 
-<section className="relative py-14 md:py-24 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 overflow-hidden">
+<section className="relative py-10 md:py-16 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 overflow-hidden">
 
   <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px]"></div>
   <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px]"></div>
@@ -704,7 +627,7 @@ useEffect(() => {
 
 {/* Service Areas */}
 
-<section className="py-14 md:py-24 bg-gradient-to-b from-slate-50 to-white">
+<section className="py-10 md:py-16 bg-gradient-to-b from-slate-50 to-white">
 
   <div className="max-w-7xl mx-auto px-8">
 
@@ -775,7 +698,7 @@ useEffect(() => {
 
 {/* Testimonials */}
 
-<section className="py-14 md:py-24 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
+<section className="py-10 md:py-16 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
 
   <div className="max-w-7xl mx-auto px-4 md:px-8">
 
@@ -948,7 +871,7 @@ useEffect(() => {
 
 {/* FAQ Section */}
 
-<section className="py-14 md:py-24 bg-slate-50">
+<section className="py-10 md:py-16 bg-slate-50">
 
   <div className="max-w-5xl mx-auto px-4 md:px-8">
 
@@ -1063,7 +986,7 @@ useEffect(() => {
 
       {/* Mission & Vision */}
 
-<section className="py-14 md:py-24 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
+<section className="py-10 md:py-16 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
 
   <div className="max-w-7xl mx-auto px-4 md:px-8">
 
@@ -1133,7 +1056,7 @@ useEffect(() => {
 
 {/* Premium CTA Section */}
 
-<section className="relative py-14 md:py-24 overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
+<section className="relative py-10 md:py-16 overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
 
   <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-[120px]"></div>
   <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-500/20 rounded-full blur-[120px]"></div>

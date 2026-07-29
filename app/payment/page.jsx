@@ -45,6 +45,7 @@ function PaymentContent() {
     });
 
     const order = await res.json();
+    console.log("FULL ORDER RESPONSE:", JSON.stringify(order, null, 2));
     console.log("ORDER RESPONSE:", order);
 
     console.log("ORDER FULL:", order);
@@ -78,25 +79,6 @@ const options = {
   description: "Cab Booking Payment",
 
   order_id: order.id,
-
-  config: {
-  display: {
-    blocks: {
-      upi: {
-        name: "Pay using UPI",
-        instruments: [
-          {
-            method: "upi",
-          },
-        ],
-      },
-    },
-    sequence: ["block.upi"],
-    preferences: {
-      show_default_blocks: true,
-    },
-  },
-},
 
   handler: async function (response) {
 
@@ -150,7 +132,19 @@ razorpay.on("payment.failed", function (response) {
 
   setLoading(false);
 
-  console.log(response);
+  console.log("PAYMENT FAILED FULL:", response);
+
+  console.log("ERROR:", response.error);
+
+  console.log("DESCRIPTION:", response.error.description);
+
+  console.log("CODE:", response.error.code);
+
+  console.log("SOURCE:", response.error.source);
+
+  console.log("STEP:", response.error.step);
+
+  console.log("REASON:", response.error.reason);
 
   alert(response.error.description);
 

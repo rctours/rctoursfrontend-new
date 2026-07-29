@@ -11,8 +11,8 @@ const cars = [
   image: "/dezire.jpg",
   seats: "4+1 Seats",
   luggage: "2 Bags",
-  price: "₹12/km",
-  rate: 11,
+  price: "₹13/km",
+  rate: 13,
   category: "Sedan",
 },
   {
@@ -20,9 +20,9 @@ const cars = [
     image: "/aura.jpg",
     seats: "4+1 Seats",
     luggage: "2 Bags",
-    price: "₹12/km",
+    price: "₹13/km",
     category: "Sedan",
-    rate: 12,
+    rate: 13,
   },
   {
     name: "Toyota Glanza",
@@ -38,45 +38,45 @@ const cars = [
     image: "/ertiga.jpg",
     seats: "6+1 Seats",
     luggage: "4 Bags",
-    price: "₹14/km",
+    price: "₹15/km",
     category: "SUV",
-    rate: 13,
+    rate: 15,
   },
   {
     name: "Toyota Rumion",
     image: "/rumion.jpg",
     seats: "6+1 Seats",
     luggage: "4 Bags",
-    price: "₹14/km",
+    price: "₹15/km",
     category: "SUV",
-    rate: 14,
+    rate: 15,
   },
   {
     name: "Kia Carens",
     image: "/carens.jpg",
     seats: "6+1 Seats",
     luggage: "4 Bags",
-    price: "₹16/km",
+    price: "₹17/km",
     category: "SUV",
-    rate: 16,
+    rate: 17,
   },
   {
     name: "Innova Crysta",
     image: "/crysta.jpg",
     seats: "7+1 Seats",
     luggage: "5 Bags",
-    price: "₹18/km",
+    price: "₹19/km",
     category: "Premium",
-    rate: 18,
+    rate: 19,
   },
   {
     name: "Toyota Hycross",
     image: "/hycross.png",
     seats: "7+1 Seats",
     luggage: "5 Bags",
-    price: "₹22/km",
+    price: "₹25/km",
     category: "Premium",
-    rate: 22,
+    rate: 25,
   },
   {
     name: "Traveller 13 Seater",
@@ -145,11 +145,27 @@ const fare = Number(
 const calculateFare = (car) => {
   if (!car.rate) return 0;
 
-  if (tripType === "Outstation Trip") {
-    return Math.round((distance / 2) * car.rate * 2);
+  // Airport
+  if (tripType === "Airport Pick-Up & Drop") {
+    return Math.round(distance * car.rate * 2);
   }
 
-  return Math.round(distance * car.rate * 2);
+  // Local Rental
+  if (tripType === "Local Rental") {
+    return Math.round(distance * car.rate);
+  }
+
+  // One Way
+  if (tripType === "One Way Trip") {
+    return Math.round(distance * car.rate * 2);
+  }
+
+  // Outstation
+  if (tripType === "Outstation Trip") {
+    return Math.round(distance * car.rate * 2);
+  }
+
+  return Math.round(distance * car.rate);
 };
 
   const [currentIndex, setCurrentIndex] = useState(0);

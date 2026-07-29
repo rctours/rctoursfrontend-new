@@ -1,42 +1,78 @@
 import { NextResponse } from "next/server";
+import clientPromise from "@/lib/mongodb";
 import crypto from "crypto";
 
-export async function POST(req) {
+// ===============================================
+// POST METHOD: VERIFY AND UPDATE REMAINING PAYMENT
+// ===============================================
+export async function POST(request) {
   try {
-    const { bookingId, paymentId, orderId, signature, amount } = await req.json();
+    const { 
+      bookingId, 
+      paymentId, 
+      orderId, 
+      signature, 
+      amount 
+    } = await request.json();
 
+    // 1. Signature Validation (Security Layer)
     const razorpaySecret = process.env.RAZORPAY_KEY_SECRET;
-
-    if (!razorpaySecret) {
-      return NextResponse.json({
-        success: false,
-        message: "Server configuration error",
-      });
-    }
-
     const generatedSignature = crypto
       .createHmac("sha256", razorpaySecret)
       .update(orderId + "|" + paymentId)
       .digest("hex");
 
     if (generatedSignature !== signature) {
-      return NextResponse.json({
-        success: false,
-        message: "Payment verification failed",
-      });
+      return NextResponse.json(
+        { success: false, message: "Security Alert: Invalid payment signature." },
+        { status: 401 }
+      );
+    }
+
+    // 2. Database Update (Update remaining balance)
+    const client = await clientPromise;
+    const db = client.db("rctours");
+
+    const result = await db.collection("bookings").updateOne(
+      { bookingId: bookingId },
+      {
+  $set: {
+    paymentStatus: "Fully Paid",
+
+    remainingPaymentStatus: "Paid",
+
+    remainingPaymentId: paymentId,
+
+    remainingAmount: 0,
+
+    updatedAt: new Date(),
+  },
+
+  $inc: {
+    paidAmount: Number(amount),
+
+    advancePaid: Number(amount),
+  },
+}
+    );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { success: false, message: "Booking record not found for update." },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({
       success: true,
-      message: "Payment verified successfully",
+      message: "Remaining payment settled successfully.",
     });
 
   } catch (error) {
-    console.log(error);
-
-    return NextResponse.json({
-      success: false,
-      message: "Server error",
-    });
+    console.error("REMAINING PAYMENT VERIFICATION EXCEPTION:", error);
+    return NextResponse.json(
+      { success: false, message: "Internal server error during settlement." },
+      { status: 500 }
+    );
   }
 }

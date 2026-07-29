@@ -1,7 +1,9 @@
-export default function sitemap() {
+import clientPromise from "@/lib/mongodb";
+
+export default async function sitemap() {
   const baseUrl = "https://www.rctoursandtravels.in";
 
-  return [
+  const staticPages = [
     {
       url: `${baseUrl}`,
       lastModified: new Date(),
@@ -58,4 +60,29 @@ export default function sitemap() {
       priority: 0.8,
     },
   ];
+
+  try {
+    const client = await clientPromise;
+    const db = client.db("rctours");
+
+    const blogs = await db
+      .collection("blogs")
+      .find({
+        status: "Published",
+      })
+      .toArray();
+
+    const blogPages = blogs.map((blog) => ({
+      url: `${baseUrl}/blog/${blog.slug}`,
+      lastModified: blog.updatedAt || blog.createdAt,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    }));
+
+    return [...staticPages, ...blogPages];
+  } catch (error) {
+    console.error("Sitemap Error:", error);
+
+    return staticPages;
+  }
 }

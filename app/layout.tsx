@@ -1,6 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import Navbar from "./components/Navbar";
+import { headers } from "next/headers";
+
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.rctoursandtravels.in"),
@@ -296,14 +298,23 @@ const websiteSchema = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = await headers();
+
+  const pathname =
+    headersList.get("x-pathname") ||
+    headersList.get("next-url") ||
+    "";
+
+  const isAdminPage = pathname.startsWith("/admin");
   return (
     <html lang="en">
       <body>
+
         {/* ✅ SEO SCHEMA START */}
         <script
           type="application/ld+json"
@@ -335,9 +346,10 @@ export default function RootLayout({
 
         {/* ✅ SEO SCHEMA END */}
 
-        <Navbar />
+    {!isAdminPage && <Navbar />}
 
-        <main>{children}</main>
+    <main>{children}</main>
+
       </body>
     </html>
   );

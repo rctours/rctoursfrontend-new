@@ -1,65 +1,90 @@
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import clientPromise from "@/lib/mongodb";
+import { generateToken } from "@/lib/jwt";
 
-export async function POST(req) {
+export async function POST(request) {
   try {
-    const { username, password } = await req.json();
+    const { username, password } = await request.json();
 
     if (!username || !password) {
       return NextResponse.json(
         {
           success: false,
-          message: "Username and Password are required",
+          message: "Username and password are required.",
         },
         { status: 400 }
       );
     }
 
-    if (
-      username !== process.env.ADMIN_USERNAME ||
-      password !== process.env.ADMIN_PASSWORD
-    ) {
+    const client = await clientPromise;
+    const db = client.db();
+
+    const admins = db.collection("admins");
+
+    const admin = await admins.findOne({
+      username: username.toLowerCase(),
+      isActive: true,
+    });
+
+    if (!admin) {
       return NextResponse.json(
         {
           success: false,
-          message: "Invalid Username or Password",
+          message: "Invalid username or password.",
         },
         { status: 401 }
       );
     }
 
+    const passwordMatched = await bcrypt.compare(
+      password,
+      admin.password
+    );
+
+    if (!passwordMatched) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Invalid username or password.",
+        },
+        { status: 401 }
+      );
+    }
+
+    await admins.updateOne(
+      { _id: admin._id },
+      {
+        $set: {
+          lastLogin: new Date(),
+          updatedAt: new Date(),
+        },
+      }
+    );
+
+    const token = await generateToken(admin);
+
     const response = NextResponse.json({
       success: true,
-      message: "Login Successful",
+      message: "Login successful.",
     });
-
-    const token = jwt.sign(
-    {
-    username,
-    role: "admin",
-    },
-    process.env.AUTH_SECRET,
-    {
-    expiresIn: "1d",
-    }
-    );
 
     response.cookies.set("admin-auth", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60 * 24, // 1 day
+      maxAge: 60 * 60 * 24,
     });
 
     return response;
   } catch (error) {
-    console.error("LOGIN ERROR:", error);
+    console.error("ADMIN LOGIN ERROR:", error);
 
     return NextResponse.json(
       {
         success: false,
-        message: "Server Error",
+        message: "Internal server error.",
       },
       { status: 500 }
     );
@@ -69,6 +94,6 @@ export async function POST(req) {
 export async function GET() {
   return NextResponse.json({
     success: true,
-    message: "Login API Working",
+    message: "Admin Login API Ready",
   });
 }

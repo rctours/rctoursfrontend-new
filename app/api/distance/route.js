@@ -1,89 +1,112 @@
-export async function POST(req) {
+import { NextResponse } from "next/server";
+
+export async function POST(request) {
   try {
-    const { pickup, drop } = await req.json();
+    const { pickup, drop } = await request.json();
 
-    const apiKey = process.env.ORS_API_KEY;
+    if (!pickup || !drop) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Pickup or Drop missing",
+        },
+        { status: 400 }
+      );
+    }
 
-    // Pickup Geocode
-    const pickupRes = await fetch(
-      `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${encodeURIComponent(
-        pickup
-      )}`
-    );
+    // ==============================
+    // Get Coordinates from Nominatim
+    // ==============================
 
-    const pickupData = await pickupRes.json();
-    console.log("PICKUP DATA =", JSON.stringify(pickupData, null, 2));
+    async function getCoordinates(address) {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+          address
+        )}&format=json&limit=1&countrycodes=in`,
+        {
+          headers: {
+            "User-Agent": "RC-Tours-Travels-App/1.0",
+          },
+        }
+      );
 
-    // Drop Geocode
-    const dropRes = await fetch(
-      `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${encodeURIComponent(
-        drop
-      )}`
-    );
+      const data = await res.json();
 
-    const dropData = await dropRes.json();
-    console.log("DROP DATA =", JSON.stringify(dropData, null, 2));
+      if (!data.length) return null;
 
-    const pickupCoords =
-      pickupData.features?.[0]?.geometry?.coordinates;
+      return [
+        Number(data[0].lon),
+        Number(data[0].lat),
+      ];
+    }
 
-    const dropCoords =
-      dropData.features?.[0]?.geometry?.coordinates;
+    const pickupCoords = await getCoordinates(pickup);
+    const dropCoords = await getCoordinates(drop);
+
+    console.log("Pickup :", pickupCoords);
+    console.log("Drop :", dropCoords);
 
     if (!pickupCoords || !dropCoords) {
-      return Response.json(
-      {
-      success: false,
-      error: "Location not found",
-      },
-      { status: 400 }
-      );
-      }
-
-    const routeRes = await fetch(
-      "https://api.openrouteservice.org/v2/directions/driving-car",
-      {
-        method: "POST",
-        headers: {
-          Authorization: apiKey,
-          "Content-Type": "application/json",
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Location not found",
         },
-        body: JSON.stringify({
-          coordinates: [
-            pickupCoords,
-            dropCoords,
-          ],
-        }),
-      }
-    );
+        { status: 400 }
+      );
+    }
+
+    // ==============================
+    // OSRM ROUTE API
+    // ==============================
+
+    const url =
+      `https://router.project-osrm.org/route/v1/driving/` +
+      `${pickupCoords[0]},${pickupCoords[1]};` +
+      `${dropCoords[0]},${dropCoords[1]}` +
+      `?overview=false`;
+
+    const routeRes = await fetch(url);
 
     const routeData = await routeRes.json();
 
-    console.log(
-  "ROUTE DISTANCE KM =",
-  routeData.routes?.[0]?.summary?.distance / 1000
-  );
+    console.log("OSRM Response :", routeData);
 
-    const distanceMeters =
-      routeData.routes[0].summary.distance;
+    if (
+      routeData.code !== "Ok" ||
+      !routeData.routes ||
+      !routeData.routes.length
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Route not found",
+        },
+        { status: 400 }
+      );
+    }
 
     const distanceKm = Math.round(
-      distanceMeters / 1000
+      routeData.routes[0].distance / 1000
     );
 
-    return Response.json({
-    success: true,
-    distance: distanceKm,
+    return NextResponse.json({
+      success: true,
+      distance: distanceKm,
     });
-    } catch (error) {
+
+  } catch (error) {
+
     console.log(error);
 
-    return Response.json(
-    {
-    success: false,
-    error: "Server Error",
-    },
-    { status: 500 }
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Internal Server Error",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

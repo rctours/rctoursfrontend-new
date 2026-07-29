@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 
 const maharashtraPackages = [
@@ -546,9 +546,27 @@ const gujaratPackages = [
 export default function TourPackagesPage() {
   const [search, setSearch] = useState("");
 
-  const filteredPackages = maharashtraPackages.filter((pkg) =>
+    const [dynamicPackages, setDynamicPackages] = useState([]);
+  useEffect(() => {
+    const loadPackages = async () => {
+      try {
+        const res = await fetch("/api/public/tour-packages");
+
+        const data = await res.json();
+        if (data.success) {
+          setDynamicPackages(data.packages || []);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    loadPackages();
+  }, []);
+
+  const filteredPackages = dynamicPackages.filter((pkg) =>
   pkg.title.toLowerCase().includes(search.toLowerCase())
-);
+  );
 
   return (
     <div className="min-h-screen bg-slate-50 overflow-x-hidden">

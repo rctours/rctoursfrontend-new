@@ -1,29 +1,38 @@
 import { NextResponse } from "next/server";
+import Razorpay from "razorpay";
 
-export async function POST(req) {
+// ===============================================
+// POST METHOD: INITIALIZE RAZORPAY PAYMENT ORDER
+// ===============================================
+export async function POST(request) {
   try {
-    const { bookingId, amount } = await req.json();
-
-    // ✅ 1. FIRST check env
+    // 1. Validation Check: Ensure server environment credentials
     if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      console.error("RAZORPAY CREDENTIALS MISSING IN SERVER ENVIRONMENT.");
       return NextResponse.json(
-        { success: false, error: "Razorpay keys missing in .env.local" },
+        { success: false, message: "Payment gateway service currently unavailable." },
         { status: 500 }
       );
     }
 
-    // ✅ 2. Import Razorpay (safe for Next.js)
-    const Razorpay = (await import("razorpay")).default;
+    const { bookingId, amount } = await request.json();
 
-    // ✅ 3. Create instance AFTER env check
+    if (!bookingId || !amount) {
+      return NextResponse.json(
+        { success: false, message: "Operation rejected. Required parameters missing." },
+        { status: 400 }
+      );
+    }
+
+    // 2. Initialize Razorpay Gateway Instance
     const razorpay = new Razorpay({
       key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
 
-    // ✅ 4. Create order
+    // 3. Generate Secure Payment Order
     const order = await razorpay.orders.create({
-      amount: Math.round(Number(amount) * 100),
+      amount: Math.round(Number(amount) * 100), // Convert to paise
       currency: "INR",
       receipt: bookingId,
     });
@@ -34,13 +43,18 @@ export async function POST(req) {
       amount: order.amount,
       currency: order.currency,
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      message: "Payment order session initialized successfully.",
     });
 
-  } catch (err) {
-    console.error("RAZORPAY ERROR:", err);
+  } catch (error) {
+    console.error("RAZORPAY ORDER GENERATION PIPELINE FAILED:", error);
 
     return NextResponse.json(
-      { success: false, error: err.message || "Server Error" },
+      { 
+        success: false, 
+        message: "Internal payment gateway processing exception.",
+        error: error.message 
+      },
       { status: 500 }
     );
   }
