@@ -109,6 +109,11 @@ export default function AdminLayout({ children }) {
       icon: "🌍",
     },
     {
+    name: "Campaigns",
+    href: "/admin/campaigns",
+    icon: "📢",
+    },
+    {
       name: "Reports",
       href: "/admin/reports",
       icon: "📈",

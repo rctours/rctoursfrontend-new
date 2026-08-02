@@ -27,7 +27,7 @@ const vehicleImages = {
 
   "Maruti Ertiga": "/ertiga.jpg",
 
-  "Toyota Rumion": "/rumion.jpg",
+  "Toyota Rumion": "/rumion.png",
 
   "Kia Carens": "/carens.jpg",
 

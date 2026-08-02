@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
 import Footer from "@/components/Footer";
+import AnnouncementPopup from "@/components/AnnouncementPopup";
+import TravelAssistantButton from "@/components/TravelAssistantButton";
 
 import {
   ChevronLeft,
@@ -338,7 +340,9 @@ useEffect(() => {
 
 
   return (
-    
+  <>
+    <AnnouncementPopup />
+
     <main className="min-h-screen bg-black text-white pt-20 overflow-x-hidden">
 
       {/* Hero Section */}
@@ -1201,7 +1205,7 @@ return (
   <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col h-full">
 
     <Image
-      src="/dezire.jpg"
+      src="/dezire.jpeg"
       alt="Swift Dzire"
       width={500}
       height={300}
@@ -1306,7 +1310,7 @@ return (
   <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-lg flex flex-col h-full">
 
     <Image
-      src="/ertiga.jpg"
+      src="/ertiga.jpeg"
       alt="Ertiga"
       width={500}
       height={300}
@@ -1411,7 +1415,7 @@ return (
   <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-lg flex flex-col h-full">
 
     <Image
-      src="/crysta.jpg"
+      src="/crysta.jpeg"
       alt="Innova Crysta"
       width={500}
       height={300}
@@ -2659,6 +2663,10 @@ return (
 
 </div>
 
+      {/* RC Travel Assistant Floating Button */}
+      <TravelAssistantButton />
+
     </main>
-  );
+  </>
+);
 }

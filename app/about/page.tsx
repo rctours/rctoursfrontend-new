@@ -515,15 +515,15 @@ outstation trips, family vacations and corporate travel.
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
 
       <div className="relative h-32 md:h-52 rounded-2xl md:rounded-3xl overflow-hidden">
-        <Image src="/gallery/dzire.png" alt="Swift Dzire" fill className="object-cover hover:scale-110 transition duration-700" />
+        <Image src="/gallery/dzire.jpg" alt="Swift Dzire" fill className="object-cover hover:scale-110 transition duration-700" />
       </div>
 
       <div className="relative h-32 md:h-52 rounded-2xl md:rounded-3xl overflow-hidden">
-        <Image src="/gallery/ertiga.png" alt="Ertiga" fill className="object-cover hover:scale-110 transition duration-700" />
+        <Image src="/gallery/ertiga.jpg" alt="Ertiga" fill className="object-cover hover:scale-110 transition duration-700" />
       </div>
 
       <div className="relative h-32 md:h-52 rounded-2xl md:rounded-3xl overflow-hidden">
-        <Image src="/gallery/innova.png" alt="Innova Crysta" fill className="object-cover hover:scale-110 transition duration-700" />
+        <Image src="/gallery/innova.jpg" alt="Innova Crysta" fill className="object-cover hover:scale-110 transition duration-700" />
       </div>
 
       <div className="relative h-32 md:h-52 rounded-2xl md:rounded-3xl overflow-hidden">

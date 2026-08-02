@@ -95,7 +95,7 @@ export default function Navbar() {
           </a>
 
           {/* Desktop Menu */}
-          <div className="hidden lg:flex items-center gap-6 xl:gap-8 text-white font-semibold text-[15px] xl:text-[16px] ml-auto mr-6 xl:mr-10">
+          <div className="hidden lg:flex flex-1 items-center justify-center gap-8 xl:gap-10 text-white font-semibold text-[15px] xl:text-[16px] px-8">
             <Link href="/" className="hover:text-cyan-400 transition">
               Home
             </Link>
@@ -108,8 +108,11 @@ export default function Navbar() {
             <Link href="/fleet" className="hover:text-cyan-400 transition">
               Fleet
             </Link>
-            <Link href="/tour-packages" className="hover:text-cyan-400 transition">
-              Tour Packages
+            <Link
+            href="/tour-packages"
+            className="hover:text-cyan-400 transition whitespace-nowrap"
+            >
+            Tour Packages
             </Link>
             <Link href="/blog" className="hover:text-cyan-400 transition">
               Blog
@@ -120,10 +123,10 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Buttons */}
-          <div className="hidden lg:flex items-center gap-2 xl:gap-3 shrink-0">
+          <div className="hidden lg:flex items-center gap-1.5 xl:gap-2 shrink-0">
             <a
               href="tel:+919172271464"
-              className="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 px-3.5 xl:px-4 py-2.5 rounded-full text-white text-[14px] xl:text-[15px] font-semibold transition"
+              className="flex items-center gap-1.5 bg-cyan-500 hover:bg-cyan-600 px-3 xl:px-3.5 py-2 rounded-full text-white text-[13px] xl:text-[14px] font-semibold transition whitespace-nowrap"
             >
               <Phone size={17} />
               Call Now
@@ -133,7 +136,7 @@ export default function Navbar() {
               href="https://wa.me/919172271464"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-green-500 hover:bg-green-600 px-3.5 xl:px-4 py-2.5 rounded-full text-white text-[14px] xl:text-[15px] font-semibold transition"
+              className="flex items-center gap-1.5 bg-green-500 hover:bg-green-600 px-3 xl:px-3.5 py-2 rounded-full text-white text-[13px] xl:text-[14px] font-semibold transition whitespace-nowrap"
             >
               <MessageCircle size={17} />
               WhatsApp
@@ -149,7 +152,7 @@ export default function Navbar() {
                     e.stopPropagation();
                     setProfileMenuOpen(!profileMenuOpen);
                   }}
-                  className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-3.5 py-2 rounded-full text-[15px] font-semibold transition"
+                  className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white px-3.5 py-2 rounded-full text-[13px] xl:text-[14px] font-semibold transition whitespace-nowrap"
                 >
                   <span>👤</span>
                   <span className="max-w-[180px] truncate">
@@ -187,7 +190,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/profile-login"
-                className="bg-white/10 hover:bg-cyan-500 text-white px-4 py-2.5 rounded-full text-[14px] xl:text-[15px] font-semibold transition"
+                className="bg-white/10 hover:bg-cyan-500 text-white px-3.5 py-2 rounded-full text-[13px] xl:text-[14px] font-semibold transition whitespace-nowrap"
               >
                 👤 Customer Profile
               </Link>
