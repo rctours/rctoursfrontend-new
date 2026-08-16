@@ -122,6 +122,18 @@ export default function TrackBookingPage() {
       return;
     }
 
+    // ==========================================
+  // EMAIL FORMAT VALIDATION
+  // ==========================================
+
+  const emailPattern =
+  /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+
+if (!emailPattern.test(email.trim())) {
+  alert("Please enter a valid Email Address");
+  return;
+}
+
     try {
       setLoading(true);
 

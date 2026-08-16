@@ -1278,7 +1278,7 @@ return (
         </div>
 
         <Link
-        href={`/booking-details?tripType=Local Rental&cabType=Sedan&package=${selectedPackage}&fare=${
+        href={`/booking-details?tripType=Local Rental&cabType=Swift%20Dzire&package=${selectedPackage}&fare=${
         selectedPackage === "4hr"
         ? 1200
         : selectedPackage === "8hr"
@@ -2663,8 +2663,9 @@ return (
 
 </div>
 
-      {/* RC Travel Assistant Floating Button */}
-      <TravelAssistantButton />
+      {/* RC Travel Assistant Floating Button - TEMPORARILY HIDDEN
+<TravelAssistantButton />
+*/}
 
     </main>
   </>

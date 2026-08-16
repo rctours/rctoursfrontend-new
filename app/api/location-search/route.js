@@ -1,43 +1,196 @@
 import { NextResponse } from "next/server";
 
 // ===============================================
-// GET METHOD: AUTOCOMPLETE SEARCH FOR ADDRESSES
+// LOCATION SEARCH CACHE
 // ===============================================
+
+const cache = new Map();
+
+const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
+
+// ===============================================
+// GET METHOD: FAST LOCATION AUTOCOMPLETE
+// ===============================================
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const query = searchParams.get("q");
 
-    // 1. Handle empty query state gracefully
-    if (!query) {
+    const rawQuery = searchParams.get("q") || "";
+
+    const query = rawQuery.trim();
+
+    // ===========================================
+    // EMPTY / VERY SHORT QUERY
+    // ===========================================
+
+    if (!query || query.length < 2) {
       return NextResponse.json([]);
     }
 
-    // 2. Execute Geocoding Search via OpenStreetMap Nominatim
-    // Note: User-Agent is mandatory for Nominatim usage policies
-    const response = await fetch(
-    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-    query + ", Maharashtra, India"
-    )}&format=json&limit=5&addressdetails=1&countrycodes=in`,
-    {
-    headers: {
-      "User-Agent": "RC-Tours-Travels-App/1.0",
-    },
-  }
-);
+    // ===========================================
+    // CACHE KEY
+    // ===========================================
+
+    const cacheKey = query.toLowerCase();
+
+    const cached = cache.get(cacheKey);
+
+    if (cached) {
+      const age = Date.now() - cached.timestamp;
+
+      if (age < CACHE_DURATION) {
+        return NextResponse.json(cached.data, {
+          headers: {
+            "Cache-Control":
+              "public, max-age=600, stale-while-revalidate=3600",
+          },
+        });
+      }
+
+      cache.delete(cacheKey);
+    }
+
+    // ===========================================
+    // NOMINATIM SEARCH
+    // ===========================================
+
+    const url =
+      "https://nominatim.openstreetmap.org/search?" +
+      new URLSearchParams({
+        q: query + ", India",
+        format: "json",
+        addressdetails: "1",
+        limit: "5",
+        countrycodes: "in",
+        "accept-language": "en",
+      }).toString();
+
+    const controller = new AbortController();
+
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 5000);
+
+    let response;
+
+    try {
+      response = await fetch(url, {
+        method: "GET",
+
+        headers: {
+          "User-Agent":
+            "RC-Tours-Travels/1.0 (https://www.rctoursandtravels.in)",
+          Accept: "application/json",
+        },
+
+        signal: controller.signal,
+
+        cache: "no-store",
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    // ===========================================
+    // PROVIDER ERROR
+    // ===========================================
 
     if (!response.ok) {
-      throw new Error("Geocoding service provider returned an error.");
+      console.error(
+        "NOMINATIM ERROR:",
+        response.status,
+        response.statusText
+      );
+
+      return NextResponse.json([], {
+        status: 200,
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      });
     }
 
     const data = await response.json();
 
-    return NextResponse.json(data);
-    
+    // ===========================================
+    // CLEAN RESULTS
+    // ===========================================
+
+    const results = Array.isArray(data)
+      ? data.map((item) => ({
+          place_id: item.place_id,
+          display_name: item.display_name,
+
+          lat: item.lat,
+          lon: item.lon,
+
+          type: item.type,
+          category: item.category,
+
+          address: item.address || {},
+        }))
+      : [];
+
+    // ===========================================
+    // SAVE TO CACHE
+    // ===========================================
+
+    cache.set(cacheKey, {
+      timestamp: Date.now(),
+      data: results,
+    });
+
+    // ===========================================
+    // LIMIT CACHE SIZE
+    // ===========================================
+
+    if (cache.size > 500) {
+      const firstKey = cache.keys().next().value;
+
+      if (firstKey) {
+        cache.delete(firstKey);
+      }
+    }
+
+    // ===========================================
+    // RESPONSE
+    // ===========================================
+
+    return NextResponse.json(results, {
+      headers: {
+        "Cache-Control":
+          "public, max-age=600, stale-while-revalidate=3600",
+      },
+    });
   } catch (error) {
-    console.error("LOCATION SEARCH PIPELINE EXCEPTION:", error);
-    
-    // 3. Return empty array on failure to prevent frontend UI breakage
-    return NextResponse.json([]);
+    // ===========================================
+    // TIMEOUT
+    // ===========================================
+
+    if (error?.name === "AbortError") {
+      console.error(
+        "LOCATION SEARCH TIMEOUT"
+      );
+
+      return NextResponse.json([], {
+        status: 200,
+      });
+    }
+
+    // ===========================================
+    // GENERAL ERROR
+    // ===========================================
+
+    console.error(
+      "LOCATION SEARCH PIPELINE EXCEPTION:",
+      error
+    );
+
+    // Frontend should never break because
+    // location provider failed.
+    return NextResponse.json([], {
+      status: 200,
+    });
   }
 }

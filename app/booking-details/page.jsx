@@ -14,24 +14,21 @@ import MobileBookingCard from "@/components/MobileBookingCard";
 import Script from "next/script";
 
 const vehicleImages = {
+  "Swift Dzire": "/swift-dzire.jpg",
+  "Dzire": "/swift-dzire.jpg",
 
-  "Swift Dzire": "/dezire.jpg",
-
-  "Dzire": "/dezire.jpg",
-
-  "Hyundai Aura": "/aura.jpg",
+  "Hyundai Aura": "/Aura.jpg",
 
   "Toyota Glanza": "/glanza.jpg",
 
-  "Ertiga": "/ertiga.jpg",
-
-  "Maruti Ertiga": "/ertiga.jpg",
+  "Ertiga": "/ertiga.jpeg",
+  "Maruti Ertiga": "/ertiga.jpeg",
 
   "Toyota Rumion": "/rumion.png",
 
   "Kia Carens": "/carens.jpg",
 
-  "Innova Crysta": "/crysta.jpg",
+  "Innova Crysta": "/innova-crysta.jpg",
 
   "Toyota Hycross": "/hycross.png",
 
@@ -42,7 +39,6 @@ const vehicleImages = {
   "Traveller 26 Seater": "/traveller26.jpg",
 
   "Force Urbania": "/urbania.jpg",
-
 };
 
 const vehicleCapacity = {
@@ -79,16 +75,27 @@ const vehicleCapacity = {
 
 const vehicleCategory = {
   "Swift Dzire": "Sedan",
+  "Dzire": "Sedan",
+
   "Hyundai Aura": "Sedan",
+
   "Toyota Glanza": "Hatchback",
+
+  "Ertiga": "MUV",
   "Maruti Ertiga": "MUV",
+
   "Toyota Rumion": "MUV",
+
   "Kia Carens": "MUV",
+
   "Innova Crysta": "SUV",
+
   "Toyota Hycross": "SUV",
+
   "Traveller 13 Seater": "Traveller",
   "Traveller 17 Seater": "Traveller",
   "Traveller 26 Seater": "Traveller",
+
   "Force Urbania": "Urbania",
 };
 
@@ -108,7 +115,10 @@ function BookingDetailsContent() {
   const searchParams = useSearchParams();
 
 
-const vehicle = searchParams.get("vehicle")?.trim() || "";
+const vehicle =
+  searchParams.get("vehicle")?.trim() ||
+  searchParams.get("cabType")?.trim() ||
+  "Swift Dzire";
 const tripType = searchParams.get("tripType")?.trim() || "";
 const pickupParam = searchParams.get("pickup")?.trim() || "";
 const dropParam = searchParams.get("drop")?.trim() || "";
@@ -144,7 +154,7 @@ const fare = Number(
 //});
 
 const vehicleImage =
-  vehicleImages[vehicle] || "/dezire.jpg";
+  vehicleImages[vehicle] || "/swift-dzire.jpg";
 
   const [paymentType, setPaymentType] = useState("partial");
 

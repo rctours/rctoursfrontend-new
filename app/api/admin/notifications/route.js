@@ -22,6 +22,7 @@ export async function GET() {
     const client = await clientPromise;
     const db = client.db();
 
+    // Latest 20 notifications for notification panel
     const notifications = await db
       .collection("notifications")
       .find({})
@@ -29,9 +30,12 @@ export async function GET() {
       .limit(20)
       .toArray();
 
-    const unreadCount = notifications.filter(
-      (item) => !item.isRead
-    ).length;
+    // Count ALL unread notifications from MongoDB
+    const unreadCount = await db
+      .collection("notifications")
+      .countDocuments({
+        isRead: false,
+      });
 
     return NextResponse.json({
       success: true,

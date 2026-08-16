@@ -8,6 +8,7 @@ import {
 
 import Link from "next/link";
 import Image from "next/image";
+import { FaWhatsapp } from "react-icons/fa";
 
 import {
   ArrowLeft,
@@ -17,6 +18,7 @@ import {
   Loader2,
   MapPin,
   MessageCircle,
+  Phone,
   Route,
   Send,
   ShieldCheck,
@@ -181,9 +183,55 @@ export default function TravelAssistantPage() {
             },
 
             body: JSON.stringify({
-              message:
-                customerMessage,
-            }),
+            message:
+            customerMessage,
+
+            history:
+            messages
+            .filter(
+            (item) =>
+            item.role === "user" ||
+            item.role === "assistant"
+            )
+            .slice(-10)
+            .map((item) => ({
+            role:
+              item.role,
+
+            text:
+              item.text,
+
+            // ================================================
+            // VERIFIED ASSISTANT CONTEXT
+            // ================================================
+            //
+          // Sirf API se aaye structured values forward
+          // karenge. Backend next step me in values ko
+          // validate karke use karega.
+            //
+          // User messages me normally ye null honge.
+          //
+          // ================================================
+
+          verified:
+            item.verified === true,
+
+          fareVerified:
+            item.fareVerified === true,
+
+          distanceVerified:
+            item.distanceVerified === true,
+
+          trip:
+            item.trip || null,
+
+          distance:
+            item.distance || null,
+
+          pricing:
+            item.pricing || null,
+            })),
+          }),
           }
         );
 
@@ -200,7 +248,7 @@ export default function TravelAssistantPage() {
         );
       }
 
-      // ------------------------------------------------
+        // ------------------------------------------------
       // ADD ASSISTANT RESPONSE
       // ------------------------------------------------
 
@@ -208,31 +256,76 @@ export default function TravelAssistantPage() {
         ...prev,
 
         {
-          role: "assistant",
+  role: "assistant",
 
-          text:
-            data.reply,
+  text:
+    data.reply,
 
-          verified:
-            data.verified ??
-            data.verifiedBusinessRules ??
-            true,
+  verified:
+    data.verified ??
+    data.verifiedBusinessRules ??
+    true,
 
-          fareVerified:
-            data.fareVerified,
+  fareVerified:
+    data.fareVerified === true,
 
-          distanceVerified:
-            data.distanceVerified,
+  distanceVerified:
+    data.distanceVerified === true,
 
-          chatId:
-            data.chatId,
-        },
+  // ================================================
+  // VERIFIED CONVERSATION CONTEXT
+  // ================================================
+  //
+  // API ne agar trip / distance / pricing verify
+  // kiya hai to assistant message ke saath us
+  // structured data ko bhi preserve karenge.
+  //
+  // Example:
+  //
+  // trip:
+  // Nagpur -> Hyderabad
+  // One Way
+  // Ertiga
+  //
+  // distance:
+  // 497 KM
+  //
+  // pricing:
+  // baseFare = 12922
+  //
+  // Isse next customer follow-up me verified
+  // information safely API ko wapas bheji ja sakegi.
+  //
+  // ================================================
+
+  trip:
+    data.trip || null,
+
+  distance:
+    data.distance || null,
+
+  pricing:
+    data.pricing || null,
+
+  chatId:
+    data.chatId,
+},
       ]);
     } catch (error) {
       console.error(
         "Travel Assistant UI Error:",
         error
       );
+
+      // ================================================
+      // FRIENDLY FALLBACK RESPONSE
+      // ================================================
+      //
+      // Agar AI API temporarily respond na kare,
+      // network issue ho, ya question unclear ho,
+      // customer ko technical error nahi dikhayenge.
+      //
+      // ================================================
 
       setMessages((prev) => [
         ...prev,
@@ -241,10 +334,20 @@ export default function TravelAssistantPage() {
           role: "assistant",
 
           text:
-            "Sorry, Travel Assistant abhi temporarily unavailable hai.\n\n" +
-            "Please thodi der baad dobara try karein ya RC Tours & Travels se directly contact karein.",
+            "Main aapka question clearly samajh nahi paaya. 🙂\n\n" +
+            "Aap thoda aur detail me bata sakte hain ki aapko kya chahiye?\n\n" +
+            "Example:\n" +
+            "• 5 logon ke liye kaunsi car best rahegi?\n" +
+            "• Nagpur se Pune Dzire ka fare kitna hai?\n" +
+            "• Nagpur local 8 hour Ertiga ka fare batao\n" +
+            "• Nagpur se Tadoba 2 din ka trip plan batao\n\n" +
+            "Agar aap chahein to RC Tours & Travels team se directly Call ya WhatsApp bhi kar sakte hain.",
 
           verified: false,
+
+          // Is flag se message ke niche
+          // Call + WhatsApp buttons show karenge.
+          showContactActions: true,
         },
       ]);
     } finally {
@@ -530,9 +633,40 @@ export default function TravelAssistantPage() {
                             }`}
                           >
                             {item.text}
-                          </div>
+                            </div>
 
-                          {/* VERIFIED INFORMATION */}
+                          {/* ==============================================
+                          FALLBACK CONTACT ACTIONS
+                          ============================================== */}
+
+                          {!isUser &&
+                          item.showContactActions === true && (
+                          <div className="mt-3 flex flex-wrap gap-2 px-1">
+
+                        {/* CALL NOW */}
+                        <a
+                        href="tel:+919172271464"
+                        className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-blue-700 hover:shadow-md md:text-sm"
+                        >
+                        <Phone size={16} />
+                        Call Now
+                        </a>
+
+                        {/* WHATSAPP */}
+                        <a
+                        href="https://wa.me/919172271464?text=Hello%20RC%20Tours%20%26%20Travels%2C%20mujhe%20cab%20booking%20ke%20liye%20help%20chahiye."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-green-700 hover:shadow-md md:text-sm"
+                        >
+                        <FaWhatsapp size={18} />
+                        WhatsApp
+                        </a>
+
+                        </div>
+                        )}
+
+                        {/* VERIFIED INFORMATION */}
 
                           {!isUser &&
                             item.verified ===
@@ -567,15 +701,11 @@ export default function TravelAssistantPage() {
                             )}
 
                           {!isUser &&
-                            item.verified ===
-                              false && (
-                              <p className="mt-2 px-1 text-[10px] font-semibold text-amber-600 md:text-[11px]">
-                                Confirmation
-                                may be
-                                required
-                                before
-                                booking.
-                              </p>
+                          item.verified === false &&
+                          item.showContactActions !== true && (
+                          <p className="mt-2 px-1 text-[10px] font-semibold text-amber-600 md:text-[11px]">
+                          Confirmation may be required before booking.
+                          </p>
                             )}
                         </div>
                       </div>

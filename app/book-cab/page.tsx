@@ -213,19 +213,45 @@ if (tripType === "Outstation Trip") {
         ) + 1
       : 1;
 
-  let billableDistance;
+  // API se actual one-way road distance
+const oneWayDistance = Number(data.distance);
 
-  if (totalDays > 1) {
+// Actual round-trip distance
+const actualRoundTripDistance =
+  oneWayDistance * 2;
 
-    billableDistance = totalDays * 300;
+// Minimum billing = 300 KM per day
+const minimumBillableDistance =
+  totalDays * 300;
 
-  } else {
+// Actual round trip ya minimum billing,
+// dono me jo zyada hai wahi final included KM
+const billableDistance = Math.max(
+  actualRoundTripDistance,
+  minimumBillableDistance
+);
 
-    billableDistance = data.distance * 2;
+console.log(
+  "OUTSTATION ONE WAY DISTANCE:",
+  oneWayDistance
+);
 
-  }
+console.log(
+  "OUTSTATION ACTUAL ROUND TRIP:",
+  actualRoundTripDistance
+);
 
-  setDistance(billableDistance);
+console.log(
+  "OUTSTATION MINIMUM DISTANCE:",
+  minimumBillableDistance
+);
+
+console.log(
+  "OUTSTATION FINAL BILLABLE DISTANCE:",
+  billableDistance
+);
+
+setDistance(billableDistance);
 
   sessionStorage.setItem(
     cacheKey,
@@ -317,7 +343,7 @@ const includedHours =
   fuel: "CNG / Petrol",
   rate: 15,
   extraHour: 250,
-  image: "/cars/ertiga.jpg",
+  image: "/ertiga.jpeg",
 
     packageFare: {
     "40 KM / 4 Hrs": 1500,
@@ -411,26 +437,14 @@ const isFormComplete =
   return Math.round(distance * cab.rate * 2);
   }
 
-  if (tripType === "Outstation Trip") {
+if (tripType === "Outstation Trip") {
 
-  const start = new Date(pickupDate);
-  const end = new Date(returnDate);
-
-  const totalDays =
-    returnDate
-      ? Math.floor(
-          (end.getTime() - start.getTime()) /
-          (1000 * 60 * 60 * 24)
-        ) + 1
-      : 1;
-
-  if (totalDays > 1) {
-
-    const totalDistance = totalDays * 300;
-
-    return Math.round(totalDistance * cab.rate);
-
-  }
+  // "distance" me already final Included KM hai:
+  // short route  -> 300 KM/day minimum
+  // long route   -> actual round-trip distance
+  //
+  // Isliye fare bhi isi displayed distance
+  // ke according calculate hoga.
 
   return Math.round(distance * cab.rate);
 }
