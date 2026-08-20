@@ -6,6 +6,25 @@ import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X, Phone, MessageCircle } from "lucide-react";
 
+function trackWhatsAppClick(source = "navbar") {
+  try {
+    window.dispatchEvent(
+      new CustomEvent("rc_whatsapp_conversion", {
+        detail: {
+          source,
+          timestamp: new Date().toISOString(),
+        },
+      })
+    );
+
+    console.log("RC WhatsApp Conversion Tracked:", {
+      source,
+    });
+  } catch (error) {
+    console.error("WhatsApp conversion tracking error:", error);
+  }
+}
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -133,10 +152,11 @@ export default function Navbar() {
             </a>
 
             <a
-              href="https://wa.me/919172271464"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 bg-green-500 hover:bg-green-600 px-3 xl:px-3.5 py-2 rounded-full text-white text-[13px] xl:text-[14px] font-semibold transition whitespace-nowrap"
+            href="https://wa.me/919172271464"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackWhatsAppClick("navbar_desktop")}
+            className="flex items-center gap-1.5 bg-green-500 hover:bg-green-600 px-3 xl:px-3.5 py-2 rounded-full text-white text-[13px] xl:text-[14px] font-semibold transition whitespace-nowrap"
             >
               <MessageCircle size={17} />
               WhatsApp
@@ -299,10 +319,11 @@ export default function Navbar() {
 
           <div className="border-t border-white/10 pt-4 mt-auto">
             <a
-              href="https://wa.me/919172271464"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-center py-3.5 rounded-xl font-bold mb-3 transition shadow-md"
+            href="https://wa.me/919172271464"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackWhatsAppClick("navbar_mobile")}
+            className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-center py-3.5 rounded-xl font-bold mb-3 transition shadow-md"
             >
               <MessageCircle size={18} />
               WhatsApp Booking

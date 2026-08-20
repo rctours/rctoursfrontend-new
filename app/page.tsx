@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   Fuel,
   HandCoins,
+  LocateFixed,
 } from "lucide-react";
 
 export default function Home() {
@@ -40,8 +41,34 @@ const [isRouteHovered, setIsRouteHovered] = useState(false);
 const [pickup, setPickup] = useState("");
 const [drop, setDrop] = useState("");
 
-const [pickupSuggestions, setPickupSuggestions] = useState([]);
-const [dropSuggestions, setDropSuggestions] = useState([]);
+const [pickupCoords, setPickupCoords] = useState<{
+  lat: number;
+  lon: number;
+} | null>(null);
+
+const [dropCoords, setDropCoords] = useState<{
+  lat: number;
+  lon: number;
+} | null>(null);
+
+const [gettingLocation, setGettingLocation] = useState(false);
+
+type LocationSuggestion = {
+  display_name: string;
+  lat: string | number;
+  lon: string | number;
+  place_id?: string | number;
+};
+
+const [pickupSuggestions, setPickupSuggestions] =
+  useState<LocationSuggestion[]>([]);
+
+const [dropSuggestions, setDropSuggestions] =
+  useState<LocationSuggestion[]>([]);
+
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const searchAbortRef = useRef<AbortController | null>(null);
 
 const [journeyDate, setJourneyDate] = useState("");
 
@@ -59,48 +86,175 @@ const [distance, setDistance] = useState(0);
 const [fare, setFare] = useState(0);
 const [loading, setLoading] = useState(false);
 
-const searchLocation = async (
+const getCurrentLocation = () => {
+  if (!navigator.geolocation) {
+    alert("Your browser does not support location access.");
+    return;
+  }
+
+  setGettingLocation(true);
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude, longitude } = position.coords;
+
+      console.log("CURRENT LOCATION LAT:", latitude);
+      console.log("CURRENT LOCATION LNG:", longitude);
+
+      try {
+        const res = await fetch(
+          `/api/location-search?lat=${latitude}&lon=${longitude}`
+        );
+
+       const data = await res.json();
+
+if (data?.display_name) {
+  setPickup(data.display_name);
+
+  setPickupCoords({
+    lat: Number(latitude),
+    lon: Number(longitude),
+  });
+
+  console.log("CURRENT PICKUP COORDS SET:", {
+    lat: Number(latitude),
+    lon: Number(longitude),
+  });
+
+  setPickupSuggestions([]);
+} else if (Array.isArray(data) && data.length > 0) {
+  setPickup(data[0].display_name || "");
+
+  setPickupCoords({
+    lat: Number(latitude),
+    lon: Number(longitude),
+  });
+
+  setPickupSuggestions([]);
+} else {
+  setPickup(`${latitude}, ${longitude}`);
+
+  setPickupCoords({
+    lat: Number(latitude),
+    lon: Number(longitude),
+  });
+
+  setPickupSuggestions([]);
+}
+} catch (error) {
+  console.log("Current location error:", error);
+
+  // Agar address convert nahi hua,
+  // to latitude/longitude ko pickup me save karenge.
+  setPickup(`${latitude}, ${longitude}`);
+
+  setPickupCoords({
+    lat: Number(latitude),
+    lon: Number(longitude),
+  });
+
+  setPickupSuggestions([]);
+} finally {
+  setGettingLocation(false);
+}
+},
+(error) => {
+  console.log("Location permission/error:", error);
+
+  setGettingLocation(false);
+
+  if (error.code === 1) {
+    alert("Please allow location permission to use your current location.");
+      } else if (error.code === 2) {
+        alert("Unable to detect your current location.");
+      } else if (error.code === 3) {
+        alert("Location request timed out. Please try again.");
+      } else {
+        alert("Unable to get your current location.");
+      }
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0,
+    }
+  );
+};
+
+const searchLocation = (
   text: string,
   type: "pickup" | "drop"
 ) => {
-  if (text.length < 1) {
-  if (type === "pickup") {
-    setPickupSuggestions([]);
-  } else {
-    setDropSuggestions([]);
+  // Previous typing timer cancel
+  if (searchTimeoutRef.current) {
+    clearTimeout(searchTimeoutRef.current);
   }
-  return;
-}
 
-  console.log("API KEY:", process.env.NEXT_PUBLIC_ORS_API_KEY);
-  console.log("SEARCH TEXT:", text);
+  // Previous API request cancel
+  if (searchAbortRef.current) {
+    searchAbortRef.current.abort();
+  }
 
+  const query = text.trim();
 
-  try {
-    const res = await fetch(
-  `/api/location-search?q=${encodeURIComponent(text)}`
-);
-
-const data = await res.json();
-
-const results =
-  data.map((item: any) => item.display_name) || [];
-
+  // Empty search
+  if (!query) {
     if (type === "pickup") {
-      setPickupSuggestions(results);
+      setPickupSuggestions([]);
     } else {
-      setDropSuggestions(results);
+      setDropSuggestions([]);
     }
-  } catch (error) {
 
-  console.log(error);
+    return;
+  }
 
-  return {
-    distance: 0,
-    fare: 0,
-  };
+  // Customer typing stop karne ke baad search
+  searchTimeoutRef.current = setTimeout(async () => {
+    // New request controller
+    const controller = new AbortController();
 
-}
+    searchAbortRef.current = controller;
+
+    try {
+      const res = await fetch(
+        `/api/location-search?q=${encodeURIComponent(query)}`,
+        {
+          signal: controller.signal,
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Location search failed");
+      }
+
+      const data = await res.json();
+
+      const results: LocationSuggestion[] =
+        Array.isArray(data) ? data : [];
+
+      // Sirf latest search result show hoga
+      if (!controller.signal.aborted) {
+        if (type === "pickup") {
+          setPickupSuggestions(results);
+        } else {
+          setDropSuggestions(results);
+        }
+      }
+    } catch (error: any) {
+      // Abort error normal hai
+      if (error?.name === "AbortError") {
+        return;
+      }
+
+      console.log("Location search error:", error);
+
+      if (type === "pickup") {
+        setPickupSuggestions([]);
+      } else {
+        setDropSuggestions([]);
+      }
+    }
+  }, 350);
 };
 
 const calculateFare = async () => {
@@ -119,8 +273,10 @@ const calculateFare = async () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        pickup,
-        drop,
+      pickup,
+      drop,
+      pickupCoords,
+      dropCoords,
       }),
     });
 
@@ -298,15 +454,19 @@ if (tripType === "Local Rental") {
   bookCabUrl = "#local-rental";
 } else {
   bookCabUrl =
-  `/book-cab?vehicle=${encodeURIComponent(selectedVehicle)}` +
-  `&tripType=${encodeURIComponent(tripType)}` +
-  `&pickup=${encodeURIComponent(pickup)}` +
-  `&drop=${encodeURIComponent(drop)}` +
-  `&journeyDate=${journeyDate}` +
-  `&pickupTime=${pickupTime}` +
-  `&returnDate=${returnDate}` +
-  `&distance=${distance}` +
-  `&fare=${fare}`;
+    `/book-cab?vehicle=${encodeURIComponent(selectedVehicle)}` +
+    `&tripType=${encodeURIComponent(tripType)}` +
+    `&pickup=${encodeURIComponent(pickup)}` +
+    `&drop=${encodeURIComponent(drop)}` +
+    `&journeyDate=${journeyDate}` +
+    `&pickupTime=${pickupTime}` +
+    `&returnDate=${returnDate}` +
+    `&distance=${distance}` +
+    `&fare=${fare}` +
+    `&pickupLat=${pickupCoords?.lat ?? ""}` +
+    `&pickupLon=${pickupCoords?.lon ?? ""}` +
+    `&dropLat=${dropCoords?.lat ?? ""}` +
+    `&dropLon=${dropCoords?.lon ?? ""}`;
 }
 
 console.log("bookCabUrl:", bookCabUrl);
@@ -314,6 +474,8 @@ console.log("tripType:", tripType);
 console.log("pickup:", pickup);
 console.log("drop:", drop);
 console.log("journeyDate:", journeyDate);
+console.log("pickupCoords:", pickupCoords);
+console.log("dropCoords:", dropCoords);
 
 useEffect(() => {
   if (isReviewHovered) return;
@@ -545,6 +707,26 @@ useEffect(() => {
             className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm focus:outline-none focus:border-cyan-500"
             />
 
+            <button
+            type="button"
+            onClick={getCurrentLocation}
+            disabled={gettingLocation}
+            className="mt-2 w-full flex items-center justify-center gap-2 text-sm font-semibold text-cyan-600 hover:text-cyan-700 transition disabled:opacity-50"
+            >
+            <span className="flex items-center justify-center w-7 h-7 rounded-full bg-cyan-50">
+            <LocateFixed
+            size={18}
+            strokeWidth={2.3}
+            />
+            </span>
+
+            <span>
+            {gettingLocation
+            ? "Getting your location..."
+            : "Use current location"}
+            </span>
+            </button>
+
             {pickupSuggestions.length > 0 && (
             <div className="absolute left-0 right-0 mt-1 bg-white border rounded-xl shadow-xl max-h-48 overflow-y-auto z-50">
 
@@ -553,12 +735,18 @@ useEffect(() => {
             <div
             key={index}
             onClick={() => {
-              setPickup(item);
-              setPickupSuggestions([]);
+            setPickup(item.display_name);
+
+            setPickupCoords({
+            lat: Number(item.lat),
+            lon: Number(item.lon),
+            });
+
+            setPickupSuggestions([]);
             }}
             className="px-4 py-3 cursor-pointer hover:bg-cyan-50 text-sm"
             >
-            📍 {item}
+            📍 {item.display_name}
             </div>
 
             ))}
@@ -596,12 +784,18 @@ useEffect(() => {
           <div
             key={index}
             onClick={() => {
-              setDrop(item);
-              setDropSuggestions([]);
+            setDrop(item.display_name);
+
+            setDropCoords({
+            lat: Number(item.lat),
+            lon: Number(item.lon),
+            });
+
+            setDropSuggestions([]);
             }}
             className="px-4 py-3 cursor-pointer hover:bg-cyan-50 text-sm"
             >
-            📍 {item}
+            📍 {item.display_name}
             </div>
 
             ))}
@@ -771,15 +965,19 @@ useEffect(() => {
               if (!result) return;
 
               window.location.href =
-              `/book-cab?vehicle=${encodeURIComponent(selectedVehicle)}` +
-              `&tripType=${encodeURIComponent(tripType)}` +
-              `&pickup=${encodeURIComponent(pickup)}` +
-              `&drop=${encodeURIComponent(drop)}` +
-              `&journeyDate=${journeyDate}` +
-              `&pickupTime=${pickupTime}` +
-              `&returnDate=${returnDate}` +
-              `&distance=${result.distance}` +
-              `&fare=${result.fare}`;
+  `/book-cab?vehicle=${encodeURIComponent(selectedVehicle)}` +
+  `&tripType=${encodeURIComponent(tripType)}` +
+  `&pickup=${encodeURIComponent(pickup)}` +
+  `&drop=${encodeURIComponent(drop)}` +
+  `&journeyDate=${journeyDate}` +
+  `&pickupTime=${pickupTime}` +
+  `&returnDate=${returnDate}` +
+  `&distance=${result.distance}` +
+  `&fare=${result.fare}` +
+  `&pickupLat=${pickupCoords?.lat ?? ""}` +
+  `&pickupLon=${pickupCoords?.lon ?? ""}` +
+  `&dropLat=${dropCoords?.lat ?? ""}` +
+  `&dropLon=${dropCoords?.lon ?? ""}`;
 
               }}
               className="w-full h-12 md:h-14 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-700 text-white text-lg font-bold flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-[1.02]"

@@ -3,7 +3,7 @@ import clientPromise from "@/lib/mongodb";
 
 export async function POST(request) {
   try {
-    const { mobile, distance, tripType } = await request.json();
+    const { mobile, tripType } = await request.json();
 
     if (!mobile) {
       return NextResponse.json(
@@ -49,40 +49,13 @@ export async function POST(request) {
     });
 
     // ==========================
-    // DISCOUNT CALCULATION
+    // CURRENT TRIP LOYALTY POINTS
     // ==========================
 
-    let welcomeDiscount = 100;
-    let returningDiscount = 100;
+    let tripLoyaltyPoints = 100;
 
-    const trip = (tripType || "").toLowerCase();
-
-    // Distance based only for One Way & Outstation
-    if (
-      trip.includes("one way") ||
-      trip.includes("outstation")
-    ) {
-      welcomeDiscount = Number(distance || 0);
-
-      // New Customer
-      if (welcomeDiscount < 300) {
-        welcomeDiscount = 300;
-      }
-
-      if (welcomeDiscount > 1000) {
-        welcomeDiscount = 1000;
-      }
-
-      // Returning Customer
-      returningDiscount = Math.floor(Number(distance || 0) / 2);
-
-      if (returningDiscount < 300) {
-        returningDiscount = 300;
-      }
-
-      if (returningDiscount > 500) {
-        returningDiscount = 500;
-      }
+    if (tripType === "Local Rental") {
+      tripLoyaltyPoints = 50;
     }
 
     // ==========================
@@ -92,8 +65,9 @@ export async function POST(request) {
     if (!customer) {
       return NextResponse.json({
         success: true,
+
         customerType: "new",
-        welcomeReward: true,
+
         customer: {
           mobile: cleanMobile,
           name: "",
@@ -101,21 +75,26 @@ export async function POST(request) {
           loyaltyPoints: 0,
           totalBookings: 0,
           totalSpent: 0,
-          couponCode: "WELCOME" + welcomeDiscount,
-          couponDiscount: welcomeDiscount,
-          couponUsed: false,
-          benefitType: "Welcome Customer Offer",
+
+          // No coupon for new customer
+          couponCode: "",
+          couponDiscount: 0,
+          couponUsed: true,
         },
+
+        tripLoyaltyPoints,
       });
     }
 
     // ==========================
-    // RETURNING CUSTOMER
+    // EXISTING CUSTOMER
     // ==========================
 
     return NextResponse.json({
       success: true,
+
       customerType: "returning",
+
       customer: {
         mobile: cleanMobile,
         name: customer.name || "",
@@ -123,12 +102,19 @@ export async function POST(request) {
         loyaltyPoints: customer.loyaltyPoints || 0,
         totalBookings: customer.totalBookings || 0,
         totalSpent: customer.totalSpent || 0,
-        couponCode: "RCRETURN" + returningDiscount,
-        couponDiscount: returningDiscount,
-        couponUsed: false,
-        benefitType: "Returning Customer Benefit",
+
+        // ==========================
+        // LOYALTY COUPON
+        // ==========================
+
+        couponCode: customer.couponCode || "",
+        couponDiscount: customer.couponDiscount || 0,
+        couponUsed: customer.couponUsed ?? true,
       },
+
+      tripLoyaltyPoints,
     });
+
   } catch (error) {
     console.error("Customer Check Error:", error);
 

@@ -273,6 +273,10 @@ const [customerInfo, setCustomerInfo] = useState(null);
 
 const [checkingCustomer, setCheckingCustomer] = useState(false);
 
+const [tripLoyaltyPoints, setTripLoyaltyPoints] = useState(0);
+
+const [showLoyaltyInfo, setShowLoyaltyInfo] = useState(false);
+
   // Vehicle Fare
   const vehicleFare = baseFare;
 
@@ -295,17 +299,27 @@ const [checkingCustomer, setCheckingCustomer] = useState(false);
 
   const checkCustomer = async (mobileNumber) => {
 
-  // Sirf exactly 10 digit Indian mobile par hi coupon check hoga
-  if (!/^[6-9]\d{9}$/.test(mobileNumber)) {
+// Sirf exactly 10 digit Indian mobile par hi customer check hoga
+
+if (!/^[6-9]\d{9}$/.test(mobileNumber)) {
+
   setCustomerType("");
+
   setCustomerInfo(null);
 
+  setTripLoyaltyPoints(0);
+
+  setShowLoyaltyInfo(false);
+
   setCouponApplied(false);
+
   setCouponCode("");
+
   setDiscountAmount(0);
 
   return;
-  }
+
+}
 
   try {
     setCheckingCustomer(true);
@@ -326,29 +340,20 @@ const [checkingCustomer, setCheckingCustomer] = useState(false);
 
     if (!data.success) return;
 
-    setCustomerType(data.customerType);
+setCustomerType(data.customerType);
 
-    setCustomerInfo(data.customer);
+setCustomerInfo(data.customer);
 
-  if (data.customer?.couponCode) {
+// Current trip par milne wale loyalty points
+setTripLoyaltyPoints(data.tripLoyaltyPoints || 0);
 
-  setCouponCode(data.customer.couponCode);
+// Customer check hone ke baad Loyalty Information show karenge
+setShowLoyaltyInfo(true);
 
-  setDiscountAmount(data.customer.couponDiscount || 0);
-
-  setCouponApplied(true);
-
-  // Popup tabhi dikhao jab number valid ho
-  if (/^[6-9]\d{9}$/.test(mobileNumber)) {
-  setCheckingOffer(true);
-
-  setTimeout(() => {
-    setCheckingOffer(false);
-    setShowCouponSuccess(true);
-  }, 2500);
-}
-  
-  }
+// 3 second baad popup automatically close hoga
+setTimeout(() => {
+  setShowLoyaltyInfo(false);
+}, 8000);
 
   } catch (error) {
     console.log(error);
@@ -389,6 +394,7 @@ const [checkingCustomer, setCheckingCustomer] = useState(false);
         body: JSON.stringify({
         couponCode: code,
         mobile: customerMobile,
+        fare: vehicleFare,
         }),
       }
     );
@@ -2863,77 +2869,142 @@ setPaymentType("full")
 
 )}
 
-{/* Coupon Success Popup */}
-{showCouponSuccess && (
-  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 md:p-8 text-center relative overflow-hidden transform transition-all">
+{/* ================= LOYALTY POINTS POPUP ================= */}
 
-      {/* Top Animated Check Icon */}
+{showLoyaltyInfo && customerInfo && (
+  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 md:p-8 text-center relative overflow-hidden">
+
+      {/* Loyalty Icon */}
       <div className="flex justify-center mb-5">
-        <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center animate-pulse shadow-inner">
-          <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center text-white text-3xl font-bold shadow-md">
-            ✓
+        <div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center animate-pulse shadow-inner">
+          <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center text-white text-3xl font-bold shadow-md">
+            ★
           </div>
         </div>
       </div>
 
       {/* Heading */}
       <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900">
-        🎉 Congratulations! 🎉
+        {customerType === "new"
+          ? "Welcome to RC Tours! 🎉"
+          : "Welcome Back! 🎉"}
       </h2>
 
       {/* Customer Status */}
       <p className="mt-2 text-lg font-bold text-blue-600">
-        {customerType === "new" ? "Welcome New Customer" : "Welcome Back"}
-      </p>
-
-      <p className="text-sm text-gray-500 mt-1">
         {customerType === "new"
-          ? "Your Welcome Discount is ready to use."
-          : "Your Returning Customer Discount is ready to use."}
+          ? "Start Earning Loyalty Points"
+          : `${customerInfo.membership || "Bronze"} Member`}
       </p>
 
-      {/* Coupon Code & Savings Box */}
-      <div className="mt-6 bg-gradient-to-b from-gray-50 to-emerald-50/50 rounded-2xl p-5 border border-emerald-100 shadow-sm">
-        <p className="text-gray-400 uppercase tracking-wider text-xs font-semibold">
-          Applied Coupon Code
+      {/* Current Points */}
+      <div className="mt-6 bg-gradient-to-b from-amber-50 to-yellow-50 rounded-2xl p-5 border border-amber-200 shadow-sm">
+
+        <p className="text-gray-500 uppercase tracking-wider text-xs font-semibold">
+          Your Current Loyalty Points
         </p>
-        
-        <h3 className="text-2xl md:text-3xl font-black text-gray-900 mt-1 tracking-wide">
-          {couponCode}
+
+        <h3 className="text-4xl md:text-5xl font-black text-amber-600 mt-2">
+          {customerInfo.loyaltyPoints || 0}
         </h3>
 
-        <div className="mt-3 pt-3 border-t border-emerald-200/60 flex items-center justify-between px-2">
-          <span className="text-sm font-medium text-gray-600">You Saved:</span>
-          <span className="text-2xl md:text-3xl font-black text-emerald-600">
-            ₹{discountAmount}
-          </span>
+        <p className="text-sm text-gray-600 mt-2">
+          Loyalty Points Available
+        </p>
+
+      </div>
+
+      {/* Current Trip Points */}
+      <div className="mt-4 bg-blue-50 border border-blue-100 rounded-2xl p-4">
+
+        <p className="text-sm font-semibold text-gray-700">
+          Complete this trip and earn
+        </p>
+
+        <p className="text-3xl font-black text-blue-600 mt-1">
+          +{tripLoyaltyPoints} Points
+        </p>
+
+        <p className="text-xs text-gray-500 mt-2">
+          Loyalty points will be added after trip completion.
+        </p>
+
+      </div>
+
+      {/* Membership */}
+      <div className="mt-4 flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 border">
+
+        <span className="text-sm text-gray-600">
+          Membership
+        </span>
+
+        <span className="font-bold text-gray-900">
+          {customerInfo.membership || "Bronze"}
+        </span>
+
+      </div>
+
+      {/* AVAILABLE LOYALTY COUPON */}
+      {customerInfo.couponCode && !customerInfo.couponUsed && (
+        <div className="mt-4 bg-green-50 border border-green-200 rounded-2xl p-4">
+
+          {/* Header */}
+          <div className="flex items-center justify-between">
+
+            <div>
+              <p className="text-sm font-bold text-green-800">
+                🎁 Loyalty Reward Unlocked!
+              </p>
+
+              <p className="text-xs text-green-700 mt-1">
+                You have an unused coupon available.
+              </p>
+            </div>
+
+            <span className="text-3xl">
+              🎉
+            </span>
+
+          </div>
+
+          {/* Coupon Box */}
+          <div className="mt-3 bg-white border border-green-200 rounded-xl p-3">
+
+            <p className="text-xs text-gray-500">
+              Your Coupon Code
+            </p>
+
+            <div className="flex items-center justify-between gap-3 mt-2">
+
+              <span className="text-base md:text-lg font-black text-green-700 break-all">
+                {customerInfo.couponCode}
+              </span>
+
+              <span className="whitespace-nowrap font-bold text-green-600">
+                ₹{customerInfo.couponDiscount} OFF
+              </span>
+
+            </div>
+
+          </div>
+
+          <p className="text-xs text-gray-500 mt-3">
+            Copy this coupon and apply it in the Available Coupons section below.
+          </p>
+
         </div>
-      </div>
+      )}
 
-      {/* Subtext */}
-      <p className="mt-4 text-xs md:text-sm text-gray-500 font-medium">
-        Enjoy your ride with RC Tours 🚖
-      </p>
-
-      {/* Action Buttons */}
-      <div className="mt-6 space-y-3">
-        {/* Copy Coupon Button */}
-        <button
-          onClick={copyCoupon}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-sm md:text-base shadow-lg shadow-blue-600/20 transition-all"
-        >
-          {copiedCoupon ? "✅ Coupon Copied" : "📋 Copy Coupon"}
-        </button>
-
-        {/* Continue Button */}
-        <button
-          onClick={() => setShowCouponSuccess(false)}
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold text-sm md:text-base shadow-lg shadow-emerald-600/20 transition-all"
-        >
-          Continue Booking →
-        </button>
-      </div>
+      {/* Continue Button */}
+      <button
+        onClick={() => {
+        setShowLoyaltyInfo(false);
+        }}
+        className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-sm md:text-base shadow-lg shadow-blue-600/20 transition-all"
+      >
+        Continue Booking →
+      </button>
 
     </div>
   </div>

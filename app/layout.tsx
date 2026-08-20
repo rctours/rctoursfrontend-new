@@ -1,8 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import Navbar from "./components/Navbar";
+import GoogleAnalytics from "./components/GoogleAnalytics";
 import { headers } from "next/headers";
-
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.rctoursandtravels.in"),
@@ -122,6 +122,7 @@ const localBusinessSchema = {
   url: "https://www.rctoursandtravels.in",
   telephone: "+919172271464",
   priceRange: "₹₹",
+
   address: {
     "@type": "PostalAddress",
     streetAddress: "New Narsala Rd, Beldar Nagar, Dighori",
@@ -130,106 +131,109 @@ const localBusinessSchema = {
     postalCode: "440034",
     addressCountry: "IN",
   },
+
   openingHours: "Mo-Su 00:00-23:59",
 
-areaServed: [
-  {
-    "@type": "City",
-    name: "Nagpur",
-  },
-  {
-    "@type": "State",
-    name: "Maharashtra",
-  },
-  {
-    "@type": "State",
-    name: "Madhya Pradesh",
-  },
-  {
-    "@type": "State",
-    name: "Chhattisgarh",
-  },
-  {
-    "@type": "Country",
-    name: "India",
-  },
-],
-
-paymentAccepted: [
-  "Cash",
-  "UPI",
-  "Credit Card",
-  "Debit Card",
-  "Net Banking",
-],
-
-currenciesAccepted: "INR",
-
-serviceType: [
-  "Airport Taxi Service",
-  "Local Taxi Service",
-  "Outstation Taxi Service",
-  "One Way Taxi",
-  "Round Trip Taxi",
-  "Corporate Cab Service",
-  "Tempo Traveller Rental",
-  "Tour Packages",
-],
-
-hasOfferCatalog: {
-  "@type": "OfferCatalog",
-  name: "Taxi Services",
-  itemListElement: [
+  areaServed: [
     {
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Service",
-        name: "Airport Taxi",
-      },
+      "@type": "City",
+      name: "Nagpur",
     },
     {
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Service",
-        name: "Local Cab Rental",
-      },
+      "@type": "State",
+      name: "Maharashtra",
     },
     {
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Service",
-        name: "Outstation Cab",
-      },
+      "@type": "State",
+      name: "Madhya Pradesh",
     },
     {
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Service",
-        name: "One Way Taxi",
-      },
+      "@type": "State",
+      name: "Chhattisgarh",
     },
     {
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Service",
-        name: "Round Trip Taxi",
-      },
-    },
-    {
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Service",
-        name: "Tempo Traveller Rental",
-      },
+      "@type": "Country",
+      name: "India",
     },
   ],
-},
+
+  paymentAccepted: [
+    "Cash",
+    "UPI",
+    "Credit Card",
+    "Debit Card",
+    "Net Banking",
+  ],
+
+  currenciesAccepted: "INR",
+
+  serviceType: [
+    "Airport Taxi Service",
+    "Local Taxi Service",
+    "Outstation Taxi Service",
+    "One Way Taxi",
+    "Round Trip Taxi",
+    "Corporate Cab Service",
+    "Tempo Traveller Rental",
+    "Tour Packages",
+  ],
+
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Taxi Services",
+
+    itemListElement: [
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Airport Taxi",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Local Cab Rental",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Outstation Cab",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "One Way Taxi",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Round Trip Taxi",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Tempo Traveller Rental",
+        },
+      },
+    ],
+  },
 };
 
-// ✅ FAQ Schema (SEO optimized)
+// ✅ FAQ Schema
 const faqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+
   mainEntity: [
     {
       "@type": "Question",
@@ -276,6 +280,7 @@ const organizationSchema = {
   image: "https://www.rctoursandtravels.in/logo.png",
   telephone: "+919172271464",
   email: "info@rctoursandtravels.in",
+
   address: {
     "@type": "PostalAddress",
     streetAddress: "New Narsala Rd, Beldar Nagar, Dighori",
@@ -292,6 +297,7 @@ const websiteSchema = {
   "@type": "WebSite",
   name: "RC Tours & Travels",
   url: "https://www.rctoursandtravels.in",
+
   publisher: {
     "@type": "Organization",
     name: "RC Tours & Travels",
@@ -311,11 +317,16 @@ export default async function RootLayout({
     "";
 
   const isAdminPage = pathname.startsWith("/admin");
+
   return (
     <html lang="en">
       <body>
 
+        {/* ✅ Google Analytics */}
+        <GoogleAnalytics />
+
         {/* ✅ SEO SCHEMA START */}
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -331,24 +342,24 @@ export default async function RootLayout({
         />
 
         <script
-  type="application/ld+json"
-  dangerouslySetInnerHTML={{
-    __html: JSON.stringify(organizationSchema),
-  }}
-/>
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
+        />
 
-<script
-  type="application/ld+json"
-  dangerouslySetInnerHTML={{
-    __html: JSON.stringify(websiteSchema),
-  }}
-/>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema),
+          }}
+        />
 
         {/* ✅ SEO SCHEMA END */}
 
-    {!isAdminPage && <Navbar />}
+        {!isAdminPage && <Navbar />}
 
-    <main>{children}</main>
+        <main>{children}</main>
 
       </body>
     </html>

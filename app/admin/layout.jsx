@@ -73,62 +73,85 @@ export default function AdminLayout({ children }) {
     };
   }, [isAuthPage]);
 
-  const menuItems = [
+    const menuItems = [
     {
       name: "Dashboard",
       href: "/admin",
       icon: "📊",
     },
+
     {
       name: "Bookings",
       href: "/admin/bookings",
       icon: "🚖",
     },
+
     {
       name: "Payments",
       href: "/admin/payments",
       icon: "💳",
     },
-    {
-      name: "Drivers",
-      href: "/admin/drivers",
-      icon: "👨‍✈️",
-    },
-    {
-      name: "Vehicles",
-      href: "/admin/vehicles",
-      icon: "🚗",
-    },
+
     {
       name: "Customers",
       href: "/admin/customers",
       icon: "👥",
     },
+
+    {
+      name: "Drivers",
+      href: "/admin/drivers",
+      icon: "👨‍✈️",
+    },
+
+    {
+      name: "Vehicles",
+      href: "/admin/vehicles",
+      icon: "🚗",
+    },
+
     {
       name: "Blogs",
       href: "/admin/blogs",
       icon: "📝",
     },
+
     {
       name: "Tours",
       href: "/admin/tour-packages",
       icon: "🌍",
     },
+
     {
-    name: "Campaigns",
-    href: "/admin/campaigns",
-    icon: "📢",
+      name: "Campaigns",
+      href: "/admin/campaigns",
+      icon: "📢",
     },
+
+    {
+      name: "SEO Dashboard",
+      href: "/admin/seo",
+      icon: "🔎",
+    },
+
+    {
+      name: "Keyword Rankings",
+      href: "/admin/seo/keywords",
+      icon: "📈",
+    },
+
     {
       name: "Reports",
       href: "/admin/reports",
-      icon: "📈",
+      icon: "📊",
     },
+
     {
       name: "Settings",
       href: "/admin/settings",
       icon: "⚙️",
     },
+
     {
       name: "Profile",
       href: "/admin/profile",

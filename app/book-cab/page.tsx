@@ -9,7 +9,19 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaWhatsapp } from "react-icons/fa";
 import Footer from "@/components/Footer";
-import { ChevronLeft, ChevronRight, BadgeCheck, ShieldCheck, Ticket, Info } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  BadgeCheck,
+  ShieldCheck,
+  Ticket,
+  Info,
+  MapPin,
+  Route,
+  Gift,
+  CircleParking,
+  ReceiptText,
+} from "lucide-react";
 
 function BookCabContent() {
   const searchParams = useSearchParams();
@@ -23,6 +35,8 @@ function BookCabContent() {
   const [showInfoPopup, setShowInfoPopup] = useState(false);
 
   const [loadingDistance, setLoadingDistance] = useState(false);
+
+  const [gettingLocation, setGettingLocation] = useState(false);
 
   const footerRef = useRef(null);
 
@@ -74,14 +88,104 @@ console.log("BOOK FARE :", searchParams.get("fare"));
 
 const [rentalPackage, setRentalPackage] = useState("40 KM / 4 Hrs");
 
-const [pickupSuggestions, setPickupSuggestions] = useState<string[]>([]);
-const [dropSuggestions, setDropSuggestions] = useState<string[]>([]);
+const [pickupSuggestions, setPickupSuggestions] = useState<any[]>([]);
+const [dropSuggestions, setDropSuggestions] = useState<any[]>([]);
+
+const [pickupCoords, setPickupCoords] = useState<{
+  lat: number;
+  lon: number;
+} | null>(() => {
+  const lat = searchParams.get("pickupLat");
+  const lon = searchParams.get("pickupLon");
+
+  if (!lat || !lon) return null;
+
+  return {
+    lat: Number(lat),
+    lon: Number(lon),
+  };
+});
+
+const [dropCoords, setDropCoords] = useState<{
+  lat: number;
+  lon: number;
+} | null>(() => {
+  const lat = searchParams.get("dropLat");
+  const lon = searchParams.get("dropLon");
+
+  if (!lat || !lon) return null;
+
+  return {
+    lat: Number(lat),
+    lon: Number(lon),
+  };
+});
+
+
+
+const getCurrentLocation = () => {
+  if (!navigator.geolocation) {
+    alert("Your browser does not support location.");
+    return;
+  }
+
+  setGettingLocation(true);
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude, longitude } = position.coords;
+
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`
+        );
+
+        const data = await res.json();
+
+        if (data?.display_name) {
+          setPickup(data.display_name);
+          setPickupSuggestions([]);
+        } else {
+          alert("Unable to find your current location.");
+        }
+      } catch (error) {
+        console.log("CURRENT LOCATION ERROR:", error);
+        alert("Unable to get your current location.");
+      } finally {
+        setGettingLocation(false);
+      }
+    },
+    (error) => {
+      console.log("GEOLOCATION ERROR:", error);
+
+      setGettingLocation(false);
+
+      if (error.code === 1) {
+        alert("Please allow location permission to use your current location.");
+      } else if (error.code === 2) {
+        alert("Your current location could not be detected.");
+      } else if (error.code === 3) {
+        alert("Location request timed out. Please try again.");
+      } else {
+        alert("Unable to get your current location.");
+      }
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0,
+    }
+  );
+};
 
 const searchLocation = async (
   text: string,
   type: "pickup" | "drop"
 ) => {
-  if (text.length < 1) {
+  const value = text.trim();
+
+  // 3 letters se kam hone par search nahi karega
+  if (value.length < 3) {
     if (type === "pickup") {
       setPickupSuggestions([]);
     } else {
@@ -92,13 +196,17 @@ const searchLocation = async (
 
   try {
     const res = await fetch(
-  `/api/location-search?q=${encodeURIComponent(text)}`
-);
+      `/api/location-search?q=${encodeURIComponent(value)}`
+    );
 
-const data = await res.json();
+    if (!res.ok) {
+      console.log("LOCATION SEARCH ERROR:", res.status);
+      return;
+    }
 
-const results =
-  data.map((item: any) => item.display_name) || [];
+    const data = await res.json();
+
+    const results = Array.isArray(data) ? data : [];
 
     if (type === "pickup") {
       setPickupSuggestions(results);
@@ -106,7 +214,7 @@ const results =
       setDropSuggestions(results);
     }
   } catch (error) {
-    console.log(error);
+    console.log("LOCATION SEARCH ERROR:", error);
   }
 };
 
@@ -168,6 +276,139 @@ if (
   router.push(`/fleet?${params.toString()}`);
 };
 
+const handleModifySearch = async () => {
+  console.log("Modify Search Clicked");
+
+  if (!pickup.trim()) {
+    alert("Please enter Pickup Location");
+    return;
+  }
+
+  if (!drop.trim()) {
+    alert("Please enter Drop Location");
+    return;
+  }
+
+  if (!pickupDate) {
+    alert("Please select Journey Date");
+    return;
+  }
+
+  if (
+    tripType === "Outstation Trip" &&
+    !returnDate
+  ) {
+    alert("Please select Return Date");
+    return;
+  }
+
+  if (
+    tripType !== "Outstation Trip" &&
+    !pickupTime
+  ) {
+    alert("Please select Pickup Time");
+    return;
+  }
+
+  setLoadingDistance(true);
+
+  try {
+    const res = await fetch("/api/distance", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        pickup,
+        drop,
+        pickupCoords,
+        dropCoords,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      alert(data.message || "Unable to calculate distance");
+      return;
+    }
+
+    const oneWayDistance = Number(data.distance);
+
+    let finalDistance = oneWayDistance;
+
+    if (tripType === "Outstation Trip") {
+      const start = new Date(pickupDate);
+      const end = new Date(returnDate);
+
+      const totalDays =
+        returnDate
+          ? Math.floor(
+              (end.getTime() - start.getTime()) /
+              (1000 * 60 * 60 * 24)
+            ) + 1
+          : 1;
+
+      const actualRoundTripDistance =
+        oneWayDistance * 2;
+
+      const minimumBillableDistance =
+        totalDays * 300;
+
+      finalDistance = Math.max(
+        actualRoundTripDistance,
+        minimumBillableDistance
+      );
+    }
+
+    setDistance(finalDistance);
+
+    const defaultRate = 13;
+
+    const newFare =
+      Math.round(finalDistance * defaultRate * 2);
+
+    setFare(newFare);
+
+    setShowSearchModal(false);
+
+    const params = new URLSearchParams(window.location.search);
+
+params.set("pickup", pickup);
+params.set("drop", drop);
+params.set("pickupDate", pickupDate);
+params.set("returnDate", returnDate);
+params.set("pickupTime", pickupTime);
+params.set("tripType", tripType);
+params.set("distance", finalDistance.toString());
+params.set("fare", newFare.toString());
+
+router.replace(`/book-cab?${params.toString()}`);
+
+    console.log(
+      "MODIFIED DISTANCE:",
+      finalDistance
+    );
+
+    console.log(
+      "MODIFIED FARE:",
+      newFare
+    );
+
+  } catch (error) {
+    console.log(
+      "MODIFY SEARCH DISTANCE ERROR:",
+      error
+    );
+
+    alert(
+      "Unable to calculate distance. Please try again."
+    );
+  } finally {
+    setLoadingDistance(false);
+  }
+};
+
 useEffect(() => {
   const getDistance = async () => {
 
@@ -191,8 +432,10 @@ if (cachedDistance) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          pickup,
-          drop,
+        pickup,
+        drop,
+        pickupCoords,
+        dropCoords,
         }),
       });
 
@@ -284,7 +527,15 @@ setDistance(billableDistance);
   if (pickup && drop) {
     getDistance();
   }
-}, [pickup, drop, pickupDate, returnDate, tripType]);
+}, [
+  pickup,
+  drop,
+  pickupDate,
+  returnDate,
+  tripType,
+  pickupCoords,
+  dropCoords,
+]);
 
 useEffect(() => {
   const footer = footerRef.current;
@@ -319,71 +570,116 @@ const includedHours =
     ? 8
     : 12;
 
-  const cabs = [
-  {
-  name: "Swift Dzire",
-  seats: 4,
-  bags: 2,
-  fuel: "CNG / Petrol",
-  rate: 13,
-  extraHour: 150,
-  image: "/cars/dzire.jpg",
+    const isMaharashtraLocation = (location: string) => {
+  const text = location.toLowerCase();
 
-  packageFare: {
-    "40 KM / 4 Hrs": 1200,
-    "80 KM / 8 Hrs": 2200,
-    "120 KM / 12 Hrs": 3000,
-  },
-  },
+  return (
+    text.includes("maharashtra") ||
+    text.includes("nagpur") ||
+    text.includes("mumbai") ||
+    text.includes("pune") ||
+    text.includes("nashik") ||
+    text.includes("aurangabad") ||
+    text.includes("chhatrapati sambhajinagar") ||
+    text.includes("amravati") ||
+    text.includes("akola") ||
+    text.includes("wardha") ||
+    text.includes("bhandara") ||
+    text.includes("gondia") ||
+    text.includes("chandrapur") ||
+    text.includes("gadchiroli") ||
+    text.includes("yavatmal") ||
+    text.includes("buldhana") ||
+    text.includes("washim") ||
+    text.includes("jalgaon") ||
+    text.includes("dhule") ||
+    text.includes("nanded") ||
+    text.includes("latur") ||
+    text.includes("solapur") ||
+    text.includes("satara") ||
+    text.includes("kolhapur") ||
+    text.includes("sangli") ||
+    text.includes("ratnagiri") ||
+    text.includes("thane") ||
+    text.includes("palghar") ||
+    text.includes("raigad")
+  );
+};
 
+const showStateTax =
+  pickup.trim() !== "" &&
+  drop.trim() !== "" &&
+  (!isMaharashtraLocation(pickup) ||
+    !isMaharashtraLocation(drop));
+
+const cabs = [
   {
-  name: "Ertiga",
-  seats: 6,
-  bags: 3,
-  fuel: "CNG / Petrol",
-  rate: 15,
-  extraHour: 250,
-  image: "/ertiga.jpeg",
+    name: "Swift Dzire",
+    category: "SEDAN",
+    seats: 4,
+    bags: 2,
+    fuel: "CNG / Petrol",
+    rate: 12,
+    extraHour: 150,
+    image: "/cars/dzire.jpg",
 
     packageFare: {
-    "40 KM / 4 Hrs": 1500,
-    "80 KM / 8 Hrs": 2500,
-    "120 KM / 12 Hrs": 3100,
-  },
-  },
-
-  {
-  name: "Toyota Rumion",
-  seats: 6,
-  bags: 3,
-  fuel: "CNG / Petrol",
-  rate: 15,
-  extraHour: 250,
-  image: "/cars/rumion.png",
-
-   packageFare: {
-    "40 KM / 4 Hrs": 1600,
-    "80 KM / 8 Hrs": 2600,
-    "120 KM / 12 Hrs": 3200,
-  },
+      "40 KM / 4 Hrs": 1200,
+      "80 KM / 8 Hrs": 2200,
+      "120 KM / 12 Hrs": 3000,
+    },
   },
 
   {
-  name: "Innova Crysta",
-  seats: 7,
-  bags: 4,
-  fuel: "Diesel",
-  rate: 19,
-  extraHour: 350,
-  image: "/cars/crysta.jpg",
+    name: "Ertiga",
+    category: "SUV",
+    seats: 6,
+    bags: 3,
+    fuel: "CNG / Petrol",
+    rate: 14,
+    extraHour: 250,
+    image: "/ertiga.jpeg",
 
-  packageFare: {
-    "40 KM / 4 Hrs": 3500,
-    "80 KM / 8 Hrs": 4200,
-    "120 KM / 12 Hrs": 5000,
+    packageFare: {
+      "40 KM / 4 Hrs": 1500,
+      "80 KM / 8 Hrs": 2500,
+      "120 KM / 12 Hrs": 3100,
+    },
   },
+
+  {
+    name: "Toyota Rumion",
+    category: "SUV",
+    seats: 6,
+    bags: 3,
+    fuel: "CNG / Petrol",
+    rate: 15,
+    extraHour: 250,
+    image: "/cars/rumion.png",
+
+    packageFare: {
+      "40 KM / 4 Hrs": 1600,
+      "80 KM / 8 Hrs": 2600,
+      "120 KM / 12 Hrs": 3200,
+    },
   },
-  
+
+  {
+    name: "Innova Crysta",
+    category: "PREMIUM SUV",
+    seats: 7,
+    bags: 4,
+    fuel: "Diesel",
+    rate: 19,
+    extraHour: 350,
+    image: "/cars/crysta.jpg",
+
+    packageFare: {
+      "40 KM / 4 Hrs": 3500,
+      "80 KM / 8 Hrs": 4200,
+      "120 KM / 12 Hrs": 5000,
+    },
+  },
 ];
 
 const isNagpurAirportTransfer =
@@ -409,6 +705,15 @@ const isFormComplete =
   pickup.trim() !== "" &&
   drop.trim() !== "" &&
   pickupDate !== "";
+
+  const getDiscountedRate = (cab: typeof cabs[number]) => {
+  if (cab.name === "Swift Dzire") return 10.99;
+  if (cab.name === "Ertiga") return 12.99;
+  if (cab.name === "Toyota Rumion") return 13.99;
+  if (cab.name === "Innova Crysta") return 17.99;
+
+  return cab.rate;
+};
 
   const getCabFare = (cab: typeof cabs[number]) => {
   if (!isFormComplete) return 0;
@@ -450,6 +755,25 @@ if (tripType === "Outstation Trip") {
 }
 
   return Math.round(distance * cab.rate);
+};
+
+const getFinalCabFare = (cab: typeof cabs[number]) => {
+  if (tripType === "Local Rental") {
+    return getCabFare(cab);
+  }
+
+  return Math.round(
+    distance *
+      getDiscountedRate(cab) *
+      (tripType === "One Way Trip" || tripType === "One Way" ? 2 : 1)
+  );
+};
+
+const getCabDiscount = (cab: typeof cabs[number]) => {
+  const originalFare = getCabFare(cab);
+  const finalFare = getFinalCabFare(cab);
+
+  return Math.max(0, originalFare - finalFare);
 };
 
   return (
@@ -647,22 +971,71 @@ if (tripType === "Outstation Trip") {
     className="h-[58px] md:h-[64px] w-full rounded-2xl border-2 border-gray-200 bg-white pl-12 pr-5 text-gray-800 placeholder:text-gray-400 shadow-sm transition-all duration-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 focus:outline-none hover:border-orange-300"
   />
 
-  {pickupSuggestions.length > 0 && (
-    <div className="absolute z-50 bg-white border rounded-xl w-full max-h-60 overflow-y-auto shadow-lg">
-      {pickupSuggestions.map((item, index) => (
-        <div
-          key={index}
-          className="p-3 cursor-pointer hover:bg-gray-100"
-          onClick={() => {
-            setPickup(item);
-            setPickupSuggestions([]);
-          }}
-        >
-          {item}
-        </div>
-      ))}
+  {(pickupSuggestions.length > 0 || pickup.trim() === "") && (
+  <div className="absolute z-50 bg-white border border-gray-300 rounded-xl w-full max-h-60 overflow-y-auto shadow-lg">
+
+{/* Use Current Location */}
+{pickup.trim() === "" && (
+  <button
+    type="button"
+    onClick={getCurrentLocation}
+    disabled={gettingLocation}
+    className="w-full px-4 py-3 bg-white hover:bg-blue-50 transition-all duration-200 flex items-center gap-3 text-left border-b border-gray-100"
+  >
+    <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+      <MapPin
+        size={19}
+        strokeWidth={2.5}
+        className="text-blue-600"
+      />
     </div>
+
+<div className="flex-1 min-w-0">
+  <p className="text-sm font-bold text-blue-600 whitespace-nowrap">
+    {gettingLocation
+      ? "Getting your location..."
+      : "Use Current Location"}
+  </p>
+
+  {!gettingLocation && (
+    <p className="text-[11px] text-gray-400 mt-0.5 whitespace-nowrap">
+      Quickly detect pickup location
+    </p>
   )}
+</div>
+
+    {!gettingLocation && (
+      <ChevronRight
+        size={18}
+        className="text-gray-400"
+      />
+    )}
+  </button>
+)}
+
+    {/* Location Suggestions */}
+
+    {pickupSuggestions.map((item, index) => (
+  <div
+    key={item.place_id || index}
+    className="p-3 cursor-pointer hover:bg-gray-100"
+    onClick={() => {
+      setPickup(item.display_name);
+
+      setPickupCoords({
+        lat: Number(item.lat),
+        lon: Number(item.lon),
+      });
+
+      setPickupSuggestions([]);
+    }}
+  >
+    {item.display_name}
+  </div>
+))}
+
+  </div>
+)}
 </div>
 
   <div className="relative">
@@ -686,17 +1059,23 @@ if (tripType === "Outstation Trip") {
     <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl max-h-60 overflow-y-auto">
 
       {dropSuggestions.map((item, index) => (
-        <div
-          key={index}
-          className="cursor-pointer px-4 py-3 hover:bg-orange-50 transition"
-          onClick={() => {
-            setDrop(item);
-            setDropSuggestions([]);
-          }}
-        >
-          {item}
-        </div>
-      ))}
+      <div
+    key={item.place_id || index}
+    className="cursor-pointer px-4 py-3 hover:bg-orange-50 transition"
+    onClick={() => {
+      setDrop(item.display_name);
+
+      setDropCoords({
+        lat: Number(item.lat),
+        lon: Number(item.lon),
+      });
+
+      setDropSuggestions([]);
+    }}
+  >
+    {item.display_name}
+  </div>
+))}
 
     </div>
   )}
@@ -889,19 +1268,23 @@ if (tripType === "Outstation Trip") {
     <div className="absolute left-0 right-0 top-full mt-1 bg-white border rounded-xl shadow-lg max-h-52 overflow-y-auto z-50">
 
       {pickupSuggestions.map((item, index) => (
+  <div
+    key={item.place_id || index}
+    onClick={() => {
+      setPickup(item.display_name);
 
-        <div
-          key={index}
-          onClick={() => {
-            setPickup(item);
-            setPickupSuggestions([]);
-          }}
-          className="px-4 py-3 cursor-pointer hover:bg-orange-50"
-        >
-          {item}
-        </div>
+      setPickupCoords({
+        lat: Number(item.lat),
+        lon: Number(item.lon),
+      });
 
-      ))}
+      setPickupSuggestions([]);
+    }}
+    className="px-4 py-3 cursor-pointer hover:bg-orange-50"
+  >
+    {item.display_name}
+  </div>
+))}
 
     </div>
   )}
@@ -943,19 +1326,23 @@ if (tripType === "Outstation Trip") {
     <div className="absolute left-0 right-0 top-full mt-1 bg-white border rounded-xl shadow-lg max-h-52 overflow-y-auto z-50">
 
       {dropSuggestions.map((item, index) => (
+  <div
+    key={item.place_id || index}
+    onClick={() => {
+      setDrop(item.display_name);
 
-        <div
-          key={index}
-          onClick={() => {
-            setDrop(item);
-            setDropSuggestions([]);
-          }}
-          className="px-4 py-3 cursor-pointer hover:bg-orange-50"
-        >
-          {item}
-        </div>
+      setDropCoords({
+        lat: Number(item.lat),
+        lon: Number(item.lon),
+      });
 
-      ))}
+      setDropSuggestions([]);
+    }}
+    className="px-4 py-3 cursor-pointer hover:bg-orange-50"
+  >
+    {item.display_name}
+  </div>
+))}
 
     </div>
   )}
@@ -994,13 +1381,11 @@ if (tripType === "Outstation Trip") {
       </div>
 
       <button
-      onClick={() => {
-      handleSearch();
-      setShowSearchModal(false);
-      }}
-      className="mt-6 w-full h-14 rounded-2xl bg-orange-500 text-white text-xl font-bold"
+      onClick={handleModifySearch}
+      disabled={loadingDistance}
+      className="mt-6 w-full h-14 rounded-2xl bg-orange-500 text-white text-xl font-bold disabled:opacity-60"
       >
-      Search Modify
+      {loadingDistance ? "Updating..." : "Search Modify"}
       </button>
 
     </div>
@@ -1097,7 +1482,7 @@ if (tripType === "Outstation Trip") {
     </h2>
 
     <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-lg text-sm font-medium">
-      SEDAN
+    {cab.category}
     </span>
 
     <span className="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm font-bold">
@@ -1183,84 +1568,297 @@ if (tripType === "Outstation Trip") {
 
                   <div className="hidden md:block mt-3 md:mt-0 text-left md:text-right">
 
-                    <p className="text-red-500 text-xs">
-                    {tripType}
-                    </p>
+  {/* Trip Type Badge */}
+  <div className="inline-flex items-center gap-2 bg-red-50 border border-red-100 text-red-500 px-3 py-2 rounded-xl">
 
-                    <h3 className="text-2xl md:text-3xl font-bold">
+    <Route
+      size={16}
+      strokeWidth={2.5}
+    />
 
-                    ₹{getCabFare(cab)}
-
-                  </h3>
-
-                  <p className="text-sm text-gray-500">
-                  {tripType === "Local Rental"
-                  ? `${includedKm} KM / ${includedHours} Hrs`
-                  : `Distance: ${distance} KM`}
-                  </p>
-
-                  <p className="text-xs text-red-500 font-medium mt-1">
-                  Toll, Parking & State Tax Extra
-                  </p>
-
-                  </div>
-
-                </div>
-
-<div className="border-t mt-3 pt-3">
-
-  {/* ================= Desktop ================= */}
-  <div className="hidden md:flex justify-between items-center">
-
-    <span className="text-sm md:text-base font-semibold text-gray-700">
-      Book with ₹500 Advance
+    <span className="text-xs font-bold">
+      {tripType}
     </span>
-
-    <Link
-      href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=0&fare=${getCabFare(cab)}`}
-      className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white px-6 py-3 rounded-full font-bold text-base shadow-lg transition-all duration-300"
-    >
-      Book Now
-    </Link>
 
   </div>
 
-  {/* ================= Mobile ================= */}
+  {/* Price Area */}
+  <div className="mt-3">
 
-  <div className="md:hidden">
+    {/* Original Fare */}
+    <p className="text-lg md:text-xl text-gray-400 line-through font-semibold leading-none">
+      ₹{getCabFare(cab)}
+    </p>
 
-    <div className="flex items-center justify-between">
+    {/* Final Fare */}
+    <h3 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-none mt-1">
+      ₹{getFinalCabFare(cab)}
+    </h3>
 
-      <div>
+    {/* Saving */}
+    {tripType !== "Local Rental" &&
+      getCabDiscount(cab) > 0 && (
+        <div className="inline-flex items-center gap-2 mt-2 bg-green-50 border border-green-100 text-green-600 px-3 py-2 rounded-xl">
 
-        <h3 className="text-3xl font-bold">
-          ₹{getCabFare(cab)}
-        </h3>
+          <Gift
+            size={17}
+            strokeWidth={2.5}
+          />
 
-        <p className="text-sm text-gray-500">
-          Distance: {distance} KM
-        </p>
+          <span className="text-xs md:text-sm font-bold">
+            You Save ₹{getCabDiscount(cab)}
+          </span>
 
-        <p className="text-xs text-red-500 mt-1">
-          Toll, Parking & State Tax Extra
-        </p>
+        </div>
+      )}
+
+  </div>
+
+  {/* Extra Charges */}
+  {tripType !== "Local Rental" && (
+    <div className="flex items-center justify-end gap-3 mt-3 text-gray-500">
+
+      <div className="flex items-center gap-1">
+        <ReceiptText
+          size={14}
+          strokeWidth={2}
+        />
+        <span className="text-[10px] md:text-[11px] font-medium">
+          Toll Extra
+        </span>
+      </div>
+
+      <div className="flex items-center gap-1">
+        <CircleParking
+          size={14}
+          strokeWidth={2}
+        />
+        <span className="text-[10px] md:text-[11px] font-medium">
+          Parking Extra
+        </span>
+      </div>
+
+      {showStateTax && (
+      <div className="flex items-center gap-1">
+      <ReceiptText
+      size={14}
+      strokeWidth={2}
+      />
+      <span className="text-[10px] md:text-[11px] font-medium">
+      State Tax Extra
+      </span>
+    </div>
+  )}
+
+    </div>
+  )}
+
+</div>
+
+</div>
+
+<div className="border-t mt-3 pt-3">
+
+{/* ================= Desktop ================= */}
+<div className="hidden md:flex justify-between items-center">
+
+  {/* Advance Booking */}
+  <div className="flex items-center gap-3">
+
+    <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+      <ShieldCheck
+        size={25}
+        strokeWidth={2.5}
+        className="text-blue-600"
+      />
+    </div>
+
+    <div>
+      <p className="text-base md:text-lg font-bold text-gray-900">
+        Book with ₹500 Advance
+      </p>
+
+      <p className="text-sm text-gray-500 mt-0.5">
+        Secure your ride
+      </p>
+    </div>
+
+  </div>
+
+  {/* Book Now Button */}
+  <Link
+    href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=0&fare=${getFinalCabFare(cab)}`}
+    className="h-14 md:h-16 min-w-[180px] md:min-w-[210px] px-8 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold text-lg md:text-xl flex items-center justify-center gap-4 shadow-lg hover:shadow-xl transition-all duration-300"
+  >
+    <span>
+      Book Now
+    </span>
+
+    <span className="w-9 h-9 rounded-full bg-white text-blue-600 flex items-center justify-center">
+      →
+    </span>
+  </Link>
+
+</div>
+
+{/* ================= Mobile ================= */}
+
+<div className="md:hidden">
+
+  {/* Mobile Price Section */}
+  <div className="flex items-start justify-between gap-3">
+
+    <div>
+
+      {/* Original Fare */}
+      <p className="text-base text-gray-400 line-through font-semibold leading-none">
+        ₹{getCabFare(cab)}
+      </p>
+
+      {/* Final Fare */}
+      <h3 className="text-3xl font-extrabold text-gray-900 leading-none mt-1">
+        ₹{getFinalCabFare(cab)}
+      </h3>
+
+      {/* Saving */}
+      {tripType !== "Local Rental" &&
+        getCabDiscount(cab) > 0 && (
+          <div className="inline-flex items-center gap-1.5 mt-2 bg-green-50 border border-green-100 text-green-600 px-2.5 py-1.5 rounded-lg">
+
+            <Gift
+              size={14}
+              strokeWidth={2.5}
+            />
+
+            <span className="text-xs font-bold">
+              You Save ₹{getCabDiscount(cab)}
+            </span>
+
+          </div>
+        )}
+
+    </div>
+
+    {/* Trip Type */}
+    <div className="inline-flex items-center gap-1.5 bg-red-50 border border-red-100 text-red-500 px-2.5 py-1.5 rounded-lg">
+
+      <Route
+        size={14}
+        strokeWidth={2.5}
+      />
+
+      <span className="text-[10px] font-bold">
+        {tripType}
+      </span>
+
+    </div>
+
+  </div>
+
+
+  {/* Extra Charges */}
+  {tripType !== "Local Rental" && (
+    <div className="flex items-center gap-3 mt-3 text-gray-500">
+
+      <div className="flex items-center gap-1">
+
+        <ReceiptText
+          size={13}
+          strokeWidth={2}
+        />
+
+        <span className="text-[10px] font-medium">
+          Toll Extra
+        </span>
 
       </div>
 
+      <div className="flex items-center gap-1">
+
+        <CircleParking
+          size={13}
+          strokeWidth={2}
+        />
+
+        <span className="text-[10px] font-medium">
+          Parking Extra
+        </span>
+
+      </div>
+
+      {showStateTax && (
+      <div className="flex items-center gap-1">
+
+      <ReceiptText
+      size={13}
+      strokeWidth={2}
+      />
+
+      <span className="text-[10px] font-medium">
+      State Tax Extra
+      </span>
+
+    </div>
+    )}
+
+    </div>
+  )}
+
+
+  {/* Bottom Booking Row */}
+  <div className="border-t mt-3 pt-3">
+
+    <div className="flex items-center justify-between gap-3">
+
+      {/* Advance */}
+      <div className="flex items-center gap-2 min-w-0">
+
+        <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+
+          <ShieldCheck
+            size={20}
+            strokeWidth={2.5}
+            className="text-blue-600"
+          />
+
+        </div>
+
+        <div className="min-w-0">
+
+          <p className="text-xs font-bold text-gray-900 whitespace-nowrap">
+            Book with ₹500 Advance
+          </p>
+
+          <p className="text-[10px] text-gray-500 mt-0.5">
+            Secure your ride
+          </p>
+
+        </div>
+
+      </div>
+
+
+      {/* Book Now */}
       <Link
-        href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=0&fare=${getCabFare(cab)}`}
-        className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-5 py-3 rounded-full font-bold"
+        href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=0&fare=${getFinalCabFare(cab)}`}
+        className="h-11 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shrink-0"
       >
-        Book Now
+
+        <span>
+          Book Now
+        </span>
+
+        <span className="w-7 h-7 rounded-full bg-white text-blue-600 flex items-center justify-center text-lg font-bold">
+          →
+        </span>
+
       </Link>
 
     </div>
 
-    <p className="text-center mt-3 font-semibold text-gray-700">
-      Book with ₹500 Advance
-    </p>
-
   </div>
+
+</div>
 
 </div>
               </div>

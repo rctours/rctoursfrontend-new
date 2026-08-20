@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
+import { createNotification } from "@/lib/notifications";
+import {
+  createCustomerNotification,
+} from "@/lib/customerNotifications";
 
 // ===============================================
 // GET SINGLE BOOKING
@@ -70,9 +74,7 @@ export async function GET(request, { params }) {
       success: true,
       booking,
     });
-
   } catch (error) {
-
     console.error(
       "GET SINGLE RESERVATION API MODULE EXCEPTION:",
       error
@@ -114,6 +116,31 @@ export async function PATCH(request, { params }) {
         }
       );
     }
+
+    // ===============================================
+    // GET CURRENT BOOKING
+    // Driver assignment change detect karne ke liye
+    // ===============================================
+
+    const currentBooking = await db.collection("bookings").findOne({
+      bookingId: bookingId.trim(),
+    });
+
+    if (!currentBooking) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Booking not found.",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    // ===============================================
+    // GET UPDATE DATA
+    // ===============================================
 
     const body = await request.json();
 
@@ -158,6 +185,10 @@ export async function PATCH(request, { params }) {
 
     updateData.updatedAt = new Date();
 
+    // ===============================================
+    // UPDATE BOOKING
+    // ===============================================
+
     const result = await db.collection("bookings").updateOne(
       {
         bookingId: bookingId.trim(),
@@ -180,9 +211,60 @@ export async function PATCH(request, { params }) {
       );
     }
 
+    // ===============================================
+    // GET UPDATED BOOKING
+    // ===============================================
+
     const updatedBooking = await db.collection("bookings").findOne({
       bookingId: bookingId.trim(),
     });
+
+    // ===============================================
+    // DRIVER ASSIGNMENT CHANGE DETECTION
+    // ===============================================
+
+    const driverWasChanged =
+      body.driverId &&
+      body.driverId !== currentBooking.driverId;
+
+    // ===============================================
+    // CREATE ADMIN + CUSTOMER NOTIFICATION
+    // ===============================================
+
+    if (driverWasChanged && updatedBooking) {
+      // -------------------------------------------
+      // ADMIN NOTIFICATION
+      // -------------------------------------------
+
+      await createNotification({
+        title: "Driver Assigned",
+        message: `${updatedBooking.driverName || "A driver"} has been assigned to booking ${updatedBooking.bookingId}.`,
+        type: "driver",
+        link: `/admin/bookings/${updatedBooking.bookingId}`,
+      });
+
+      // -------------------------------------------
+      // CUSTOMER NOTIFICATION
+      // -------------------------------------------
+
+      await createCustomerNotification({
+        mobile: updatedBooking.mobile,
+
+        title: "Driver Assigned 🚖",
+
+        message: updatedBooking.driverMobile
+          ? `Your driver ${updatedBooking.driverName || "has been"} assigned for your trip. Driver contact: ${updatedBooking.driverMobile}`
+          : `Your driver ${updatedBooking.driverName || ""} has been assigned for your trip.`,
+
+        type: "driver_assigned",
+
+        link: "/my-profile",
+      });
+    }
+
+    // ===============================================
+    // RETURN UPDATED BOOKING
+    // ===============================================
 
     return NextResponse.json({
       success: true,
@@ -190,9 +272,7 @@ export async function PATCH(request, { params }) {
         "Ledger transaction updated successfully inside active state.",
       booking: updatedBooking,
     });
-
   } catch (error) {
-
     console.error(
       "PATCH RESERVATION DISPATCH PIPELINE EXCEPTION:",
       error

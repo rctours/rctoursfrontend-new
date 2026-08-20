@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { createNotification } from "@/lib/notifications";
+import {
+  createCustomerNotification,
+} from "@/lib/customerNotifications";
 
 // ===============================================
 // POST METHOD: SAVE CUSTOMER RESERVATION
@@ -13,6 +16,7 @@ export async function POST(request) {
     // NORMALIZE MOBILE NUMBER
     // Always save as 91XXXXXXXXXX
     // ===============================================
+
     let mobile = String(body.mobile || "").replace(/\D/g, "");
 
     if (mobile.length === 10) {
@@ -24,6 +28,7 @@ export async function POST(request) {
     // ===============================================
     // DATA VALIDATION
     // ===============================================
+
     if (!body.name || !body.mobile || !body.pickup || !body.drop) {
       return NextResponse.json(
         {
@@ -40,6 +45,7 @@ export async function POST(request) {
     // ===============================================
     // GENERATE BOOKING ID
     // ===============================================
+
     const today = new Date();
 
     const yy = today.getFullYear().toString().slice(-2);
@@ -51,9 +57,13 @@ export async function POST(request) {
     const lastBooking = await db
       .collection("bookings")
       .find({
-        bookingId: { $regex: `^${prefix}` },
+        bookingId: {
+          $regex: `^${prefix}`,
+        },
       })
-      .sort({ bookingId: -1 })
+      .sort({
+        bookingId: -1,
+      })
       .limit(1)
       .toArray();
 
@@ -64,11 +74,13 @@ export async function POST(request) {
       sequence = Number(lastId.slice(-4)) + 1;
     }
 
-    const bookingId = `${prefix}${String(sequence).padStart(4, "0")}`;
+    const bookingId =
+      `${prefix}${String(sequence).padStart(4, "0")}`;
 
     // ===============================================
     // BOOKING OBJECT
     // ===============================================
+
     const newBooking = {
       ...body,
 
@@ -103,26 +115,53 @@ export async function POST(request) {
     // ===============================================
     // SAVE BOOKING
     // ===============================================
-    const result = await db.collection("bookings").insertOne(newBooking);
+
+    const result = await db
+      .collection("bookings")
+      .insertOne(newBooking);
 
     // ===============================================
     // CREATE ADMIN NOTIFICATION
     // ===============================================
+
     await createNotification({
       title: "New Booking Received",
-      message: `${body.name} booked a ride from ${body.pickup} to ${body.drop}.`,
+      message:
+        `${body.name} booked a ride from ` +
+        `${body.pickup} to ${body.drop}.`,
       type: "booking",
       link: `/admin/bookings/${bookingId}`,
     });
 
     // ===============================================
+    // CREATE CUSTOMER BOOKING NOTIFICATION
+    // ===============================================
+
+    await createCustomerNotification({
+      mobile: body.mobile,
+
+      title: "Booking Confirmed 🎉",
+
+      message:
+        `Your booking ${bookingId} has been successfully received. ` +
+        `Trip: ${body.pickup} to ${body.drop}. ` +
+        `You can check your booking details in your Customer Portal.`,
+
+      type: "booking-confirmed",
+
+      link: "/profile-login",
+    });
+
+    // ===============================================
     // MARK COUPON AS USED
     // ===============================================
-    if (body.couponApplied && body.couponCode) {
 
-      const customer = await db.collection("customers").findOne({
-        mobile: body.mobile,
-      });
+    if (body.couponApplied && body.couponCode) {
+      const customer = await db
+        .collection("customers")
+        .findOne({
+          mobile: body.mobile,
+        });
 
       await db.collection("customers").updateOne(
         {
@@ -140,33 +179,70 @@ export async function POST(request) {
 
       await db.collection("loyaltyHistory").insertOne({
         customerId: customer?._id || null,
+
         mobile: body.mobile,
+
         name: body.name,
+
         action: "Coupon Redeemed",
+
         points: body.couponDiscount,
+
         reason: body.couponCode,
-        balancePoints: customer?.loyaltyPoints || 0,
+
+        balancePoints:
+          customer?.loyaltyPoints || 0,
+
         bookingId,
+
         createdAt: new Date(),
+      });
+
+      // =============================================
+      // CUSTOMER COUPON USED NOTIFICATION
+      // =============================================
+
+      await createCustomerNotification({
+        mobile: body.mobile,
+
+        title: "Reward Coupon Used 🎁",
+
+        message:
+          `Your coupon ${body.couponCode} has been successfully applied ` +
+          `to booking ${bookingId}. You saved ₹${body.couponDiscount || 0}.`,
+
+        type: "coupon-used",
+
+        link: "/profile-login",
       });
     }
 
+    // ===============================================
+    // SUCCESS RESPONSE
+    // ===============================================
+
     return NextResponse.json({
       success: true,
+
       message:
         "Reservation recorded successfully within RC Tours & Travels registry.",
+
       bookingId,
+
       insertedId: result.insertedId,
     });
 
   } catch (error) {
-
-    console.error("CRITICAL BOOKING SAVE PIPELINE EXCEPTION:", error);
+    console.error(
+      "CRITICAL BOOKING SAVE PIPELINE EXCEPTION:",
+      error
+    );
 
     return NextResponse.json(
       {
         success: false,
-        message: "Internal ledger processing data exception encountered.",
+        message:
+          "Internal ledger processing data exception encountered.",
       },
       {
         status: 500,

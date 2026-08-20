@@ -28,6 +28,36 @@ export default function BookingSuccessPage() {
     }
   }, []);
 
+    useEffect(() => {
+    const data = localStorage.getItem("bookingData");
+
+    if (!data) return;
+
+    try {
+      const booking = JSON.parse(data);
+
+      if (!booking?.bookingId) return;
+
+      window.dispatchEvent(
+        new CustomEvent("rc_booking_conversion", {
+          detail: {
+            bookingId: booking.bookingId,
+            totalFare: booking.totalFare || 0,
+            paymentType: booking.paymentType || "",
+          },
+        })
+      );
+
+      console.log("RC Booking Conversion Tracked:", {
+        bookingId: booking.bookingId,
+        totalFare: booking.totalFare || 0,
+        paymentType: booking.paymentType || "",
+      });
+    } catch (error) {
+      console.error("Booking conversion tracking error:", error);
+    }
+  }, []);
+
   const copyBookingId = async () => {
     if (!bookingData?.bookingId) return;
 

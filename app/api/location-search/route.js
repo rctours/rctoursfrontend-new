@@ -9,12 +9,100 @@ const cache = new Map();
 const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
 
 // ===============================================
-// GET METHOD: FAST LOCATION AUTOCOMPLETE
+// GET METHOD
+// - Normal location autocomplete
+// - Current location reverse geocoding
 // ===============================================
 
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
+
+    // ===========================================
+    // CURRENT LOCATION
+    // latitude + longitude -> address
+    // ===========================================
+
+    const latitude = searchParams.get("lat");
+    const longitude = searchParams.get("lon");
+
+    if (latitude && longitude) {
+      const reverseUrl =
+        "https://nominatim.openstreetmap.org/reverse?" +
+        new URLSearchParams({
+          lat: latitude,
+          lon: longitude,
+          format: "json",
+          addressdetails: "1",
+          "accept-language": "en",
+        }).toString();
+
+      const controller = new AbortController();
+
+      const timeout = setTimeout(() => {
+        controller.abort();
+      }, 8000);
+
+      let response;
+
+      try {
+        response = await fetch(reverseUrl, {
+          method: "GET",
+
+          headers: {
+            "User-Agent":
+              "RC-Tours-Travels/1.0 (https://www.rctoursandtravels.in)",
+            Accept: "application/json",
+          },
+
+          signal: controller.signal,
+
+          cache: "no-store",
+        });
+      } finally {
+        clearTimeout(timeout);
+      }
+
+      // =========================================
+      // REVERSE GEOCODING ERROR
+      // =========================================
+
+      if (!response.ok) {
+        console.error(
+          "NOMINATIM REVERSE ERROR:",
+          response.status,
+          response.statusText
+        );
+
+        return NextResponse.json({
+          display_name: `${latitude}, ${longitude}`,
+          lat: latitude,
+          lon: longitude,
+          address: {},
+        });
+      }
+
+      const data = await response.json();
+
+      // =========================================
+      // CURRENT LOCATION RESPONSE
+      // =========================================
+
+      return NextResponse.json({
+        display_name:
+          data?.display_name ||
+          `${latitude}, ${longitude}`,
+
+        lat: data?.lat || latitude,
+        lon: data?.lon || longitude,
+
+        address: data?.address || {},
+      });
+    }
+
+    // ===========================================
+    // NORMAL LOCATION SEARCH
+    // ===========================================
 
     const rawQuery = searchParams.get("q") || "";
 
@@ -105,6 +193,7 @@ export async function GET(request) {
 
       return NextResponse.json([], {
         status: 200,
+
         headers: {
           "Cache-Control": "no-store",
         },
@@ -120,12 +209,15 @@ export async function GET(request) {
     const results = Array.isArray(data)
       ? data.map((item) => ({
           place_id: item.place_id,
+
           display_name: item.display_name,
 
           lat: item.lat,
+
           lon: item.lon,
 
           type: item.type,
+
           category: item.category,
 
           address: item.address || {},
@@ -169,9 +261,7 @@ export async function GET(request) {
     // ===========================================
 
     if (error?.name === "AbortError") {
-      console.error(
-        "LOCATION SEARCH TIMEOUT"
-      );
+      console.error("LOCATION SEARCH TIMEOUT");
 
       return NextResponse.json([], {
         status: 200,
@@ -189,6 +279,7 @@ export async function GET(request) {
 
     // Frontend should never break because
     // location provider failed.
+
     return NextResponse.json([], {
       status: 200,
     });

@@ -2,7 +2,16 @@ import { NextResponse } from "next/server";
 
 export async function POST(request) {
   try {
-    const { pickup, drop } = await request.json();
+    const {
+      pickup,
+      drop,
+      pickupCoords,
+      dropCoords,
+    } = await request.json();
+
+    // ==============================
+    // Basic Validation
+    // ==============================
 
     if (!pickup || !drop) {
       return NextResponse.json(
@@ -15,55 +24,116 @@ export async function POST(request) {
     }
 
     // ==============================
-    // Get Coordinates from Nominatim
+    // Coordinates
     // ==============================
 
-    async function getCoordinates(address) {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-          address
-        )}&format=json&limit=1&countrycodes=in`,
-        {
-          headers: {
-            "User-Agent": "RC-Tours-Travels-App/1.0",
-          },
-        }
-      );
+    let finalPickupCoords = null;
+    let finalDropCoords = null;
 
-      const data = await res.json();
+    // --------------------------------
+    // Pickup coordinates
+    // --------------------------------
 
-      if (!data.length) return null;
-
-      return [
-        Number(data[0].lon),
-        Number(data[0].lat),
+    if (
+      pickupCoords &&
+      Number.isFinite(Number(pickupCoords.lat)) &&
+      Number.isFinite(Number(pickupCoords.lon))
+    ) {
+      finalPickupCoords = [
+        Number(pickupCoords.lon),
+        Number(pickupCoords.lat),
       ];
     }
 
-    const pickupCoords = await getCoordinates(pickup);
-    const dropCoords = await getCoordinates(drop);
+    // --------------------------------
+    // Drop coordinates
+    // --------------------------------
 
-    console.log("Pickup :", pickupCoords);
-    console.log("Drop :", dropCoords);
+    if (
+      dropCoords &&
+      Number.isFinite(Number(dropCoords.lat)) &&
+      Number.isFinite(Number(dropCoords.lon))
+    ) {
+      finalDropCoords = [
+        Number(dropCoords.lon),
+        Number(dropCoords.lat),
+      ];
+    }
 
-    if (!pickupCoords || !dropCoords) {
+    // ==============================
+    // Fallback: Nominatim
+    // ==============================
+
+    async function getCoordinates(address) {
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+            address
+          )}&format=json&limit=1&countrycodes=in`,
+          {
+            headers: {
+              "User-Agent": "RC-Tours-Travels-App/1.0",
+            },
+          }
+        );
+
+        const data = await res.json();
+
+        if (!Array.isArray(data) || !data.length) {
+          return null;
+        }
+
+        return [
+          Number(data[0].lon),
+          Number(data[0].lat),
+        ];
+      } catch (error) {
+        console.log("Nominatim error:", error);
+        return null;
+      }
+    }
+
+    // --------------------------------
+    // Pickup fallback
+    // --------------------------------
+
+    if (!finalPickupCoords) {
+      finalPickupCoords = await getCoordinates(pickup);
+    }
+
+    // --------------------------------
+    // Drop fallback
+    // --------------------------------
+
+    if (!finalDropCoords) {
+      finalDropCoords = await getCoordinates(drop);
+    }
+
+    console.log("Pickup :", finalPickupCoords);
+    console.log("Drop :", finalDropCoords);
+
+    // ==============================
+    // Check Coordinates
+    // ==============================
+
+    if (!finalPickupCoords || !finalDropCoords) {
       return NextResponse.json(
         {
           success: false,
-          message: "Location not found",
+          message: "Location coordinates not found",
         },
         { status: 400 }
       );
     }
 
     // ==============================
-    // OSRM ROUTE API
+    // OSRM Route API
     // ==============================
 
     const url =
       `https://router.project-osrm.org/route/v1/driving/` +
-      `${pickupCoords[0]},${pickupCoords[1]};` +
-      `${dropCoords[0]},${dropCoords[1]}` +
+      `${finalPickupCoords[0]},${finalPickupCoords[1]};` +
+      `${finalDropCoords[0]},${finalDropCoords[1]}` +
       `?overview=false`;
 
     const routeRes = await fetch(url);
@@ -71,6 +141,10 @@ export async function POST(request) {
     const routeData = await routeRes.json();
 
     console.log("OSRM Response :", routeData);
+
+    // ==============================
+    // Check Route
+    // ==============================
 
     if (
       routeData.code !== "Ok" ||
@@ -86,18 +160,26 @@ export async function POST(request) {
       );
     }
 
+    // ==============================
+    // Distance
+    // ==============================
+
     const distanceKm = Math.round(
       routeData.routes[0].distance / 1000
     );
+
+    console.log("DISTANCE KM :", distanceKm);
+
+    // ==============================
+    // Final Response
+    // ==============================
 
     return NextResponse.json({
       success: true,
       distance: distanceKm,
     });
-
   } catch (error) {
-
-    console.log(error);
+    console.log("Distance API Error:", error);
 
     return NextResponse.json(
       {
