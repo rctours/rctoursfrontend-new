@@ -13,6 +13,20 @@ webpush.setVapidDetails(
 );
 
 // ======================================================
+// NORMALIZE MOBILE NUMBER
+// ======================================================
+
+function normalizeMobile(mobile) {
+  let value = String(mobile || "").replace(/\D/g, "");
+
+  if (value.length === 10) {
+    value = "91" + value;
+  }
+
+  return value;
+}
+
+// ======================================================
 // POST - SEND PUSH NOTIFICATION
 // ======================================================
 
@@ -22,32 +36,41 @@ export async function POST(request) {
 
     const {
       mobile,
+      role = "customer",
       title,
       message,
-      url = "/my-profile",
+      url,
     } = body;
 
     // ==================================================
-    // VALIDATION
+    // VALIDATE ROLE
     // ==================================================
 
-    if (!mobile) {
+    if (
+      role !== "customer" &&
+      role !== "admin"
+    ) {
       return NextResponse.json(
         {
           success: false,
-          message: "Mobile number is required.",
+          message: "Invalid notification role.",
         },
         {
           status: 400,
         }
       );
     }
+
+    // ==================================================
+    // VALIDATE TITLE AND MESSAGE
+    // ==================================================
 
     if (!title || !message) {
       return NextResponse.json(
         {
           success: false,
-          message: "Notification title and message are required.",
+          message:
+            "Notification title and message are required.",
         },
         {
           status: 400,
@@ -56,13 +79,40 @@ export async function POST(request) {
     }
 
     // ==================================================
-    // NORMALIZE MOBILE NUMBER
+    // PREPARE SUBSCRIPTION QUERY
     // ==================================================
 
-    let normalizedMobile = String(mobile).replace(/\D/g, "");
+    let subscriptionQuery = {};
 
-    if (normalizedMobile.length === 10) {
-      normalizedMobile = "91" + normalizedMobile;
+    // CUSTOMER NOTIFICATION
+    if (role === "customer") {
+      if (!mobile) {
+        return NextResponse.json(
+          {
+            success: false,
+            message:
+              "Mobile number is required for customer notification.",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+
+      const normalizedMobile =
+        normalizeMobile(mobile);
+
+      subscriptionQuery = {
+        mobile: normalizedMobile,
+        role: "customer",
+      };
+    }
+
+    // ADMIN NOTIFICATION
+    if (role === "admin") {
+      subscriptionQuery = {
+        role: "admin",
+      };
     }
 
     // ==================================================
@@ -73,21 +123,21 @@ export async function POST(request) {
     const db = client.db("rctours");
 
     // ==================================================
-    // FIND CUSTOMER PUSH SUBSCRIPTIONS
+    // FIND PUSH SUBSCRIPTIONS
     // ==================================================
 
     const subscriptions = await db
       .collection("pushSubscriptions")
-      .find({
-        mobile: normalizedMobile,
-      })
+      .find(subscriptionQuery)
       .toArray();
 
     if (!subscriptions.length) {
       return NextResponse.json({
         success: false,
-        message: "No push subscription found for this customer.",
+        message:
+          `No ${role} push subscription found.`,
         sent: 0,
+        failed: 0,
       });
     }
 
@@ -97,15 +147,22 @@ export async function POST(request) {
 
     const payload = JSON.stringify({
       title,
-      message,
-      url,
+      body: message,
+      url:
+        url ||
+        (
+          role === "admin"
+            ? "/admin/bookings"
+            : "/my-profile"
+        ),
+      tag: `rc-${role}-notification`,
     });
 
     let sent = 0;
     const expiredEndpoints = [];
 
     // ==================================================
-    // SEND NOTIFICATION TO ALL CUSTOMER DEVICES
+    // SEND TO ALL MATCHING DEVICES
     // ==================================================
 
     for (const item of subscriptions) {
@@ -116,6 +173,11 @@ export async function POST(request) {
         );
 
         sent++;
+
+        console.log(
+          `PUSH SENT TO ${role.toUpperCase()}:`,
+          item.mobile
+        );
       } catch (error) {
         console.error(
           "PUSH SEND ERROR:",
@@ -146,15 +208,21 @@ export async function POST(request) {
             $in: expiredEndpoints,
           },
         });
+
+      console.log(
+        "EXPIRED PUSH SUBSCRIPTIONS REMOVED:",
+        expiredEndpoints.length
+      );
     }
 
     // ==================================================
-    // RESPONSE
+    // SUCCESS RESPONSE
     // ==================================================
 
     return NextResponse.json({
       success: true,
-      message: "Push notification processed.",
+      message:
+        `${role} push notification processed successfully.`,
       sent,
       failed:
         subscriptions.length - sent,
@@ -171,6 +239,8 @@ export async function POST(request) {
         success: false,
         message:
           "Unable to send push notification.",
+        error:
+          error.message || "Unknown error",
       },
       {
         status: 500,

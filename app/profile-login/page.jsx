@@ -259,32 +259,7 @@ export default function TrackBookingPage() {
   console.log(
     "Push subscription saved successfully."
   );
-
-  // ================================================
-  // SEND TEST NOTIFICATION AFTER SUCCESSFUL SUBSCRIBE
-  // ================================================
-
-  try {
-    const testResponse = await fetch(
-      "/api/push/test",
-      {
-        method: "POST",
-      }
-    );
-
-    const testData =
-      await testResponse.json();
-
-    console.log(
-      "TEST PUSH RESULT:",
-      testData
-    );
-  } catch (testError) {
-    console.error(
-      "TEST PUSH ERROR:",
-      testError
-    );
-  }
+  
 }
     } catch (error) {
       console.error(

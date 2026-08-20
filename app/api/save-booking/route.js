@@ -4,10 +4,22 @@ import { createNotification } from "@/lib/notifications";
 import {
   createCustomerNotification,
 } from "@/lib/customerNotifications";
+import webpush from "web-push";
+
+// ===============================================
+// WEB PUSH CONFIGURATION
+// ===============================================
+
+webpush.setVapidDetails(
+  process.env.VAPID_SUBJECT,
+  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
+);
 
 // ===============================================
 // POST METHOD: SAVE CUSTOMER RESERVATION
 // ===============================================
+
 export async function POST(request) {
   try {
     const body = await request.json();
@@ -17,7 +29,9 @@ export async function POST(request) {
     // Always save as 91XXXXXXXXXX
     // ===============================================
 
-    let mobile = String(body.mobile || "").replace(/\D/g, "");
+    let mobile = String(
+      body.mobile || ""
+    ).replace(/\D/g, "");
 
     if (mobile.length === 10) {
       mobile = "91" + mobile;
@@ -29,15 +43,27 @@ export async function POST(request) {
     // DATA VALIDATION
     // ===============================================
 
-    if (!body.name || !body.mobile || !body.pickup || !body.drop) {
+    if (
+      !body.name ||
+      !body.mobile ||
+      !body.pickup ||
+      !body.drop
+    ) {
       return NextResponse.json(
         {
           success: false,
-          message: "Operation rejected: Incomplete booking data.",
+          message:
+            "Operation rejected: Incomplete booking data.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
+
+    // ===============================================
+    // CONNECT MONGODB
+    // ===============================================
 
     const client = await clientPromise;
     const db = client.db("rctours");
@@ -48,9 +74,18 @@ export async function POST(request) {
 
     const today = new Date();
 
-    const yy = today.getFullYear().toString().slice(-2);
-    const mm = String(today.getMonth() + 1).padStart(2, "0");
-    const dd = String(today.getDate()).padStart(2, "0");
+    const yy = today
+      .getFullYear()
+      .toString()
+      .slice(-2);
+
+    const mm = String(
+      today.getMonth() + 1
+    ).padStart(2, "0");
+
+    const dd = String(
+      today.getDate()
+    ).padStart(2, "0");
 
     const prefix = `RCT${yy}${mm}${dd}`;
 
@@ -70,12 +105,18 @@ export async function POST(request) {
     let sequence = 1;
 
     if (lastBooking.length > 0) {
-      const lastId = lastBooking[0].bookingId;
-      sequence = Number(lastId.slice(-4)) + 1;
+      const lastId =
+        lastBooking[0].bookingId;
+
+      sequence =
+        Number(lastId.slice(-4)) + 1;
     }
 
     const bookingId =
-      `${prefix}${String(sequence).padStart(4, "0")}`;
+      `${prefix}${String(sequence).padStart(
+        4,
+        "0"
+      )}`;
 
     // ===============================================
     // BOOKING OBJECT
@@ -89,15 +130,23 @@ export async function POST(request) {
       bookingStatus: "Pending",
 
       paymentStatus:
-        Number(body.remainingAmount || 0) === 0
+        Number(
+          body.remainingAmount || 0
+        ) === 0
           ? "Fully Paid"
           : "Advance Paid",
 
-      advancePaid: Number(body.advancePaid || 0),
+      advancePaid: Number(
+        body.advancePaid || 0
+      ),
 
-      remainingAmount: Number(body.remainingAmount || 0),
+      remainingAmount: Number(
+        body.remainingAmount || 0
+      ),
 
-      paidAmount: Number(body.advancePaid || 0),
+      paidAmount: Number(
+        body.advancePaid || 0
+      ),
 
       tripStatus: "Pending",
 
@@ -121,17 +170,135 @@ export async function POST(request) {
       .insertOne(newBooking);
 
     // ===============================================
-    // CREATE ADMIN NOTIFICATION
+    // CREATE ADMIN PANEL NOTIFICATION
     // ===============================================
 
     await createNotification({
       title: "New Booking Received",
+
       message:
         `${body.name} booked a ride from ` +
         `${body.pickup} to ${body.drop}.`,
+
       type: "booking",
+
       link: `/admin/bookings/${bookingId}`,
     });
+
+    // ===============================================
+    // SEND PUSH NOTIFICATION TO ADMIN DEVICES
+    // ===============================================
+
+    try {
+      const adminSubscriptions = await db
+        .collection("pushSubscriptions")
+        .find({
+          role: "admin",
+        })
+        .toArray();
+
+      console.log(
+        "ADMIN PUSH SUBSCRIPTIONS:",
+        adminSubscriptions.length
+      );
+
+      const pushPayload = JSON.stringify({
+        title: "New Booking Received 🚕",
+
+        message:
+          `${body.name} booked a ride from ` +
+          `${body.pickup} to ${body.drop}.`,
+
+        url:
+          `/admin/bookings/${bookingId}`,
+      });
+
+      const expiredEndpoints = [];
+
+      let adminPushSent = 0;
+
+      // =============================================
+      // SEND TO ALL ADMIN DEVICES
+      // =============================================
+
+      for (
+        const item of adminSubscriptions
+      ) {
+        try {
+          await webpush.sendNotification(
+            item.subscription,
+            pushPayload
+          );
+
+          adminPushSent++;
+
+          console.log(
+            "ADMIN PUSH SENT SUCCESSFULLY:",
+            item.endpoint
+          );
+        } catch (pushError) {
+          console.error(
+            "ADMIN PUSH SEND ERROR:",
+            pushError
+          );
+
+          // Remove invalid / expired devices
+          if (
+            pushError.statusCode === 404 ||
+            pushError.statusCode === 410
+          ) {
+            expiredEndpoints.push(
+              item.endpoint
+            );
+          }
+        }
+      }
+
+      // =============================================
+      // REMOVE EXPIRED ADMIN SUBSCRIPTIONS
+      // =============================================
+
+      if (
+        expiredEndpoints.length > 0
+      ) {
+        await db
+          .collection("pushSubscriptions")
+          .deleteMany({
+            endpoint: {
+              $in: expiredEndpoints,
+            },
+          });
+
+        console.log(
+          "EXPIRED ADMIN PUSH SUBSCRIPTIONS REMOVED:",
+          expiredEndpoints.length
+        );
+      }
+
+      console.log(
+        "ADMIN PUSH SUMMARY:",
+        {
+          total:
+            adminSubscriptions.length,
+
+          sent:
+            adminPushSent,
+
+          failed:
+            adminSubscriptions.length -
+            adminPushSent,
+        }
+      );
+    } catch (pushError) {
+      // IMPORTANT:
+      // Push notification fail hone par
+      // booking save process fail nahi hoga
+
+      console.error(
+        "ADMIN PUSH NOTIFICATION PIPELINE ERROR:",
+        pushError
+      );
+    }
 
     // ===============================================
     // CREATE CUSTOMER BOOKING NOTIFICATION
@@ -156,47 +323,65 @@ export async function POST(request) {
     // MARK COUPON AS USED
     // ===============================================
 
-    if (body.couponApplied && body.couponCode) {
+    if (
+      body.couponApplied &&
+      body.couponCode
+    ) {
       const customer = await db
         .collection("customers")
         .findOne({
           mobile: body.mobile,
         });
 
-      await db.collection("customers").updateOne(
-        {
-          mobile: body.mobile,
-        },
-        {
-          $set: {
-            couponUsed: true,
-            couponUsedAt: new Date(),
-            couponCode: "",
-            couponDiscount: 0,
+      await db
+        .collection("customers")
+        .updateOne(
+          {
+            mobile: body.mobile,
           },
-        }
-      );
+          {
+            $set: {
+              couponUsed: true,
 
-      await db.collection("loyaltyHistory").insertOne({
-        customerId: customer?._id || null,
+              couponUsedAt:
+                new Date(),
 
-        mobile: body.mobile,
+              couponCode: "",
 
-        name: body.name,
+              couponDiscount: 0,
+            },
+          }
+        );
 
-        action: "Coupon Redeemed",
+      await db
+        .collection("loyaltyHistory")
+        .insertOne({
+          customerId:
+            customer?._id || null,
 
-        points: body.couponDiscount,
+          mobile:
+            body.mobile,
 
-        reason: body.couponCode,
+          name:
+            body.name,
 
-        balancePoints:
-          customer?.loyaltyPoints || 0,
+          action:
+            "Coupon Redeemed",
 
-        bookingId,
+          points:
+            body.couponDiscount,
 
-        createdAt: new Date(),
-      });
+          reason:
+            body.couponCode,
+
+          balancePoints:
+            customer?.loyaltyPoints || 0,
+
+          bookingId,
+
+          createdAt:
+            new Date(),
+        });
 
       // =============================================
       // CUSTOMER COUPON USED NOTIFICATION
@@ -205,15 +390,18 @@ export async function POST(request) {
       await createCustomerNotification({
         mobile: body.mobile,
 
-        title: "Reward Coupon Used 🎁",
+        title:
+          "Reward Coupon Used 🎁",
 
         message:
           `Your coupon ${body.couponCode} has been successfully applied ` +
           `to booking ${bookingId}. You saved ₹${body.couponDiscount || 0}.`,
 
-        type: "coupon-used",
+        type:
+          "coupon-used",
 
-        link: "/profile-login",
+        link:
+          "/profile-login",
       });
     }
 
@@ -229,7 +417,8 @@ export async function POST(request) {
 
       bookingId,
 
-      insertedId: result.insertedId,
+      insertedId:
+        result.insertedId,
     });
 
   } catch (error) {
@@ -241,6 +430,7 @@ export async function POST(request) {
     return NextResponse.json(
       {
         success: false,
+
         message:
           "Internal ledger processing data exception encountered.",
       },
