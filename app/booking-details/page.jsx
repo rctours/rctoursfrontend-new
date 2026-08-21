@@ -438,10 +438,14 @@ setTimeout(() => {
 };
 
 const openRazorpayCheckout = async () => {
-
   try {
-
     setLoadingBooking(true);
+
+    // ==================================================
+    // PREPARE BOOKING DATA
+    // IMPORTANT:
+    // Booking will be saved ONLY after successful payment.
+    // ==================================================
 
     const bookingData = {
       vehicle,
@@ -486,7 +490,10 @@ const openRazorpayCheckout = async () => {
 
       remainingAmount:
         paymentType === "partial"
-          ? Math.max(finalFare - advanceAmount, 0)
+          ? Math.max(
+              finalFare - advanceAmount,
+              0
+            )
           : 0,
 
       payableAmount:
@@ -497,67 +504,192 @@ const openRazorpayCheckout = async () => {
       paymentStatus: "Pending",
     };
 
-    // Save Booking
-    const bookingRes = await fetch("/api/save-booking", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(bookingData),
-    });
-
-    const bookingResult = await bookingRes.json();
-
-    console.log("BOOKING RESULT:", bookingResult);
-
-    if (!bookingResult.success) {
-      alert(bookingResult.message);
-      return;
-    }
-
-    bookingData.bookingId = bookingResult.bookingId;
-
-    localStorage.setItem(
-    "bookingData",
-    JSON.stringify(bookingData)
+    console.log(
+      "BOOKING DATA READY - WAITING FOR PAYMENT:",
+      bookingData
     );
 
-    // Create Razorpay Order
-    const orderRes = await fetch("/api/razorpay/order", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        amount:
-          paymentType === "partial"
-            ? advanceAmount
-            : finalFare,
-      }),
-    });
+    // ==================================================
+    // CREATE RAZORPAY ORDER
+    // ==================================================
 
-    const order = await orderRes.json();
+    const orderRes = await fetch(
+      "/api/razorpay/order",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify({
+          amount:
+            paymentType === "partial"
+              ? advanceAmount
+              : finalFare,
+        }),
+      }
+    );
+
+    const order =
+      await orderRes.json();
+
+    console.log(
+      "RAZORPAY ORDER RESULT:",
+      order
+    );
 
     if (!order.success) {
-      alert("Unable to create Razorpay Order");
+      alert(
+        order.message ||
+          "Unable to create Razorpay Order"
+      );
+
+      setLoadingBooking(false);
       return;
     }
+
+    // ==================================================
+    // RAZORPAY OPTIONS
+    // ==================================================
 
     const options = {
       key: order.key,
+
       amount: order.amount,
+
       currency: order.currency,
+
       name: "RC Tours & Travels",
+
       description: "Cab Booking",
+
       order_id: order.id,
 
-      handler: function (response) {
+      // ==================================================
+      // PAYMENT SUCCESS
+      // BOOKING SAVE ONLY AFTER SUCCESS
+      // ==================================================
 
-      alert("Payment Successful");
+      handler: async function (response) {
+        try {
+          console.log(
+            "RAZORPAY PAYMENT SUCCESS:",
+            response
+          );
 
-      window.location.href =
-      "/booking-success?bookingId=" +
-      bookingResult.bookingId;
+          // =============================================
+          // NOW SAVE BOOKING
+          // =============================================
+
+          const bookingRes = await fetch(
+            "/api/save-booking",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+              },
+
+              body: JSON.stringify(
+                bookingData
+              ),
+            }
+          );
+
+          const bookingResult =
+            await bookingRes.json();
+
+          console.log(
+            "FINAL BOOKING SAVE RESULT:",
+            bookingResult
+          );
+
+          // =============================================
+          // BOOKING SAVE FAILED
+          // =============================================
+
+          if (!bookingResult.success) {
+            alert(
+              bookingResult.message ||
+                "Payment successful, but booking could not be created. Please contact RC Tours & Travels."
+            );
+
+            setLoadingBooking(false);
+            return;
+          }
+
+          // =============================================
+          // FINAL BOOKING DATA
+          // =============================================
+
+          const finalBookingData = {
+            ...bookingData,
+
+            bookingId:
+              bookingResult.bookingId,
+
+            paymentStatus:
+              paymentType === "partial"
+                ? "Advance Paid"
+                : "Fully Paid",
+
+            razorpayPaymentId:
+              response.razorpay_payment_id,
+
+            razorpayOrderId:
+              response.razorpay_order_id,
+
+            razorpaySignature:
+              response.razorpay_signature,
+          };
+
+          localStorage.setItem(
+            "bookingData",
+            JSON.stringify(
+              finalBookingData
+            )
+          );
+
+          // =============================================
+          // FINAL SUCCESS
+          // =============================================
+
+          alert(
+            "Payment Successful ✅ Booking Confirmed"
+          );
+
+          window.location.href =
+            "/booking-success?bookingId=" +
+            bookingResult.bookingId;
+        } catch (error) {
+          console.error(
+            "FINAL BOOKING SAVE AFTER PAYMENT ERROR:",
+            error
+          );
+
+          alert(
+            "Payment successful, but booking confirmation failed. Please contact RC Tours & Travels."
+          );
+
+          setLoadingBooking(false);
+        }
+      },
+
+      // ==================================================
+      // RAZORPAY POPUP CLOSED
+      // ==================================================
+
+      modal: {
+        ondismiss: function () {
+          console.log(
+            "Razorpay payment popup closed."
+          );
+
+          setLoadingBooking(false);
+        },
       },
 
       prefill: {
@@ -571,20 +703,45 @@ const openRazorpayCheckout = async () => {
       },
     };
 
-    const rzp = new window.Razorpay(options);
+    // ==================================================
+    // OPEN RAZORPAY
+    // ==================================================
+
+    const rzp =
+      new window.Razorpay(options);
+
+    // ==================================================
+    // PAYMENT FAILED
+    // ==================================================
+
+    rzp.on(
+      "payment.failed",
+      function (response) {
+        console.error(
+          "RAZORPAY PAYMENT FAILED:",
+          response
+        );
+
+        setLoadingBooking(false);
+
+        alert(
+          "Payment failed. Your booking has NOT been created."
+        );
+      }
+    );
 
     rzp.open();
-
   } catch (error) {
+    console.error(
+      "OPEN RAZORPAY CHECKOUT ERROR:",
+      error
+    );
 
-    console.log(error);
-
-    alert("Payment Failed");
-
-  } finally {
+    alert(
+      "Unable to start payment. Please try again."
+    );
 
     setLoadingBooking(false);
-
   }
 };
 
