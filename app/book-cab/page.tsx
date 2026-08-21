@@ -621,7 +621,7 @@ const cabs = [
     fuel: "CNG / Petrol",
     rate: 12,
     extraHour: 150,
-    image: "/cars/dzire.jpg",
+    image: "/cars/dzire.jpeg",
 
     packageFare: {
       "40 KM / 4 Hrs": 1200,
@@ -672,7 +672,7 @@ const cabs = [
     fuel: "Diesel",
     rate: 19,
     extraHour: 350,
-    image: "/cars/crysta.jpg",
+    image: "/cars/crysta.jpeg",
 
     packageFare: {
       "40 KM / 4 Hrs": 3500,

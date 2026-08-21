@@ -17,24 +17,52 @@ webpush.setVapidDetails(
 );
 
 // ======================================================
-// SEND PUSH NOTIFICATION SAFELY
-// Push fail hone par main process fail nahi hoga
+// NORMALIZE MOBILE NUMBER
 // ======================================================
 
-async function sendPushNotifications(
+function normalizeMobile(mobile) {
+  let value = String(mobile || "")
+    .replace(/\D/g, "");
+
+  if (value.length === 10) {
+    value = "91" + value;
+  }
+
+  return value;
+}
+
+// ======================================================
+// SEND CUSTOMER PUSH SAFELY
+// ======================================================
+
+async function sendCustomerPush({
   db,
-  query,
-  payload,
-  role
-) {
+  mobile,
+  title,
+  message,
+  url = "/my-profile",
+}) {
   try {
+    const normalizedMobile =
+      normalizeMobile(mobile);
+
+    if (!normalizedMobile) {
+      return {
+        sent: 0,
+        failed: 0,
+      };
+    }
+
     const subscriptions = await db
       .collection("pushSubscriptions")
-      .find(query)
+      .find({
+        mobile: normalizedMobile,
+        role: "customer",
+      })
       .toArray();
 
     console.log(
-      `${role.toUpperCase()} PUSH SUBSCRIPTIONS:`,
+      "CUSTOMER PUSH SUBSCRIPTIONS:",
       subscriptions.length
     );
 
@@ -45,6 +73,13 @@ async function sendPushNotifications(
       };
     }
 
+    const payload = JSON.stringify({
+      title,
+      body: message,
+      url,
+      tag: "rc-customer-notification",
+    });
+
     let sent = 0;
     const expiredEndpoints = [];
 
@@ -52,18 +87,18 @@ async function sendPushNotifications(
       try {
         await webpush.sendNotification(
           item.subscription,
-          JSON.stringify(payload)
+          payload
         );
 
         sent++;
 
         console.log(
-          `${role.toUpperCase()} PUSH SENT:`,
+          "CUSTOMER PUSH SENT:",
           item.endpoint
         );
       } catch (error) {
         console.error(
-          `${role.toUpperCase()} PUSH ERROR:`,
+          "CUSTOMER PUSH ERROR:",
           error
         );
 
@@ -78,8 +113,6 @@ async function sendPushNotifications(
       }
     }
 
-    // Remove expired subscriptions
-
     if (expiredEndpoints.length > 0) {
       await db
         .collection("pushSubscriptions")
@@ -90,7 +123,7 @@ async function sendPushNotifications(
         });
 
       console.log(
-        `${role.toUpperCase()} EXPIRED SUBSCRIPTIONS REMOVED:`,
+        "EXPIRED CUSTOMER SUBSCRIPTIONS REMOVED:",
         expiredEndpoints.length
       );
     }
@@ -102,7 +135,7 @@ async function sendPushNotifications(
     };
   } catch (error) {
     console.error(
-      `${role.toUpperCase()} PUSH PIPELINE ERROR:`,
+      "CUSTOMER PUSH PIPELINE ERROR:",
       error
     );
 
@@ -123,7 +156,8 @@ export async function PATCH(request, { params }) {
     const db = client.db("rctours");
 
     const resolvedParams = await params;
-    const bookingId = resolvedParams?.bookingId;
+    const bookingId =
+      resolvedParams?.bookingId;
 
     // ======================================================
     // CHECK BOOKING ID
@@ -145,11 +179,13 @@ export async function PATCH(request, { params }) {
     // GET BOOKING
     // ======================================================
 
-    const booking = await db
-      .collection("bookings")
-      .findOne({
-        bookingId: bookingId.trim(),
-      });
+    const booking =
+      await db
+        .collection("bookings")
+        .findOne({
+          bookingId:
+            bookingId.trim(),
+        });
 
     if (!booking) {
       return NextResponse.json(
@@ -167,15 +203,10 @@ export async function PATCH(request, { params }) {
     // NORMALIZE MOBILE NUMBER
     // ======================================================
 
-    let mobile = String(
-      booking.mobile || ""
-    ).replace(/\D/g, "");
-
-    if (mobile.length === 10) {
-      mobile = "91" + mobile;
-    }
-
-    booking.mobile = mobile;
+    booking.mobile =
+      normalizeMobile(
+        booking.mobile
+      );
 
     // ======================================================
     // UPDATE BOOKING AS COMPLETED
@@ -185,15 +216,19 @@ export async function PATCH(request, { params }) {
       .collection("bookings")
       .updateOne(
         {
-          bookingId: bookingId.trim(),
+          bookingId:
+            bookingId.trim(),
         },
         {
           $set: {
-            tripStatus: "Completed",
+            tripStatus:
+              "Completed",
 
-            bookingStatus: "Completed",
+            bookingStatus:
+              "Completed",
 
-            invoiceReady: true,
+            invoiceReady:
+              true,
 
             tripCompletedAt:
               new Date(),
@@ -215,7 +250,8 @@ export async function PATCH(request, { params }) {
     let loyaltyProcessedNow = false;
 
     if (
-      booking.paymentStatus === "Fully Paid"
+      booking.paymentStatus ===
+      "Fully Paid"
     ) {
       // ====================================================
       // PROCESS LOYALTY ONLY ONCE
@@ -223,7 +259,8 @@ export async function PATCH(request, { params }) {
 
       if (!booking.loyaltyProcessed) {
         earnedPoints =
-          booking.tripType === "Outstation Trip"
+          booking.tripType ===
+          "Outstation Trip"
             ? 100
             : 50;
 
@@ -250,11 +287,13 @@ export async function PATCH(request, { params }) {
               },
 
               $inc: {
-                totalBookings: 1,
+                totalBookings:
+                  1,
 
                 totalSpent:
                   Number(
-                    booking.totalFare || 0
+                    booking.totalFare ||
+                      0
                   ),
 
                 loyaltyPoints:
@@ -389,6 +428,27 @@ export async function PATCH(request, { params }) {
                 link:
                   "/profile-login",
               });
+
+              // ============================================
+              // CUSTOMER COUPON PUSH
+              // ============================================
+
+              await sendCustomerPush({
+                db,
+
+                mobile:
+                  booking.mobile,
+
+                title:
+                  "New Reward Coupon 🎁",
+
+                message:
+                  `Congratulations! You received a ₹300 reward coupon. ` +
+                  `Coupon Code: ${couponCode}`,
+
+                url:
+                  "/my-profile",
+              });
             }
           }
 
@@ -499,8 +559,11 @@ export async function PATCH(request, { params }) {
     }
 
     // ======================================================
-    // ADMIN PANEL NOTIFICATION
+    // ADMIN PANEL + ADMIN PUSH NOTIFICATION
     // ======================================================
+
+    // createNotification() is the SINGLE ADMIN PUSH SOURCE.
+    // This prevents duplicate admin notifications.
 
     await createNotification({
       title:
@@ -519,30 +582,6 @@ export async function PATCH(request, { params }) {
     });
 
     // ======================================================
-    // ADMIN PUSH NOTIFICATION
-    // ======================================================
-
-    await sendPushNotifications(
-      db,
-      {
-        role: "admin",
-      },
-      {
-        title:
-          "Trip Completed 🚕",
-
-        body:
-          `${booking.name}'s trip from ` +
-          `${booking.pickup} to ` +
-          `${booking.drop} has been completed.`,
-
-        url:
-          `/admin/bookings/${booking.bookingId}`,
-      },
-      "admin"
-    );
-
-    // ======================================================
     // CUSTOMER TRIP COMPLETED NOTIFICATION
     // ======================================================
 
@@ -551,6 +590,10 @@ export async function PATCH(request, { params }) {
       "Fully Paid"
         ? `Your trip from ${booking.pickup} to ${booking.drop} has been completed successfully. Thank you for travelling with RC Tours & Travels.`
         : `Your trip from ${booking.pickup} to ${booking.drop} has been completed successfully. Please check your booking payment details.`;
+
+    // ================================================
+    // CUSTOMER IN-APP NOTIFICATION
+    // ================================================
 
     await createCustomerNotification({
       mobile:
@@ -569,31 +612,25 @@ export async function PATCH(request, { params }) {
         "/profile-login",
     });
 
-    // ======================================================
+    // ================================================
     // CUSTOMER PUSH NOTIFICATION
-    // ======================================================
+    // ================================================
 
-    await sendPushNotifications(
+    await sendCustomerPush({
       db,
-      {
-        mobile:
-          booking.mobile,
 
-        role:
-          "customer",
-      },
-      {
-        title:
-          "Trip Completed 🎉",
+      mobile:
+        booking.mobile,
 
-        body:
-          customerTripMessage,
+      title:
+        "Trip Completed 🎉",
 
-        url:
-          "/my-profile",
-      },
-      "customer"
-    );
+      message:
+        customerTripMessage,
+
+      url:
+        "/my-profile",
+    });
 
     // ======================================================
     // CUSTOMER LOYALTY POINT NOTIFICATION
@@ -608,6 +645,10 @@ export async function PATCH(request, { params }) {
       const loyaltyMessage =
         `Congratulations! You earned ${earnedPoints} RC Loyalty Points ` +
         `for completing your trip.`;
+
+      // ================================================
+      // CUSTOMER IN-APP NOTIFICATION
+      // ================================================
 
       await createCustomerNotification({
         mobile:
@@ -626,31 +667,25 @@ export async function PATCH(request, { params }) {
           "/profile-login",
       });
 
-      // ==================================================
-      // CUSTOMER LOYALTY PUSH NOTIFICATION
-      // ==================================================
+      // ================================================
+      // CUSTOMER PUSH
+      // ================================================
 
-      await sendPushNotifications(
+      await sendCustomerPush({
         db,
-        {
-          mobile:
-            booking.mobile,
 
-          role:
-            "customer",
-        },
-        {
-          title:
-            "Loyalty Points Added ⭐",
+        mobile:
+          booking.mobile,
 
-          body:
-            loyaltyMessage,
+        title:
+          "Loyalty Points Added ⭐",
 
-          url:
-            "/my-profile",
-        },
-        "customer"
-      );
+        message:
+          loyaltyMessage,
+
+        url:
+          "/my-profile",
+      });
     }
 
     // ======================================================
@@ -670,7 +705,8 @@ export async function PATCH(request, { params }) {
     // ======================================================
 
     return NextResponse.json({
-      success: true,
+      success:
+        true,
 
       message:
         "Trip completed successfully.",
@@ -678,7 +714,6 @@ export async function PATCH(request, { params }) {
       booking:
         updatedBooking,
     });
-
   } catch (error) {
     console.error(
       "TRIP COMPLETE ERROR:",
@@ -687,7 +722,8 @@ export async function PATCH(request, { params }) {
 
     return NextResponse.json(
       {
-        success: false,
+        success:
+          false,
 
         message:
           "Internal server error.",

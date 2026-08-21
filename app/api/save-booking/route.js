@@ -4,17 +4,6 @@ import { createNotification } from "@/lib/notifications";
 import {
   createCustomerNotification,
 } from "@/lib/customerNotifications";
-import webpush from "web-push";
-
-// ===============================================
-// WEB PUSH CONFIGURATION
-// ===============================================
-
-webpush.setVapidDetails(
-  process.env.VAPID_SUBJECT,
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-  process.env.VAPID_PRIVATE_KEY
-);
 
 // ===============================================
 // POST METHOD: SAVE CUSTOMER RESERVATION
@@ -87,7 +76,8 @@ export async function POST(request) {
       today.getDate()
     ).padStart(2, "0");
 
-    const prefix = `RCT${yy}${mm}${dd}`;
+    const prefix =
+      `RCT${yy}${mm}${dd}`;
 
     const lastBooking = await db
       .collection("bookings")
@@ -113,10 +103,9 @@ export async function POST(request) {
     }
 
     const bookingId =
-      `${prefix}${String(sequence).padStart(
-        4,
-        "0"
-      )}`;
+      `${prefix}${String(
+        sequence
+      ).padStart(4, "0")}`;
 
     // ===============================================
     // BOOKING OBJECT
@@ -136,17 +125,14 @@ export async function POST(request) {
           ? "Fully Paid"
           : "Advance Paid",
 
-      advancePaid: Number(
-        body.advancePaid || 0
-      ),
+      advancePaid:
+        Number(body.advancePaid || 0),
 
-      remainingAmount: Number(
-        body.remainingAmount || 0
-      ),
+      remainingAmount:
+        Number(body.remainingAmount || 0),
 
-      paidAmount: Number(
-        body.advancePaid || 0
-      ),
+      paidAmount:
+        Number(body.advancePaid || 0),
 
       tripStatus: "Pending",
 
@@ -170,153 +156,49 @@ export async function POST(request) {
       .insertOne(newBooking);
 
     // ===============================================
-    // CREATE ADMIN PANEL NOTIFICATION
+    // CREATE ADMIN NOTIFICATION
+    //
+    // createNotification() handles:
+    // 1. MongoDB admin notification
+    // 2. Admin push notification
     // ===============================================
 
     await createNotification({
-      title: "New Booking Received",
+      title:
+        "New Booking Received",
 
       message:
         `${body.name} booked a ride from ` +
         `${body.pickup} to ${body.drop}.`,
 
-      type: "booking",
+      type:
+        "booking",
 
-      link: `/admin/bookings/${bookingId}`,
+      link:
+        `/admin/bookings/${bookingId}`,
     });
-
-    // ===============================================
-    // SEND PUSH NOTIFICATION TO ADMIN DEVICES
-    // ===============================================
-
-    try {
-      const adminSubscriptions = await db
-        .collection("pushSubscriptions")
-        .find({
-          role: "admin",
-        })
-        .toArray();
-
-      console.log(
-        "ADMIN PUSH SUBSCRIPTIONS:",
-        adminSubscriptions.length
-      );
-
-      const pushPayload = JSON.stringify({
-        title: "New Booking Received 🚕",
-
-        message:
-          `${body.name} booked a ride from ` +
-          `${body.pickup} to ${body.drop}.`,
-
-        url:
-          `/admin/bookings/${bookingId}`,
-      });
-
-      const expiredEndpoints = [];
-
-      let adminPushSent = 0;
-
-      // =============================================
-      // SEND TO ALL ADMIN DEVICES
-      // =============================================
-
-      for (
-        const item of adminSubscriptions
-      ) {
-        try {
-          await webpush.sendNotification(
-            item.subscription,
-            pushPayload
-          );
-
-          adminPushSent++;
-
-          console.log(
-            "ADMIN PUSH SENT SUCCESSFULLY:",
-            item.endpoint
-          );
-        } catch (pushError) {
-          console.error(
-            "ADMIN PUSH SEND ERROR:",
-            pushError
-          );
-
-          // Remove invalid / expired devices
-          if (
-            pushError.statusCode === 404 ||
-            pushError.statusCode === 410
-          ) {
-            expiredEndpoints.push(
-              item.endpoint
-            );
-          }
-        }
-      }
-
-      // =============================================
-      // REMOVE EXPIRED ADMIN SUBSCRIPTIONS
-      // =============================================
-
-      if (
-        expiredEndpoints.length > 0
-      ) {
-        await db
-          .collection("pushSubscriptions")
-          .deleteMany({
-            endpoint: {
-              $in: expiredEndpoints,
-            },
-          });
-
-        console.log(
-          "EXPIRED ADMIN PUSH SUBSCRIPTIONS REMOVED:",
-          expiredEndpoints.length
-        );
-      }
-
-      console.log(
-        "ADMIN PUSH SUMMARY:",
-        {
-          total:
-            adminSubscriptions.length,
-
-          sent:
-            adminPushSent,
-
-          failed:
-            adminSubscriptions.length -
-            adminPushSent,
-        }
-      );
-    } catch (pushError) {
-      // IMPORTANT:
-      // Push notification fail hone par
-      // booking save process fail nahi hoga
-
-      console.error(
-        "ADMIN PUSH NOTIFICATION PIPELINE ERROR:",
-        pushError
-      );
-    }
 
     // ===============================================
     // CREATE CUSTOMER BOOKING NOTIFICATION
     // ===============================================
 
     await createCustomerNotification({
-      mobile: body.mobile,
+      mobile:
+        body.mobile,
 
-      title: "Booking Confirmed 🎉",
+      title:
+        "Booking Confirmed 🎉",
 
       message:
         `Your booking ${bookingId} has been successfully received. ` +
         `Trip: ${body.pickup} to ${body.drop}. ` +
         `You can check your booking details in your Customer Portal.`,
 
-      type: "booking-confirmed",
+      type:
+        "booking-confirmed",
 
-      link: "/profile-login",
+      link:
+        "/profile-login",
     });
 
     // ===============================================
@@ -327,28 +209,34 @@ export async function POST(request) {
       body.couponApplied &&
       body.couponCode
     ) {
-      const customer = await db
-        .collection("customers")
-        .findOne({
-          mobile: body.mobile,
-        });
+      const customer =
+        await db
+          .collection("customers")
+          .findOne({
+            mobile:
+              body.mobile,
+          });
 
       await db
         .collection("customers")
         .updateOne(
           {
-            mobile: body.mobile,
+            mobile:
+              body.mobile,
           },
           {
             $set: {
-              couponUsed: true,
+              couponUsed:
+                true,
 
               couponUsedAt:
                 new Date(),
 
-              couponCode: "",
+              couponCode:
+                "",
 
-              couponDiscount: 0,
+              couponDiscount:
+                0,
             },
           }
         );
@@ -357,7 +245,8 @@ export async function POST(request) {
         .collection("loyaltyHistory")
         .insertOne({
           customerId:
-            customer?._id || null,
+            customer?._id ||
+            null,
 
           mobile:
             body.mobile,
@@ -375,7 +264,8 @@ export async function POST(request) {
             body.couponCode,
 
           balancePoints:
-            customer?.loyaltyPoints || 0,
+            customer?.loyaltyPoints ||
+            0,
 
           bookingId,
 
@@ -388,7 +278,8 @@ export async function POST(request) {
       // =============================================
 
       await createCustomerNotification({
-        mobile: body.mobile,
+        mobile:
+          body.mobile,
 
         title:
           "Reward Coupon Used 🎁",
@@ -410,7 +301,8 @@ export async function POST(request) {
     // ===============================================
 
     return NextResponse.json({
-      success: true,
+      success:
+        true,
 
       message:
         "Reservation recorded successfully within RC Tours & Travels registry.",
@@ -429,7 +321,8 @@ export async function POST(request) {
 
     return NextResponse.json(
       {
-        success: false,
+        success:
+          false,
 
         message:
           "Internal ledger processing data exception encountered.",

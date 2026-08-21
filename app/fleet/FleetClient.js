@@ -26,7 +26,7 @@ import {
 const cars = [
   {
   name: "Swift Dzire",
-  image: "/dezire.jpg",
+  image: "/swift-dzire.jpeg",
   seats: "4+1 Seats",
   luggage: "2 Bags",
   price: "₹13/km",
@@ -53,7 +53,7 @@ const cars = [
   },
   {
     name: "Maruti Ertiga",
-    image: "/ertiga.jpg",
+    image: "/ertiga.jpeg",
     seats: "6+1 Seats",
     luggage: "4 Bags",
     price: "₹15/km",
@@ -62,7 +62,7 @@ const cars = [
   },
   {
     name: "Toyota Rumion",
-    image: "/rumion.jpg",
+    image: "/rumion.png",
     seats: "6+1 Seats",
     luggage: "4 Bags",
     price: "₹15/km",
@@ -80,7 +80,7 @@ const cars = [
   },
   {
     name: "Innova Crysta",
-    image: "/crysta.jpg",
+    image: "/innova-crysta.jpeg",
     seats: "7+1 Seats",
     luggage: "5 Bags",
     price: "₹19/km",

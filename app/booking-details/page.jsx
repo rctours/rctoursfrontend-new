@@ -14,8 +14,8 @@ import MobileBookingCard from "@/components/MobileBookingCard";
 import Script from "next/script";
 
 const vehicleImages = {
-  "Swift Dzire": "/swift-dzire.jpg",
-  "Dzire": "/swift-dzire.jpg",
+  "Swift Dzire": "/swift-dzire.jpeg",
+  "Dzire": "/swift-dzire.jpeg",
 
   "Hyundai Aura": "/Aura.jpg",
 
@@ -28,7 +28,7 @@ const vehicleImages = {
 
   "Kia Carens": "/carens.jpg",
 
-  "Innova Crysta": "/innova-crysta.jpg",
+  "Innova Crysta": "/innova-crysta.jpeg",
 
   "Toyota Hycross": "/hycross.png",
 
@@ -154,7 +154,7 @@ const fare = Number(
 //});
 
 const vehicleImage =
-  vehicleImages[vehicle] || "/swift-dzire.jpg";
+  vehicleImages[vehicle] || "/swift-dzire.jpeg";
 
   const [paymentType, setPaymentType] = useState("partial");
 
@@ -187,7 +187,7 @@ const totalDays =
       : 0
     : 0;
 
-  const advanceAmount = 1;
+  const advanceAmount = 500;
 
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
@@ -2430,14 +2430,14 @@ setPaymentType("full")
     {/* Vehicle Image */}
     <div className="w-full md:w-1/3 flex flex-col items-center justify-center">
 
-      <div className="w-full h-28 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-center overflow-hidden">
+      <div className="w-full h-36 md:h-40 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-center overflow-hidden">
 
   <Image
     src={vehicleImage}
     alt={vehicle}
     width={220}
     height={120}
-    className="object-contain max-w-[180px] max-h-[110px]"
+    className="object-contain w-[220px] h-[120px] md:w-[240px] md:h-[135px]"
   />
 
 </div>
