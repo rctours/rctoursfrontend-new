@@ -11,7 +11,7 @@ export default function Footer() {
 <div
   className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-110"
   style={{
-    backgroundImage: "url('/footer-bg.png')",
+    backgroundImage: "url('/footer-bg.webp')",
     backgroundPosition: "center center",
     backgroundSize: "cover",
   }}

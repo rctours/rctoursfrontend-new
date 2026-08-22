@@ -571,74 +571,161 @@ export default function TourPackagesPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 overflow-x-hidden">
-      {/* Hero */}
-      <section className="pt-40 pb-24 bg-gradient-to-r from-blue-900 via-blue-700 to-indigo-800 text-white">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-3xl md:text-7xl font-black mb-6 leading-tight">
-            Explore Popular Travel Destinations from Nagpur
-          </h1>
+{/* Hero */}
+<section className="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 pb-12 pt-28 text-white md:pb-14 md:pt-32">
+  
+  {/* Background Glow Effect */}
+  <div className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div className="absolute left-1/2 top-0 h-64 w-64 -translate-x-1/2 rounded-full bg-blue-500/15 blur-3xl md:h-80 md:w-80" />
+  </div>
 
-          <p className="text-base md:text-2xl text-white/90 max-w-4xl mx-auto mb-8">
-          Premium Cab Rental Service from Nagpur for Family Trips,
-          Religious Tours, Wildlife Safaris and Outstation Travel.
-          </p>
+  <div className="relative z-10 mx-auto max-w-5xl px-5 text-center sm:px-6">
 
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <a
-              href="tel:9172271464"
-              className="bg-white text-blue-700 px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold w-full sm:w-auto text-center"
-            >
-              📞 Call Now
-            </a>
+    {/* Badge */}
+    <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-400/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-blue-300 backdrop-blur-md shadow-inner sm:text-xs">
+      <span>✨</span>
+      RC Tours & Travels Nagpur
+    </div>
 
-            <a
-              href="https://wa.me/919172271464"
-              target="_blank"
-              className="bg-green-500 text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold w-full sm:w-auto text-center"
-            >
-              💬 WhatsApp Quote
-            </a>
-          </div>
-        </div>
-      </section>
+    {/* Heading */}
+    <h1 className="mx-auto mt-4 max-w-5xl text-3xl font-black leading-tight tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
+      Explore Popular Travel{" "}
+      <span className="bg-gradient-to-r from-blue-300 via-cyan-300 to-indigo-300 bg-clip-text text-transparent">
+        Destinations from Nagpur
+      </span>
+    </h1>
 
-      {/* Search */}
-      <section className="max-w-4xl mx-auto px-6 -mt-8">
-        <div className="bg-white rounded-2xl shadow-xl p-4">
-          <input
-            type="text"
-            placeholder="Search Tour Packages..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full text-lg outline-none"
-          />
-        </div>
-      </section>
+    {/* Description */}
+    <p className="mx-auto mt-3 max-w-3xl text-sm leading-6 text-slate-300 md:text-base md:leading-7">
+      Premium Cab Rental Service from Nagpur for Family Trips,
+      Religious Tours, Wildlife Safaris, and Outstation Travel.
+    </p>
 
-      {/* Stats */}
-      <section className="max-w-7xl mx-auto px-6 py-8 md:py-8 md:py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          <div className="bg-white rounded-3xl p-6 shadow-lg text-center">
-            <h3 className="text-4xl font-black text-blue-600">1000+</h3>
-            <p>Trips Completed</p>
-          </div>
+    {/* Buttons */}
+    <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
 
-          <div className="bg-white rounded-3xl p-6 shadow-lg text-center">
-            <h3 className="text-4xl font-black text-blue-600">500+</h3>
-            <p>Happy Customers</p>
-          </div>
+      <a
+        href="tel:9172271464"
+        className="inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-cyan-500/25 transition hover:-translate-y-0.5 hover:bg-cyan-600"
+      >
+        📞 Call Now: +91 9172271464
+      </a>
 
-          <div className="bg-white rounded-3xl p-6 shadow-lg text-center">
-            <h3 className="text-4xl font-black text-blue-600">24×7</h3>
-            <p>Support</p>
-          </div>
+      <a
+        href="https://wa.me/919172271464"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-green-500/25 transition hover:-translate-y-0.5 hover:bg-green-600"
+      >
+        💬 WhatsApp Quote
+      </a>
 
-          <div className="bg-white rounded-3xl p-6 shadow-lg text-center">
-            <h3 className="text-4xl font-black text-blue-600">50+</h3>
-            <p>Destinations</p>
-          </div>
-        </div>
-      </section>
+    </div>
+  </div>
+</section>
+
+
+{/* Search */}
+<section className="relative z-20 mx-auto -mt-6 max-w-2xl px-5 sm:px-6">
+  <div className="rounded-xl border border-slate-200/80 bg-white p-2.5 shadow-xl shadow-slate-900/10">
+
+    <div className="relative flex items-center">
+      <span className="absolute left-4 text-sm text-slate-400">
+        🔍
+      </span>
+
+      <input
+        type="text"
+        placeholder="Search tour packages (e.g., Tadoba, Pench, Shirdi)..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full rounded-lg bg-slate-50 py-3 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:bg-white focus:ring-2 focus:ring-cyan-500/20 md:text-base"
+      />
+    </div>
+
+  </div>
+</section>
+
+
+{/* Stats */}
+<section className="mx-auto max-w-7xl px-5 py-6 sm:px-6 md:py-8">
+
+  <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+
+    {/* Trips */}
+    <div className="group rounded-xl border border-slate-200 bg-white px-3 py-3 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-cyan-200 hover:shadow-lg md:px-4 md:py-4">
+
+      <div className="text-xl leading-none md:text-2xl">
+        🚖
+      </div>
+
+      <h3 className="mt-1.5 text-2xl font-black leading-none tracking-tight text-slate-950 md:text-3xl">
+        1000+
+      </h3>
+
+      <p className="mt-1 text-[10px] font-bold text-slate-500 md:text-xs">
+        Trips Completed
+      </p>
+
+    </div>
+
+
+    {/* Customers */}
+    <div className="group rounded-xl border border-slate-200 bg-white px-3 py-3 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg md:px-4 md:py-4">
+
+      <div className="text-xl leading-none md:text-2xl">
+        😊
+      </div>
+
+      <h3 className="mt-1.5 text-2xl font-black leading-none tracking-tight text-slate-950 md:text-3xl">
+        500+
+      </h3>
+
+      <p className="mt-1 text-[10px] font-bold text-slate-500 md:text-xs">
+        Happy Customers
+      </p>
+
+    </div>
+
+
+    {/* Support */}
+    <div className="group rounded-xl border border-slate-200 bg-white px-3 py-3 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-green-200 hover:shadow-lg md:px-4 md:py-4">
+
+      <div className="text-xl leading-none md:text-2xl">
+        🕒
+      </div>
+
+      <h3 className="mt-1.5 text-2xl font-black leading-none tracking-tight text-slate-950 md:text-3xl">
+        24×7
+      </h3>
+
+      <p className="mt-1 text-[10px] font-bold text-slate-500 md:text-xs">
+        Customer Support
+      </p>
+
+    </div>
+
+
+    {/* Destinations */}
+    <div className="group rounded-xl border border-slate-200 bg-white px-3 py-3 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-lg md:px-4 md:py-4">
+
+      <div className="text-xl leading-none md:text-2xl">
+        📍
+      </div>
+
+      <h3 className="mt-1.5 text-2xl font-black leading-none tracking-tight text-slate-950 md:text-3xl">
+        50+
+      </h3>
+
+      <p className="mt-1 text-[10px] font-bold text-slate-500 md:text-xs">
+        Destinations
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
 
       {/* Packages */}
       <section className="max-w-7xl mx-auto px-6 py-8 md:py-12">
@@ -1156,58 +1243,103 @@ export default function TourPackagesPage() {
   </div>
 </section>
 
-{/* Tour Booking Process */}
-<section className="py-12 md:py-18 bg-slate-50">
-  <div className="max-w-7xl mx-auto px-6">
+{/* ================= TOUR BOOKING PROCESS ================= */}
+<section className="bg-slate-50 py-10 md:py-14">
+  <div className="mx-auto max-w-7xl px-5 sm:px-6">
 
-    <div className="text-center mb-12 md:mb-16">
-      <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4">
+    {/* Heading */}
+    <div className="mb-8 text-center md:mb-10">
+      <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-600">
+        <span className="h-px w-6 bg-cyan-500" />
+        How It Works
+        <span className="h-px w-6 bg-cyan-500" />
+      </div>
+
+      <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl md:text-5xl">
         Easy Booking Process
       </h2>
 
-      <p className="text-slate-600 text-base md:text-xl">
-        Book Your Trip in Just 4 Simple Steps
+      <p className="mt-2 text-sm text-slate-600 md:text-base">
+        Book your journey with RC Tours & Travels in 6 simple steps.
       </p>
     </div>
 
-    <div className="space-y-10">
+    {/* Booking Steps */}
+    <div className="relative">
 
-      {[
-        { num: 1, title: "Contact Us", desc: "Call or WhatsApp us with your travel requirements." },
-        { num: 2, title: "Get Quote", desc: "Receive a customized trip quotation." },
-        { num: 3, title: "Confirm Booking", desc: "Confirm your vehicle and travel dates." },
-        { num: 4, title: "Enjoy Your Trip", desc: "Relax and travel comfortably with RC Tours & Travels." }
-      ].map((step, i) => {
+      {/* Desktop Connecting Line */}
+      <div className="absolute left-[8%] right-[8%] top-7 hidden h-px bg-gradient-to-r from-cyan-200 via-cyan-400 to-cyan-200 lg:block" />
 
-        const isLeft = i % 2 === 0;
+      <div className="relative grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 lg:grid-cols-6 lg:gap-3">
 
-        return (
+        {[
+          {
+            num: "01",
+            icon: "📞",
+            title: "Contact Us",
+            desc: "Call or WhatsApp",
+          },
+          {
+            num: "02",
+            icon: "📍",
+            title: "Share Route",
+            desc: "Pickup & destination",
+          },
+          {
+            num: "03",
+            icon: "💰",
+            title: "Get Quote",
+            desc: "Best fare instantly",
+          },
+          {
+            num: "04",
+            icon: "🚗",
+            title: "Choose Cab",
+            desc: "Select your vehicle",
+          },
+          {
+            num: "05",
+            icon: "✅",
+            title: "Confirm",
+            desc: "Confirm your booking",
+          },
+          {
+            num: "06",
+            icon: "🎉",
+            title: "Enjoy Trip",
+            desc: "Travel comfortably",
+          },
+        ].map((step) => (
           <div
-            key={i}
-            className={`flex items-center gap-4 md:gap-8 ${
-              isLeft ? "flex-row" : "flex-row-reverse"
-            }`}
+            key={step.num}
+            className="group relative flex flex-col items-center text-center"
           >
+            {/* Step Circle */}
+            <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl border-4 border-slate-50 bg-white text-2xl shadow-md transition-all duration-300 group-hover:-translate-y-1 group-hover:scale-110 group-hover:bg-cyan-600">
+              <span className="transition-transform duration-300 group-hover:scale-110">
+                {step.icon}
+              </span>
 
-            {/* Number Circle */}
-            <div className="shrink-0 w-14 h-14 md:w-16 md:h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl md:text-2xl font-black shadow-lg">
-              {step.num}
+              {/* Small Number */}
+              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-cyan-600 text-[8px] font-black text-white shadow">
+                {step.num}
+              </span>
             </div>
 
-            {/* Card */}
-            <div className="bg-white rounded-3xl p-5 md:p-8 shadow-lg flex-1 hover:shadow-2xl transition">
-              <h3 className="text-lg md:text-2xl font-bold mb-2">
+            {/* Content */}
+            <div className="mt-3">
+              <h3 className="text-sm font-black text-slate-950 transition-colors group-hover:text-cyan-600">
                 {step.title}
               </h3>
-              <p className="text-slate-600 text-sm md:text-base">
+
+              <p className="mt-1 text-[11px] leading-4 text-slate-500">
                 {step.desc}
               </p>
             </div>
-
           </div>
-        );
-      })}
+        ))}
 
+      </div>
     </div>
 
   </div>
@@ -1359,110 +1491,232 @@ export default function TourPackagesPage() {
   </div>
 </section>
 
-{/* Our Premium Fleet */}
-<section className="py-6 md:py-12 bg-slate-50">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6">
+{/* ================= OUR PREMIUM FLEET ================= */}
+<section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-white py-6 md:py-8">
+  <div className="mx-auto max-w-7xl px-4 sm:px-6">
 
     {/* Heading */}
-    <div className="text-center mb-10 md:mb-14">
+    <div className="mx-auto mb-5 max-w-2xl text-center">
+      <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-600">
+        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-500" />
+        Travel With Comfort
+      </div>
 
-      <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4">
+      <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl md:text-5xl">
         Our Premium Fleet
       </h2>
 
-      <p className="text-slate-600 text-base md:text-lg">
-        Comfortable Vehicles for Family Trips, Religious Tours and Outstation Travel
+      <p className="mt-2 text-sm leading-relaxed text-slate-600 md:text-base">
+        Explore our well-maintained, comfortable vehicles designed for family
+        trips, religious tours, and outstation travel.
       </p>
-
     </div>
 
-    {/* GRID */}
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
+    {/* Fleet Grid */}
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 md:gap-5">
 
-      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-lg text-center">
-        🚗 <h3 className="font-bold mt-2">Swift Dzire</h3>
-      </div>
+      {[
+        {
+          name: "Swift Dzire",
+          tag: "Comfortable",
+          seats: "4+1 Seater",
+          image: "/swift-dzire.jpeg",
+        },
+        {
+          name: "Ertiga",
+          tag: "Family SUV",
+          seats: "6+1 Seater",
+          image: "/ertiga.jpeg",
+        },
+        {
+          name: "Innova Crysta",
+          tag: "Luxury Travel",
+          seats: "7+1 Seater",
+          image: "/innova-crysta.jpeg",
+        },
+        {
+          name: "Tempo Traveller",
+          tag: "Group Travel",
+          seats: "12-20 Seater",
+          image: "/tempo traveller.jpg",
+        },
+        {
+          name: "Force Urbania",
+          tag: "Ultra Luxury",
+          seats: "13-17 Seater",
+          image: "/urbania.jpg",
+        },
+      ].map((car) => (
+        <div
+          key={car.name}
+          className="group overflow-hidden rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400 hover:shadow-xl"
+        >
+          {/* Vehicle Image */}
+          <div className="relative h-32 overflow-hidden rounded-xl bg-slate-100 sm:h-36 md:h-40">
+            <img
+              src={car.image}
+              alt={car.name}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
 
-      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-lg text-center">
-        🚙 <h3 className="font-bold mt-2">Ertiga</h3>
-      </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/30 via-transparent to-transparent" />
 
-      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-lg text-center">
-        🚘 <h3 className="font-bold mt-2">Innova</h3>
-      </div>
+            {/* Seating Badge */}
+            <span className="absolute bottom-2 left-2 rounded-full bg-slate-950/80 px-2.5 py-1 text-[9px] font-bold text-white backdrop-blur-md">
+              {car.seats}
+            </span>
+          </div>
 
-      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-lg text-center">
-        ✨ <h3 className="font-bold mt-2">Crysta</h3>
-      </div>
+          {/* Content */}
+          <div className="px-2 pb-2.5 pt-3 text-center">
+            <p className="text-[9px] font-bold uppercase tracking-wider text-cyan-600">
+              {car.tag}
+            </p>
 
-      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-lg text-center">
-        🚌 <h3 className="font-bold mt-2">Tempo Traveller</h3>
-      </div>
+            <h3 className="mt-1 text-sm font-black tracking-tight text-slate-950 md:text-base">
+              {car.name}
+            </h3>
 
-      <div className="bg-white rounded-3xl p-4 md:p-8 shadow-lg text-center">
-        🚐 <h3 className="font-bold mt-2">Urbania</h3>
-      </div>
+            <a
+              href="https://wa.me/919172271464"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex w-full items-center justify-center rounded-lg bg-slate-100 py-2.5 text-[10px] font-bold text-slate-800 transition-all duration-300 group-hover:bg-cyan-600 group-hover:text-white"
+            >
+              Book Cab ➜
+            </a>
+          </div>
+        </div>
+      ))}
 
     </div>
 
   </div>
 </section>
 
-{/* Customer Reviews */}
-<section className="py-8 md:py-12 bg-white">
-  <div className="max-w-7xl mx-auto px-6">
+{/* ================= CUSTOMER REVIEWS ================= */}
+<section className="bg-white py-8 md:py-12">
+  <div className="mx-auto max-w-7xl px-4 sm:px-6">
 
-    <div className="text-center mb-10 md:mb-14">
+    {/* Heading */}
+    <div className="mx-auto mb-7 max-w-2xl text-center md:mb-10">
+      <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-600">
+        <span className="text-sm">★</span>
+        Customer Reviews
+      </div>
 
-      <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 leading-tight">
+      <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl md:text-5xl">
         What Our Customers Say
       </h2>
 
-      <p className="text-slate-600 text-base md:text-lg">
-        Trusted by Hundreds of Happy Travelers
+      <p className="mt-2 text-sm text-slate-600 md:text-base">
+        Trusted by happy travelers for comfortable and reliable journeys.
       </p>
-
     </div>
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+    {/* Reviews Grid */}
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-5">
 
       {/* Review 1 */}
-      <div className="bg-slate-50 rounded-3xl p-6 md:p-8 shadow-lg">
-        <div className="text-yellow-500 text-xl md:text-2xl mb-4">
-          ⭐⭐⭐⭐⭐
+      <div className="group rounded-2xl border border-slate-200 bg-slate-50/70 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-cyan-300 hover:bg-white hover:shadow-xl">
+        
+        <div className="flex items-center justify-between">
+          <div className="flex text-base tracking-wide">
+            ⭐⭐⭐⭐⭐
+          </div>
+
+          <span className="rounded-full bg-green-50 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-green-600">
+            Verified
+          </span>
         </div>
-        <p className="text-slate-700 text-sm md:text-base mb-4">
-          Excellent service for our Shirdi trip. Vehicle was clean and driver was very professional.
+
+        <p className="mt-4 text-sm leading-6 text-slate-600">
+          Excellent service for our Shirdi trip. The vehicle was clean,
+          comfortable and the driver was very professional.
         </p>
-        <h4 className="font-bold text-base md:text-lg">
-          Rajesh P.
-        </h4>
+
+        <div className="mt-5 flex items-center gap-3 border-t border-slate-200 pt-4">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-cyan-100 text-sm font-black text-cyan-700">
+            R
+          </div>
+
+          <div>
+            <h4 className="text-sm font-black text-slate-900">
+              Rajesh P.
+            </h4>
+            <p className="text-[10px] font-medium text-slate-500">
+              Shirdi Trip
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Review 2 */}
-      <div className="bg-slate-50 rounded-3xl p-6 md:p-8 shadow-lg">
-        <div className="text-yellow-500 text-xl md:text-2xl mb-4">
-          ⭐⭐⭐⭐⭐
+      <div className="group rounded-2xl border border-slate-200 bg-slate-50/70 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-cyan-300 hover:bg-white hover:shadow-xl">
+        
+        <div className="flex items-center justify-between">
+          <div className="flex text-base tracking-wide">
+            ⭐⭐⭐⭐⭐
+          </div>
+
+          <span className="rounded-full bg-green-50 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-green-600">
+            Verified
+          </span>
         </div>
-        <p className="text-slate-700 text-sm md:text-base mb-4">
-          Booked Innova for family tour. Comfortable journey and timely pickup.
+
+        <p className="mt-4 text-sm leading-6 text-slate-600">
+          Booked an Innova for our family tour. Comfortable journey,
+          timely pickup and excellent service throughout the trip.
         </p>
-        <h4 className="font-bold text-base md:text-lg">
-          Amit K.
-        </h4>
+
+        <div className="mt-5 flex items-center gap-3 border-t border-slate-200 pt-4">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-sm font-black text-blue-700">
+            A
+          </div>
+
+          <div>
+            <h4 className="text-sm font-black text-slate-900">
+              Amit K.
+            </h4>
+            <p className="text-[10px] font-medium text-slate-500">
+              Family Tour
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Review 3 */}
-      <div className="bg-slate-50 rounded-3xl p-6 md:p-8 shadow-lg">
-        <div className="text-yellow-500 text-xl md:text-2xl mb-4">
-          ⭐⭐⭐⭐⭐
+      <div className="group rounded-2xl border border-slate-200 bg-slate-50/70 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-cyan-300 hover:bg-white hover:shadow-xl">
+        
+        <div className="flex items-center justify-between">
+          <div className="flex text-base tracking-wide">
+            ⭐⭐⭐⭐⭐
+          </div>
+
+          <span className="rounded-full bg-green-50 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-green-600">
+            Verified
+          </span>
         </div>
-        <p className="text-slate-700 text-sm md:text-base mb-4">
-          Best cab service from Nagpur. Highly recommended for outstation travel.
+
+        <p className="mt-4 text-sm leading-6 text-slate-600">
+          Best cab service from Nagpur. Highly recommended for
+          comfortable and reliable outstation travel.
         </p>
-        <h4 className="font-bold text-base md:text-lg">
-          Priya S.
-        </h4>
+
+        <div className="mt-5 flex items-center gap-3 border-t border-slate-200 pt-4">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-purple-100 text-sm font-black text-purple-700">
+            P
+          </div>
+
+          <div>
+            <h4 className="text-sm font-black text-slate-900">
+              Priya S.
+            </h4>
+            <p className="text-[10px] font-medium text-slate-500">
+              Outstation Travel
+            </p>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -1470,77 +1724,113 @@ export default function TourPackagesPage() {
   </div>
 </section>
 
-{/* FAQ Section */}
-<section className="py-6 md:py-12 bg-white">
-  <div className="max-w-5xl mx-auto px-6">
 
-    <div className="text-center mb-10 md:mb-16">
+{/* ================= FAQ SECTION ================= */}
+<section className="bg-slate-50 py-8 md:py-12">
+  <div className="mx-auto max-w-5xl px-4 sm:px-6">
 
-      <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 leading-tight">
+    {/* Heading */}
+    <div className="mx-auto mb-7 max-w-2xl text-center md:mb-10">
+      <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-blue-600">
+        <span>💬</span>
+        Help Center
+      </div>
+
+      <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl md:text-5xl">
         Frequently Asked Questions
       </h2>
 
-      <p className="text-slate-600 text-base md:text-lg">
-        Everything You Need To Know Before Booking
+      <p className="mt-2 text-sm text-slate-600 md:text-base">
+        Everything you need to know before booking your trip.
       </p>
-
     </div>
 
-    <div className="space-y-4 md:space-y-6">
+    {/* FAQ List */}
+    <div className="space-y-3">
 
       {/* FAQ 1 */}
-      <div className="bg-slate-50 rounded-2xl p-5 md:p-6 shadow">
-        <h3 className="font-bold text-lg md:text-xl mb-2">
+      <details className="group rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-cyan-300 hover:shadow-md">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-sm font-black text-slate-900 md:text-base">
           Do you provide only cab service?
-        </h3>
-        <p className="text-slate-600 text-sm md:text-base">
-          Yes. RC Tours & Travels provides cab rental services for tours,
-          outstation trips, airport transfers and religious travel.
-        </p>
-      </div>
+
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-600 transition duration-300 group-open:rotate-45 group-open:bg-cyan-500 group-open:text-white">
+            +
+          </span>
+        </summary>
+
+        <div className="border-t border-slate-100 px-5 py-4 text-sm leading-6 text-slate-600">
+          RC Tours & Travels provides cab rental services for tours,
+          outstation trips, airport transfers, local travel and religious journeys.
+        </div>
+      </details>
+
 
       {/* FAQ 2 */}
-      <div className="bg-slate-50 rounded-2xl p-5 md:p-6 shadow">
-        <h3 className="font-bold text-lg md:text-xl mb-2">
+      <details className="group rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-cyan-300 hover:shadow-md">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-sm font-black text-slate-900 md:text-base">
           Are hotel bookings included?
-        </h3>
-        <p className="text-slate-600 text-sm md:text-base">
-          No. We provide transportation services only.
-        </p>
-      </div>
+
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-600 transition duration-300 group-open:rotate-45 group-open:bg-cyan-500 group-open:text-white">
+            +
+          </span>
+        </summary>
+
+        <div className="border-t border-slate-100 px-5 py-4 text-sm leading-6 text-slate-600">
+          No. We currently provide transportation and cab rental services.
+          Hotel bookings are not included unless specifically mentioned in a package.
+        </div>
+      </details>
+
 
       {/* FAQ 3 */}
-      <div className="bg-slate-50 rounded-2xl p-5 md:p-6 shadow">
-        <h3 className="font-bold text-lg md:text-xl mb-2">
+      <details className="group rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-cyan-300 hover:shadow-md">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-sm font-black text-slate-900 md:text-base">
           Can I customize my travel plan?
-        </h3>
-        <p className="text-slate-600 text-sm md:text-base">
-          Yes. We can arrange travel according to your preferred destinations
-          and schedule.
-        </p>
-      </div>
+
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-600 transition duration-300 group-open:rotate-45 group-open:bg-cyan-500 group-open:text-white">
+            +
+          </span>
+        </summary>
+
+        <div className="border-t border-slate-100 px-5 py-4 text-sm leading-6 text-slate-600">
+          Yes. You can customize your destinations, travel dates,
+          vehicle requirements and travel schedule according to your needs.
+        </div>
+      </details>
+
 
       {/* FAQ 4 */}
-      <div className="bg-slate-50 rounded-2xl p-5 md:p-6 shadow">
-        <h3 className="font-bold text-lg md:text-xl mb-2">
+      <details className="group rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-cyan-300 hover:shadow-md">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-sm font-black text-slate-900 md:text-base">
           Which vehicles are available?
-        </h3>
-        <p className="text-slate-600 text-sm md:text-base">
-          Swift Dzire, Ertiga, Innova, Innova Crysta, Tempo Traveller and
-          Force Urbania.
-        </p>
-      </div>
+
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-600 transition duration-300 group-open:rotate-45 group-open:bg-cyan-500 group-open:text-white">
+            +
+          </span>
+        </summary>
+
+        <div className="border-t border-slate-100 px-5 py-4 text-sm leading-6 text-slate-600">
+          We offer Swift Dzire, Ertiga, Innova Crysta,
+          Tempo Traveller and Force Urbania depending on your travel requirements.
+        </div>
+      </details>
+
 
       {/* FAQ 5 */}
-      <div className="bg-slate-50 rounded-2xl p-5 md:p-6 shadow">
-        <h3 className="font-bold text-lg md:text-xl mb-2">
+      <details className="group rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-cyan-300 hover:shadow-md">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-sm font-black text-slate-900 md:text-base">
           How can I book a trip?
-        </h3>
-        <p className="text-slate-600 text-sm md:text-base">
-          Simply call us or send a WhatsApp message and our team will assist
-          you with booking.
-        </p>
-      </div>
+
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-600 transition duration-300 group-open:rotate-45 group-open:bg-cyan-500 group-open:text-white">
+            +
+          </span>
+        </summary>
+
+        <div className="border-t border-slate-100 px-5 py-4 text-sm leading-6 text-slate-600">
+          Simply call us or send us a WhatsApp message with your travel details.
+          Our team will assist you with the vehicle, quotation and booking process.
+        </div>
+      </details>
 
     </div>
 

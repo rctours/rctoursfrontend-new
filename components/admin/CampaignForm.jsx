@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export default function CampaignForm() {
+export default function CampaignForm({ onCampaignSaved }) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -129,6 +129,10 @@ export default function CampaignForm() {
       }
 
       alert("✅ Campaign Saved Successfully!");
+
+      if (onCampaignSaved) {
+      onCampaignSaved();
+      }
 
       setFormData({
         title: "",

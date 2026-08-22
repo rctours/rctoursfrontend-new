@@ -1369,95 +1369,91 @@ if (Object.keys(newErrors).length > 0) {
 
 </div>
 
-    {/* ================= RC TOURS DISCOUNT ================= */}
+{/* ================= RC TOURS LOYALTY ================= */}
 
-    <div
-      className="
-      relative
-      rounded-2xl
-      border
-      border-green-200
-      bg-gradient-to-r
-      from-green-50
-      via-white
-      to-emerald-50
-      shadow
-      p-5
-      flex
-      flex-col
-      justify-between
-      "
-    >
+<div 
+  className=" 
+  relative 
+  rounded-2xl 
+  border 
+  border-green-200 
+  bg-gradient-to-r 
+  from-green-50 
+  via-white 
+  to-emerald-50 
+  shadow 
+  p-5 
+  flex 
+  flex-col 
+  justify-between 
+  " 
+> 
 
-      <span
-        className="
-        inline-block
-        w-fit
-        bg-indigo-100
-        text-indigo-700
-        text-[11px]
-        font-bold
-        px-3
-        py-1
-        rounded-full
-        "
-      >
-        🎁 EXCLUSIVE OFFER
-      </span>
+  <span 
+    className=" 
+    inline-block 
+    w-fit 
+    bg-indigo-100 
+    text-indigo-700 
+    text-[11px] 
+    font-bold 
+    px-3 
+    py-1 
+    rounded-full 
+    " 
+  > 
+    🎁 RC LOYALTY REWARDS
+  </span> 
 
-      <div className="flex items-center gap-4 mt-4">
+  <div className="flex items-center gap-4 mt-4"> 
 
-        {/* Gift */}
+    {/* Loyalty */} 
 
-        <div className="text-5xl shrink-0">
-          🎁
-        </div>
+    <div className="text-5xl shrink-0"> 
+      🎁 
+    </div> 
 
-        {/* Content */}
+    {/* Content */} 
 
-        <div className="flex-1">
+    <div className="flex-1"> 
 
-          <h3 className="text-2xl font-bold text-green-700">
-            RC Tours Discount
-          </h3>
+      <h3 className="text-2xl font-bold text-green-700"> 
+        RC Loyalty Rewards
+      </h3> 
 
-          <p className="mt-2 text-sm leading-6 text-gray-700">
+      <p className="mt-2 text-sm leading-6 text-gray-700"> 
+        Complete your trip and earn loyalty reward points with RC Tours & Travels.
+      </p> 
 
-            {couponApplied
-              ? "Your exclusive discount has been applied successfully."
-              : "Complete passenger details and mobile verification to unlock your discount."}
+    </div> 
 
-          </p>
+  </div> 
 
-        </div>
+  {/* Bottom Loyalty Info */} 
 
-      </div>
+  <div className="mt-4 bg-green-100 rounded-xl px-4 py-3 flex items-center justify-between"> 
 
-      {/* Bottom Offer */}
+    <div className="flex items-center gap-2"> 
 
-      <div className="mt-4 bg-green-100 rounded-xl px-4 py-3 flex items-center justify-between">
+      <span className="text-lg"> 
+        ⭐
+      </span> 
 
-        <div className="flex items-center gap-2">
+      <span className="font-semibold text-green-700 text-sm"> 
+        Earn points and unlock special rewards
+      </span> 
 
-          <span className="text-lg">
-            🏷️
-          </span>
+    </div> 
 
-          <span className="font-semibold text-green-700 text-sm">
-           Your Special Booking Discount is Ready
-          </span>
+    <span className="text-xl text-green-700"> 
+      › 
+    </span> 
 
-        </div>
+  </div> 
 
-        <span className="text-xl text-green-700">
-          ›
-        </span>
+</div> 
 
-      </div>
-
-    </div>
-
-  </div>
+</div> 
 
 </div>
 
@@ -2207,7 +2203,9 @@ setPaymentType("full")
             </h3>
 
             <p className="text-gray-500 text-sm mt-1">
-              Pay the remaining amount after trip.
+            Pay the remaining amount
+            <br />
+            after trip.
             </p>
 
           </div>

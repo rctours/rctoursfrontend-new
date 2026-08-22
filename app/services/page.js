@@ -1,6 +1,20 @@
 import { FaWhatsapp } from "react-icons/fa";
 import Footer from "@/components/Footer";
 
+import {
+  Plane,
+  MapPin,
+  Building2,
+  Bus,
+  ShieldCheck,
+  IndianRupee,
+  Headphones,
+  Car,
+  Phone,
+  MessageCircle,
+  Navigation,
+} from "lucide-react";
+
 export const metadata = {
   title:
     "Taxi Services In Nagpur | Airport Taxi, Outstation Cab | RC Tours & Travels",
@@ -12,665 +26,650 @@ export const metadata = {
     "Taxi Service Nagpur, Airport Taxi Nagpur, Cab Booking Nagpur, Outstation Taxi Nagpur, Tempo Traveller Nagpur, Nagpur To Pune Taxi, Nagpur To Hyderabad Taxi, RC Tours And Travels",
 };
 
+const services = [
+  {
+    title: "Airport Taxi Service",
+    description:
+      "Reliable airport pickup and drop taxi service in Nagpur with professional drivers and clean vehicles.",
+    image: "/services/airport-taxi.jpeg",
+    alt: "Airport Taxi Service Nagpur",
+    icon: Plane,
+  },
+  {
+    title: "Local Cab Booking",
+    description:
+      "Affordable local taxi services for city travel, shopping, meetings and daily transportation.",
+    image: "/services/cab-local.jpeg",
+    alt: "Local Cab Booking Nagpur",
+    icon: MapPin,
+  },
+  {
+    title: "Outstation Taxi",
+    description:
+      "Comfortable outstation taxi service from Nagpur to Pune, Mumbai, Hyderabad, Indore and more cities.",
+    image: "/services/outstation-taxi.jpeg",
+    alt: "Outstation Taxi Nagpur",
+    icon: Navigation,
+  },
+  {
+    title: "Corporate Travel",
+    description:
+      "Professional transportation solutions for companies, business meetings and corporate events.",
+    image: "/services/corporate-travel.png",
+    alt: "Corporate Travel Nagpur",
+    icon: Building2,
+  },
+  {
+    title: "Tempo Traveller Rental",
+    description:
+      "Comfortable Tempo Traveller rental for family tours, group travel and pilgrimage trips.",
+    image: "/services/tempo-traveller.png",
+    alt: "Tempo Traveller Rental Nagpur",
+    icon: Bus,
+  },
+  {
+    title: "Tour Packages",
+    description:
+      "Customized tour packages for Pench, Tadoba, Chikhaldara, Shirdi, Goa and more.",
+    image: "/services/tour-packages.jpg",
+    alt: "Tour Packages Nagpur",
+    icon: MapPin,
+  },
+];
+
+const routes = [
+  "Nagpur → Pench",
+  "Nagpur → Tadoba",
+  "Nagpur → Chikhaldara",
+  "Nagpur → Shirdi",
+  "Nagpur → Hyderabad",
+  "Nagpur → Pune",
+  "Nagpur → Mumbai",
+  "Nagpur → Goa",
+  "Nagpur → Bhopal",
+  "Nagpur → Indore",
+  "Nagpur → Raipur",
+  "Nagpur → Jabalpur",
+];
+
+const areas = [
+  "Nagpur City",
+  "Sitabuldi",
+  "Dharampeth",
+  "Ramdaspeth",
+  "Sadar",
+  "Civil Lines",
+  "Wardha Road",
+  "Airport Area",
+  "Manish Nagar",
+  "Pratap Nagar",
+  "Trimurti Nagar",
+  "Laxmi Nagar",
+  "Bajaj Nagar",
+  "Hingna",
+  "MIDC Hingna",
+  "MIHAN",
+  "Besa",
+  "Manewada",
+  "Dighori",
+  "Narsala",
+  "Hudkeshwar",
+  "Kamptee",
+  "Koradi",
+  "Katol Road",
+  "Amravati Road",
+  "Wadi",
+  "Friends Colony",
+  "Jaripatka",
+  "Pardi",
+  "Kalamna",
+  "Nandanvan",
+  "Medical Square",
+  "Mahal",
+  "Itwari",
+  "Gittikhadan",
+  "Zingabai Takli",
+  "Pachpaoli",
+  "Mankapur",
+  "Omkar Nagar",
+  "Narendra Nagar",
+  "Wardhaman Nagar",
+  "Ajni",
+  "Chhatrapati Square",
+  "Shankar Nagar",
+  "Beltarodi",
+  "Pipla",
+  "Butibori",
+  "Umred Road",
+  "Ramtek",
+  "Savner",
+  "Kuhi",
+  "Bhandara Road",
+];
+
 export default function ServicesPage() {
   return (
-    <main className="bg-white">
+    <main className="bg-white text-slate-900">
 
       {/* Hero Section */}
-<section className="bg-white pt-24 md:pt-32 pb-12 md:pb-24">
-  <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
+      <section className="pt-24 pb-10 md:pt-28 md:pb-14">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
 
-    <span className="bg-blue-100 text-blue-700 px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-semibold">
-      RC TOURS & TRAVELS NAGPUR
-    </span>
+          <span className="inline-flex bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-xs md:text-sm font-semibold">
+            RC TOURS & TRAVELS NAGPUR
+          </span>
 
-    <h1 className="text-3xl md:text-7xl font-black text-slate-900 mt-5 md:mt-8 leading-tight">
-      Taxi Services In Nagpur
-    </h1>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 mt-4 md:mt-6 leading-tight">
+            Taxi Services In Nagpur
+          </h1>
 
-    <p className="max-w-4xl mx-auto text-base md:text-xl text-gray-600 mt-5 md:mt-8 leading-7 md:leading-9 px-2">
-      Airport Taxi, Local Cab Booking, Outstation Taxi, Corporate Travel,
-      Tempo Traveller Rental and Tour Packages from Nagpur.
-    </p>
+          <p className="max-w-4xl mx-auto text-sm sm:text-base md:text-xl text-gray-600 mt-4 md:mt-6 leading-7 md:leading-9">
+            Airport Taxi, Local Cab Booking, Outstation Taxi, Corporate Travel,
+            Tempo Traveller Rental and Tour Packages from Nagpur.
+          </p>
 
-    <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center mt-8 md:mt-10">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6 md:mt-8">
 
-      <a
-        href="tel:+919172271464"
-        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 md:px-8 md:py-4 rounded-2xl font-bold text-sm md:text-base"
-      >
-        📞 Call Now
-      </a>
+            <a
+              href="tel:+919172271464"
+              className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 md:px-8 md:py-3.5 rounded-xl font-bold text-sm md:text-base transition"
+            >
+              <Phone size={18} />
+              Call Now
+            </a>
 
-      <a
-        href="https://wa.me/919172271464"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-2xl font-bold text-sm md:text-base"
-      >
-        💬 WhatsApp Booking
-      </a>
+            <a
+              href="https://wa.me/919172271464"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 md:px-8 md:py-3.5 rounded-xl font-bold text-sm md:text-base transition"
+            >
+              <MessageCircle size={18} />
+              WhatsApp Booking
+            </a>
 
-    </div>
-
-  </div>
-</section>
+          </div>
+        </div>
+      </section>
 
       {/* Services */}
-<section className="border-t border-slate-200 py-8 md:py-10 relative overflow-hidden">
+      <section className="border-t border-slate-200 py-8 md:py-12">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+
+          <h2 className="text-2xl md:text-4xl font-black text-center mb-7 md:mb-10">
+            Our Taxi Services
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+
+            {services.map((service) => {
+              const Icon = service.icon;
+
+              return (
+                <div
+                  key={service.title}
+                  className="bg-white shadow-lg hover:shadow-xl rounded-2xl overflow-hidden border border-slate-200 transition duration-300"
+                >
+                  <div className="relative">
+                    <img
+                      src={service.image}
+                      alt={service.alt}
+                      className="w-full h-40 md:h-48 object-cover"
+                    />
+
+                    <div className="absolute top-3 right-3 bg-white/95 p-2 rounded-xl shadow">
+                      <Icon className="w-5 h-5 text-blue-600" />
+                    </div>
+                  </div>
+
+                  <div className="p-4 md:p-6">
+                    <h3 className="text-lg md:text-xl font-bold mb-2">
+                      {service.title}
+                    </h3>
+
+                    <p className="text-gray-600 text-sm md:text-base leading-6 md:leading-7">
+                      {service.description}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+
+          </div>
+        </div>
+      </section>
+
+{/* Vehicles */}
+<section className="border-t border-slate-200 py-7 md:py-9">
   <div className="max-w-7xl mx-auto px-4 md:px-8">
 
-    <h2 className="text-3xl md:text-5xl font-black text-center text-slate-900 mb-8 md:mb-16">
-      Our Taxi Services
-    </h2>
+    {/* Heading */}
+    <div className="text-center mb-6 md:mb-8">
+      <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1.5 rounded-full text-[10px] md:text-xs font-bold tracking-wide">
+        <Car className="w-3.5 h-3.5" />
+        RC TOURS & TRAVELS FLEET
+      </span>
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-8">
+      <h2 className="text-2xl md:text-4xl font-black text-slate-900 mt-3">
+        Vehicles Available
+      </h2>
 
-      {/* Airport Taxi */}
-      <div className="bg-white shadow-xl rounded-3xl overflow-hidden border">
-        <img
-          src="/services/airport-taxi.jpeg"
-          alt="Airport Taxi Service Nagpur"
-          className="w-full h-44 md:h-56 object-cover"
-        />
-
-        <div className="p-5 md:p-8">
-          <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">
-            Airport Taxi Service
-          </h3>
-
-          <p className="text-gray-600 text-sm md:text-base leading-7 md:leading-8">
-            Reliable airport pickup and drop taxi service in Nagpur with
-            professional drivers and clean vehicles.
-          </p>
-        </div>
-      </div>
-
-      {/* Local Cab */}
-      <div className="bg-white shadow-xl rounded-3xl overflow-hidden border">
-        <img
-          src="/services/local-cab.jpg"
-          alt="Local Cab Booking Nagpur"
-          className="w-full h-44 md:h-56 object-cover"
-        />
-
-        <div className="p-5 md:p-8">
-          <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">
-            Local Cab Booking
-          </h3>
-
-          <p className="text-gray-600 text-sm md:text-base leading-7 md:leading-8">
-            Affordable local taxi services for city travel, shopping,
-            meetings and daily transportation.
-          </p>
-        </div>
-      </div>
-
-      {/* Outstation Taxi */}
-      <div className="bg-white shadow-xl rounded-3xl overflow-hidden border">
-        <img
-          src="/services/outstation-taxi.jpeg"
-          alt="Outstation Taxi Nagpur"
-          className="w-full h-44 md:h-56 object-cover"
-        />
-
-        <div className="p-5 md:p-8">
-          <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">
-            Outstation Taxi
-          </h3>
-
-          <p className="text-gray-600 text-sm md:text-base leading-7 md:leading-8">
-            Comfortable outstation taxi service from Nagpur to Pune,
-            Mumbai, Hyderabad, Indore and more cities.
-          </p>
-        </div>
-      </div>
-
-      {/* Corporate Travel */}
-      <div className="bg-white shadow-xl rounded-3xl overflow-hidden border">
-        <img
-          src="/services/corporate-travel.png"
-          alt="Corporate Travel Nagpur"
-          className="w-full h-44 md:h-56 object-cover"
-        />
-
-        <div className="p-5 md:p-8">
-          <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">
-            Corporate Travel
-          </h3>
-
-          <p className="text-gray-600 text-sm md:text-base leading-7 md:leading-8">
-            Professional transportation solutions for companies,
-            business meetings and corporate events.
-          </p>
-        </div>
-      </div>
-
-      {/* Tempo Traveller */}
-      <div className="bg-white shadow-xl rounded-3xl overflow-hidden border">
-        <img
-          src="/services/tempo-traveller.png"
-          alt="Tempo Traveller Rental Nagpur"
-          className="w-full h-44 md:h-56 object-cover"
-        />
-
-        <div className="p-5 md:p-8">
-          <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">
-            Tempo Traveller Rental
-          </h3>
-
-          <p className="text-gray-600 text-sm md:text-base leading-7 md:leading-8">
-            Comfortable Tempo Traveller rental for family tours,
-            group travel and pilgrimage trips.
-          </p>
-        </div>
-      </div>
-
-      {/* Tour Packages */}
-      <div className="bg-white shadow-xl rounded-3xl overflow-hidden border">
-        <img
-          src="/services/tour-packages.jpg"
-          alt="Tour Packages Nagpur"
-          className="w-full h-44 md:h-56 object-cover"
-        />
-
-        <div className="p-5 md:p-8">
-          <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">
-            Tour Packages
-          </h3>
-
-          <p className="text-gray-600 text-sm md:text-base leading-7 md:leading-8">
-            Customized tour packages for Pench, Tadoba,
-            Chikhaldara, Shirdi, Goa and more.
-          </p>
-        </div>
-      </div>
-
+      <p className="text-xs md:text-sm text-gray-600 mt-2">
+        Choose the perfect vehicle for your journey
+      </p>
     </div>
 
-  </div>
-</section>
-
-            {/* Vehicles Available */}
-
-<section className="border-t border-slate-200 py-8 md:py-10">
-
-  <div className="max-w-7xl mx-auto px-4 md:px-8">
-
-    <h2 className="text-2xl md:text-4xl font-black text-center text-slate-900 mb-6 md:mb-10">
-      Vehicles Available
-    </h2>
-
+    {/* Vehicle Cards */}
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
 
       {[
-        "Swift Dzire",
-        "Maruti Ertiga",
-        "Toyota Innova Crysta",
-        "Tempo Traveller",
+        {
+          name: "Swift Dzire",
+          image: "/swift-dzire.jpeg",
+          type: "Sedan",
+        },
+        {
+          name: "Maruti Ertiga",
+          image: "/ertiga.jpeg",
+          type: "SUV",
+        },
+        {
+          name: "Innova Crysta",
+          image: "/innova-crysta.jpeg",
+          type: "Premium",
+        },
+        {
+          name: "Tempo Traveller",
+          image: "/tempo traveller.jpg",
+          type: "Group Travel",
+        },
       ].map((car) => (
         <div
-          key={car}
-          className="bg-slate-100 rounded-2xl p-3 md:p-5 text-center border text-sm md:text-base font-semibold"
+          key={car.name}
+          className="group bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
         >
-          {car}
+          {/* Vehicle Image */}
+          <div className="relative overflow-hidden bg-slate-100">
+            <img
+              src={car.image}
+              alt={`${car.name} taxi service in Nagpur`}
+              className="w-full h-28 sm:h-32 md:h-40 object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+
+            {/* Vehicle Type */}
+            <span className="absolute top-2 left-2 bg-white/95 text-blue-700 border border-blue-100 px-2 py-1 rounded-lg text-[8px] sm:text-[9px] md:text-xs font-bold shadow-sm">
+              {car.type}
+            </span>
+          </div>
+
+          {/* Vehicle Details */}
+          <div className="p-3 md:p-4 text-center">
+            <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900">
+              {car.name}
+            </h3>
+
+            <div className="flex items-center justify-center gap-1 text-[10px] md:text-xs text-green-600 mt-1.5 font-medium">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+              Available for Booking
+            </div>
+          </div>
         </div>
       ))}
 
     </div>
 
-  </div>
+    {/* Bottom CTA */}
+    <div className="flex justify-center mt-5 md:mt-7">
+      <a
+        href="/fleet"
+        className="inline-flex items-center gap-2 bg-slate-900 hover:bg-blue-700 text-white px-5 py-2.5 md:px-6 md:py-3 rounded-xl text-xs md:text-sm font-bold transition-all duration-300 hover:-translate-y-0.5"
+      >
+        <Car className="w-4 h-4" />
+        View Complete Fleet
+      </a>
+    </div>
 
+  </div>
 </section>
 
       {/* Why Choose Us */}
+      <section className="border-t border-slate-200 py-8 md:py-10">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
 
-<section className="border-t border-white/10 py-8 md:py-10 relative overflow-hidden">
+          <h2 className="text-2xl md:text-4xl font-black text-center mb-7 md:mb-10">
+            Why Choose RC Tours & Travels
+          </h2>
 
-  <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
 
-    <h2 className="text-2xl md:text-5xl font-black text-center text-slate-900 mb-8 md:mb-16 leading-tight">
-      Why Choose RC Tours & Travels
-    </h2>
+            <div className="bg-white p-4 md:p-6 rounded-2xl text-center border shadow-sm">
+              <Car className="w-8 h-8 md:w-10 md:h-10 text-blue-600 mx-auto mb-3" />
+              <h3 className="font-bold text-sm md:text-lg">
+                Professional Drivers
+              </h3>
+            </div>
 
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+            <div className="bg-white p-4 md:p-6 rounded-2xl text-center border shadow-sm">
+              <IndianRupee className="w-8 h-8 md:w-10 md:h-10 text-green-600 mx-auto mb-3" />
+              <h3 className="font-bold text-sm md:text-lg">
+                Transparent Pricing
+              </h3>
+            </div>
 
-      <div className="bg-white p-4 md:p-8 rounded-3xl text-center border shadow-lg">
-        <div className="text-3xl md:text-5xl mb-2 md:mb-4">🚖</div>
+            <div className="bg-white p-4 md:p-6 rounded-2xl text-center border shadow-sm">
+              <ShieldCheck className="w-8 h-8 md:w-10 md:h-10 text-blue-600 mx-auto mb-3" />
+              <h3 className="font-bold text-sm md:text-lg">
+                Safe Journey
+              </h3>
+            </div>
 
-        <h3 className="font-bold text-sm md:text-xl">
-          Professional Drivers
-        </h3>
-      </div>
+            <div className="bg-white p-4 md:p-6 rounded-2xl text-center border shadow-sm">
+              <Headphones className="w-8 h-8 md:w-10 md:h-10 text-purple-600 mx-auto mb-3" />
+              <h3 className="font-bold text-sm md:text-lg">
+                24×7 Support
+              </h3>
+            </div>
 
-      <div className="bg-white p-4 md:p-8 rounded-3xl text-center border shadow-lg">
-        <div className="text-3xl md:text-5xl mb-2 md:mb-4">💰</div>
-
-        <h3 className="font-bold text-sm md:text-xl">
-          Transparent Pricing
-        </h3>
-      </div>
-
-      <div className="bg-white p-4 md:p-8 rounded-3xl text-center border shadow-lg">
-        <div className="text-3xl md:text-5xl mb-2 md:mb-4">🛡️</div>
-
-        <h3 className="font-bold text-sm md:text-xl">
-          Safe Journey
-        </h3>
-      </div>
-
-      <div className="bg-white p-4 md:p-8 rounded-3xl text-center border shadow-lg">
-        <div className="text-3xl md:text-5xl mb-2 md:mb-4">📞</div>
-
-        <h3 className="font-bold text-sm md:text-xl">
-          24×7 Support
-        </h3>
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
+          </div>
+        </div>
+      </section>
 
       {/* Popular Routes */}
-      <section className="border-t border-white/10 py-8 md:py-10 relative overflow-hidden">
+      <section className="border-t border-slate-200 py-8 md:py-10">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <h2 className="text-2xl md:text-4xl font-black text-center mb-7 md:mb-10">
+            Popular Routes From Nagpur
+          </h2>
 
-      <h2 className="text-2xl md:text-5xl font-black text-center text-slate-900 mb-8 md:mb-16 leading-tight">
-      Popular Routes From Nagpur
-      </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
+            {routes.map((route) => (
+              <div
+                key={route}
+                className="bg-slate-50 rounded-xl p-3 md:p-4 text-center border border-slate-200 text-xs md:text-base font-medium hover:shadow-md transition"
+              >
+                {route}
+              </div>
+            ))}
 
-      {[
-        "Nagpur → Pench",
-        "Nagpur → Tadoba",
-        "Nagpur → Chikhaldara",
-        "Nagpur → Shirdi",
-        "Nagpur → Hyderabad",
-        "Nagpur → Pune",
-        "Nagpur → Mumbai",
-        "Nagpur → Goa",
-        "Nagpur → Bhopal",
-        "Nagpur → Indore",
-        "Nagpur → Raipur",
-        "Nagpur → Jabalpur",
-      ].map((route) => (
-        <div
-          key={route}
-          className="bg-slate-100 rounded-2xl p-3 md:p-5 text-center border text-xs md:text-base"
-        >
-          {route}
+          </div>
         </div>
-      ))}
+      </section>
 
-    </div>
+      {/* Service Areas */}
+      <section className="border-t border-slate-200 py-8 md:py-10">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
 
-  </div>
+          <h2 className="text-2xl md:text-4xl font-black text-center mb-3 md:mb-4">
+            Taxi Service Available Across Nagpur & Nearby Areas
+          </h2>
 
-</section>
+          <p className="text-center text-gray-600 max-w-4xl mx-auto mb-6 md:mb-8 text-sm md:text-base leading-7">
+            RC Tours & Travels provides airport taxi, local cab booking,
+            outstation taxi and Tempo Traveller services across Nagpur city,
+            MIHAN, Hingna, Wardha Road, Besa, Manewada, Dighori, Narsala,
+            Kamptee, Wadi, Butibori, Ramtek and nearby locations.
+          </p>
 
-{/* Service Areas */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 md:gap-3">
 
-<section className="border-t border-slate-200 py-8 md:py-10">
+            {areas.map((area) => (
+              <div
+                key={area}
+                className="bg-slate-50 rounded-xl p-2.5 md:p-3 text-center border border-slate-200 text-xs md:text-sm hover:shadow-md transition"
+              >
+                {area}
+              </div>
+            ))}
 
-  <div className="max-w-7xl mx-auto px-4 md:px-8">
-
-    <h2 className="text-2xl md:text-4xl font-black text-center text-slate-900 mb-4 md:mb-6 leading-tight">
-      Taxi Service Available Across Nagpur & Nearby Areas
-    </h2>
-
-    <p className="text-center text-gray-600 max-w-4xl mx-auto mb-8 md:mb-10 text-sm md:text-base leading-7 md:leading-8">
-      RC Tours & Travels provides airport taxi, local cab booking,
-      outstation taxi and Tempo Traveller services across Nagpur city,
-      MIHAN, Hingna, Wardha Road, Besa, Manewada, Dighori, Narsala,
-      Kamptee, Wadi, Butibori, Ramtek and nearby locations.
-    </p>
-
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-
-      {[
-        "Nagpur City",
-        "Sitabuldi",
-        "Dharampeth",
-        "Ramdaspeth",
-        "Sadar",
-        "Civil Lines",
-        "Wardha Road",
-        "Airport Area",
-        "Manish Nagar",
-        "Pratap Nagar",
-        "Trimurti Nagar",
-        "Laxmi Nagar",
-        "Bajaj Nagar",
-        "Hingna",
-        "MIDC Hingna",
-        "MIHAN",
-        "Besa",
-        "Manewada",
-        "Dighori",
-        "Narsala",
-        "Hudkeshwar",
-        "Kamptee",
-        "Koradi",
-        "Katol Road",
-        "Amravati Road",
-        "Wadi",
-        "Friends Colony",
-        "Jaripatka",
-        "Pardi",
-        "Kalamna",
-        "Nandanvan",
-        "Medical Square",
-        "Mahal",
-        "Itwari",
-        "Gittikhadan",
-        "Zingabai Takli",
-        "Pachpaoli",
-        "Mankapur",
-        "Omkar Nagar",
-        "Narendra Nagar",
-        "Wardhaman Nagar",
-        "Ajni",
-        "Chhatrapati Square",
-        "Shankar Nagar",
-        "Beltarodi",
-        "Pipla",
-        "Butibori",
-        "Umred Road",
-        "Ramtek",
-        "Savner",
-        "Kuhi",
-        "Bhandara Road"
-      ].map((area) => (
-        <div
-          key={area}
-          className="bg-slate-100 rounded-xl p-3 md:p-4 text-center border hover:shadow-lg transition text-xs md:text-base"
-        >
-          {area}
+          </div>
         </div>
-      ))}
+      </section>
 
-    </div>
+      {/* FAQ */}
+      <section className="border-t border-slate-200 py-8 md:py-10">
+        <div className="max-w-5xl mx-auto px-4 md:px-8">
 
-  </div>
+          <h2 className="text-2xl md:text-4xl font-black text-center mb-7 md:mb-8">
+            Frequently Asked Questions
+          </h2>
 
-</section>
+          <div className="space-y-3">
 
-{/* FAQ Section */}
+            {[
+              {
+                q: "What is the taxi fare from Nagpur Airport?",
+                a: "Taxi fare depends on pickup and drop location. Contact RC Tours & Travels for an instant fare quote.",
+              },
+              {
+                q: "Do you provide outstation taxi service from Nagpur?",
+                a: "Yes, we provide outstation taxi service from Nagpur to Pune, Mumbai, Hyderabad, Indore, Bhopal, Shirdi and many more destinations.",
+              },
+              {
+                q: "Is Tempo Traveller available in Nagpur?",
+                a: "Yes, we provide Tempo Traveller rental for family trips, corporate tours, pilgrimages and group travel.",
+              },
+              {
+                q: "Do you offer one-way taxi service?",
+                a: "Yes, one-way and round-trip taxi services are available for local and outstation routes.",
+              },
+              {
+                q: "How can I book a taxi in Nagpur?",
+                a: "You can call us directly at +91 9172271464 or book your taxi through WhatsApp.",
+              },
+            ].map((faq) => (
+              <div
+                key={faq.q}
+                className="bg-slate-50 border border-slate-200 p-4 md:p-5 rounded-2xl"
+              >
+                <h3 className="font-bold text-sm md:text-lg mb-2">
+                  {faq.q}
+                </h3>
 
-<section className="border-t border-slate-200 py-8 md:py-10">
+                <p className="text-gray-600 text-sm md:text-base leading-6">
+                  {faq.a}
+                </p>
+              </div>
+            ))}
 
-  <div className="max-w-5xl mx-auto px-4 md:px-8">
-
-    <h2 className="text-2xl md:text-4xl font-black text-center text-slate-900 mb-8 md:mb-10 leading-tight">
-      Frequently Asked Questions
-    </h2>
-
-    <div className="space-y-3 md:space-y-5">
-
-      <div className="bg-slate-100 p-4 md:p-6 rounded-2xl">
-        <h3 className="font-bold text-base md:text-xl mb-2">
-          What is the taxi fare from Nagpur Airport?
-        </h3>
-        <p className="text-gray-600 text-sm md:text-base leading-6 md:leading-7">
-          Taxi fare depends on pickup and drop location. Contact RC Tours &
-          Travels for an instant fare quote.
-        </p>
-      </div>
-
-      <div className="bg-slate-100 p-4 md:p-6 rounded-2xl">
-        <h3 className="font-bold text-base md:text-xl mb-2">
-          Do you provide outstation taxi service from Nagpur?
-        </h3>
-        <p className="text-gray-600 text-sm md:text-base leading-6 md:leading-7">
-          Yes, we provide outstation taxi service from Nagpur to Pune,
-          Mumbai, Hyderabad, Indore, Bhopal, Shirdi and many more destinations.
-        </p>
-      </div>
-
-      <div className="bg-slate-100 p-4 md:p-6 rounded-2xl">
-        <h3 className="font-bold text-base md:text-xl mb-2">
-          Is Tempo Traveller available in Nagpur?
-        </h3>
-        <p className="text-gray-600 text-sm md:text-base leading-6 md:leading-7">
-          Yes, we provide Tempo Traveller rental for family trips,
-          corporate tours, pilgrimages and group travel.
-        </p>
-      </div>
-
-      <div className="bg-slate-100 p-4 md:p-6 rounded-2xl">
-        <h3 className="font-bold text-base md:text-xl mb-2">
-          Do you offer one-way taxi service?
-        </h3>
-        <p className="text-gray-600 text-sm md:text-base leading-6 md:leading-7">
-          Yes, one-way and round-trip taxi services are available for
-          local and outstation routes.
-        </p>
-      </div>
-
-      <div className="bg-slate-100 p-4 md:p-6 rounded-2xl">
-        <h3 className="font-bold text-base md:text-xl mb-2">
-          How can I book a taxi in Nagpur?
-        </h3>
-        <p className="text-gray-600 text-sm md:text-base leading-6 md:leading-7">
-          You can call us directly at +91 9172271464 or book through WhatsApp.
-        </p>
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-{/* Contact Information */}
-
-<section className="border-t border-slate-200 py-6 md:py-12">
-
-  <div className="max-w-6xl mx-auto px-4 md:px-8">
-
-    <h2 className="text-2xl md:text-5xl font-black text-center text-slate-900 mb-3 md:mb-4 leading-tight">
-      Contact RC Tours & Travels
-    </h2>
-
-    <p className="text-center text-gray-600 text-sm md:text-base max-w-3xl mx-auto mb-6 md:mb-12 leading-6 md:leading-7">
-      Looking for Airport Taxi, Local Cab, Outstation Taxi or Tempo Traveller
-      in Nagpur? Contact our team today for instant booking and fare details.
-    </p>
-
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6 max-w-5xl mx-auto">
-
-      {/* Call */}
-      <div className="bg-white border shadow-lg rounded-3xl p-4 md:p-8 text-center">
-
-        <div className="text-4xl md:text-5xl mb-2 md:mb-4">
-          📞
+          </div>
         </div>
+      </section>
 
-        <h3 className="text-lg md:text-2xl font-bold mb-2 md:mb-3">
-          Call Us
-        </h3>
+      {/* Contact Information */}
+      <section className="border-t border-slate-200 py-8 md:py-10">
+        <div className="max-w-6xl mx-auto px-4 md:px-8">
 
-        <p className="text-gray-600 text-sm md:text-base mb-3 md:mb-4">
-          Quick booking and fare information.
-        </p>
+          <h2 className="text-2xl md:text-4xl font-black text-center mb-3">
+            Contact RC Tours & Travels
+          </h2>
+
+          <p className="text-center text-gray-600 text-sm md:text-base max-w-3xl mx-auto mb-6 md:mb-8 leading-7">
+            Looking for Airport Taxi, Local Cab, Outstation Taxi or Tempo
+            Traveller in Nagpur? Contact our team today for instant booking
+            and fare details.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 max-w-5xl mx-auto">
+
+            <div className="bg-white border shadow-sm rounded-2xl p-5 md:p-6 text-center">
+              <Phone className="w-8 h-8 text-blue-600 mx-auto mb-3" />
+
+              <h3 className="text-lg font-bold mb-2">
+                Call Us
+              </h3>
+
+              <p className="text-gray-600 text-sm mb-3">
+                Quick booking and fare information.
+              </p>
+
+              <a
+                href="tel:+919172271464"
+                className="text-blue-600 font-bold text-sm md:text-base"
+              >
+                +91 9172271464
+              </a>
+            </div>
+
+            <div className="bg-white border shadow-sm rounded-2xl p-5 md:p-6 text-center">
+              <MessageCircle className="w-8 h-8 text-green-600 mx-auto mb-3" />
+
+              <h3 className="text-lg font-bold mb-2">
+                WhatsApp Booking
+              </h3>
+
+              <p className="text-gray-600 text-sm mb-3">
+                Instant response for taxi booking.
+              </p>
+
+              <a
+                href="https://wa.me/919172271464"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-green-600 font-bold text-sm md:text-base"
+              >
+                Chat On WhatsApp
+              </a>
+            </div>
+
+            <div className="bg-white border shadow-sm rounded-2xl p-5 md:p-6 text-center">
+              <MapPin className="w-8 h-8 text-red-500 mx-auto mb-3" />
+
+              <h3 className="text-lg font-bold mb-2">
+                Our Location
+              </h3>
+
+              <p className="text-gray-600 text-sm leading-6">
+                New Narsala Rd, Beldar Nagar,
+                <br />
+                Dighori, Nagpur,
+                <br />
+                Maharashtra 440034
+              </p>
+            </div>
+
+          </div>
+
+          <div className="mt-5 md:mt-7 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-2xl p-4 md:p-6 text-center shadow-lg">
+
+            <p className="text-xs md:text-base leading-6">
+              Airport Pickup & Drop • Local Cab Service • Outstation Taxi •
+              Tempo Traveller • Corporate Travel • Tour Packages
+            </p>
+
+          </div>
+        </div>
+      </section>
+
+      {/* SEO Content */}
+      <section className="border-t border-slate-200 py-8 md:py-10">
+        <div className="max-w-6xl mx-auto px-4 md:px-8">
+
+          <h2 className="text-2xl md:text-4xl font-black text-center mb-7 md:mb-8">
+            Best Taxi Service In Nagpur
+          </h2>
+
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 md:p-8">
+
+            <p className="text-sm md:text-base text-gray-600 leading-7 mb-4">
+              RC Tours & Travels is a trusted taxi service provider in Nagpur
+              offering airport taxi, local cab booking, outstation taxi,
+              corporate travel and Tempo Traveller rental services.
+            </p>
+
+            <p className="text-sm md:text-base text-gray-600 leading-7 mb-4">
+              We provide transportation services from Nagpur to Pench,
+              Tadoba, Chikhaldara, Wardha, Amravati, Pune, Mumbai,
+              Hyderabad, Indore, Bhopal, Shirdi and many other destinations.
+            </p>
+
+            <p className="text-sm md:text-base text-gray-600 leading-7">
+              Our focus is on customer satisfaction, clean vehicles,
+              experienced drivers, transparent pricing and safe travel.
+              Whether you need a local cab or an outstation taxi,
+              RC Tours & Travels is ready to serve you.
+            </p>
+
+          </div>
+        </div>
+      </section>
+
+      {/* Compact CTA */}
+      <section className="border-t border-slate-200 py-7 md:py-9">
+        <div className="max-w-4xl mx-auto px-4 md:px-8">
+
+          <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-800 rounded-2xl px-5 py-7 md:px-10 md:py-9 text-center shadow-xl">
+
+            <h2 className="text-2xl md:text-4xl font-black text-white leading-tight">
+              Need A Taxi In Nagpur?
+              <br />
+              <span className="text-cyan-300">
+                Book RC Tours & Travels Now
+              </span>
+            </h2>
+
+            <p className="text-sm md:text-base text-slate-200 mt-3">
+              24×7 Airport Taxi • Outstation Cab • Tempo Traveller Booking
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mt-5">
+
+              <a
+                href="tel:+919172271464"
+                className="inline-flex items-center justify-center gap-2 bg-cyan-400 hover:bg-cyan-300 text-slate-900 px-6 py-3 rounded-xl font-bold text-sm md:text-base transition"
+              >
+                <Phone size={18} />
+                Call Now
+              </a>
+
+              <a
+                href="https://wa.me/919172271464"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-bold text-sm md:text-base transition"
+              >
+                <MessageCircle size={18} />
+                WhatsApp Booking
+              </a>
+
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+
+      {/* Floating Buttons */}
+      <div className="fixed bottom-4 right-3 md:bottom-6 md:right-5 z-50 flex flex-col items-center gap-2">
 
         <a
           href="tel:+919172271464"
-          className="text-blue-600 font-bold text-base md:text-lg break-all"
+          aria-label="Call RC Tours and Travels"
+          className="bg-cyan-500 hover:bg-cyan-600 text-white w-12 h-12 md:w-14 md:h-14 rounded-full shadow-2xl flex items-center justify-center transition"
         >
-          +91 9172271464
+          <Phone className="w-5 h-5 md:w-6 md:h-6" />
         </a>
-
-      </div>
-
-      {/* WhatsApp */}
-      <div className="bg-white border shadow-lg rounded-3xl p-4 md:p-8 text-center">
-
-        <div className="text-4xl md:text-5xl mb-2 md:mb-4">
-          💬
-        </div>
-
-        <h3 className="text-lg md:text-2xl font-bold mb-2 md:mb-3">
-          WhatsApp Booking
-        </h3>
-
-        <p className="text-gray-600 text-sm md:text-base mb-3 md:mb-4">
-          Instant response for taxi booking.
-        </p>
 
         <a
           href="https://wa.me/919172271464"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-green-600 font-bold text-base md:text-lg"
+          aria-label="WhatsApp RC Tours and Travels"
+          className="bg-green-500 hover:bg-green-600 text-white w-12 h-12 md:w-14 md:h-14 rounded-full shadow-2xl flex items-center justify-center transition"
         >
-          Chat On WhatsApp
+          <FaWhatsapp className="text-2xl md:text-3xl" />
         </a>
 
-      </div>
-
-      {/* Location */}
-      <div className="bg-white border shadow-lg rounded-3xl p-4 md:p-8 text-center">
-
-        <div className="text-4xl md:text-5xl mb-2 md:mb-4">
-          📍
+        <div className="bg-green-500 text-white px-2.5 py-1 rounded-lg shadow-lg animate-pulse">
+          <p className="text-[9px] md:text-[10px] font-bold text-center whitespace-nowrap">
+            🎁 Get Discount
+          </p>
         </div>
 
-        <h3 className="text-lg md:text-2xl font-bold mb-2 md:mb-3">
-          Our Location
-        </h3>
-
-        <p className="text-gray-600 text-sm md:text-base leading-6 md:leading-7">
-          New Narsala Rd, Beldar Nagar,
-          Dighori, Nagpur,
-          Maharashtra 440034
-        </p>
-
       </div>
 
-    </div>
-
-    <div className="mt-6 md:mt-10 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-3xl p-4 md:p-10 text-center shadow-xl">
-
-      <p className="max-w-3xl mx-auto text-sm md:text-lg leading-6 md:leading-8">
-        Airport Pickup & Drop • Local Cab Service • Outstation Taxi •
-        Tempo Traveller • Corporate Travel • Tour Packages
-      </p>
-
-    </div>
-
-  </div>
-
-</section>
-
-      {/* SEO Content */}
-<section className="border-t border-white/10 py-8 md:py-10 relative overflow-hidden">
-
-  <div className="max-w-6xl mx-auto px-4 md:px-8">
-
-    <h2 className="text-2xl md:text-5xl font-black text-center text-slate-900 mb-8 md:mb-12 leading-tight">
-      Best Taxi Service In Nagpur
-    </h2>
-
-    <div className="bg-white rounded-3xl shadow-xl p-5 md:p-10">
-
-      <p className="text-sm md:text-lg text-gray-600 leading-7 md:leading-9 mb-5 md:mb-6">
-        RC Tours & Travels is a trusted taxi service provider in Nagpur
-        offering airport taxi, local cab booking, outstation taxi,
-        corporate travel and Tempo Traveller rental services.
-      </p>
-
-      <p className="text-sm md:text-lg text-gray-600 leading-7 md:leading-9 mb-5 md:mb-6">
-        We provide transportation services from Nagpur to Pench,
-        Tadoba, Chikhaldara, Wardha, Amravati, Pune, Mumbai,
-        Hyderabad, Indore, Bhopal, Shirdi and many other destinations.
-      </p>
-
-      <p className="text-sm md:text-lg text-gray-600 leading-7 md:leading-9">
-        Our focus is on customer satisfaction, clean vehicles,
-        experienced drivers, transparent pricing and safe travel.
-        Whether you need a local cab or an outstation taxi,
-        RC Tours & Travels is ready to serve you.
-      </p>
-
-    </div>
-
-  </div>
-
-</section>
-
-{/* CTA */}
-<section className="border-t border-white/10 py-8 md:py-10 relative overflow-hidden">
-
-  <div className="max-w-5xl mx-auto px-4 md:px-8 text-center">
-
-    <h2 className="text-2xl md:text-5xl font-black mb-4 md:mb-6 leading-tight">
-      Need A Taxi In Nagpur?
-      <br />
-      Call RC Tours & Travels Now
-    </h2>
-
-    <p className="text-base md:text-xl mb-8 md:mb-10 leading-7">
-      24×7 Airport Taxi • Outstation Cab • Tempo Traveller Booking
-    </p>
-
-    <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
-
-      <a
-        href="tel:+919172271464"
-        className="bg-cyan-500 hover:bg-cyan-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-2xl font-bold text-sm md:text-base"
-      >
-        📞 Call Now
-      </a>
-
-      <a
-        href="https://wa.me/919172271464"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-green-500 hover:bg-green-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-2xl font-bold text-sm md:text-base"
-      >
-        💬 WhatsApp Booking
-      </a>
-
-    </div>
-
-  </div>
-
-</section>
-
-<Footer />
-
-{/* Floating Buttons */}
-<div className="fixed bottom-4 md:bottom-6 right-2 md:right-0 z-50 flex flex-col items-center gap-1">
-
-  <a
-    href="tel:+919172271464"
-    className="bg-cyan-500 hover:bg-cyan-600 text-white w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center text-xl md:text-2xl"
-  >
-    📞
-  </a>
-
-  <a
-    href="https://wa.me/919172271464"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="bg-green-500 hover:bg-green-600 text-white w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl md:text-4xl"
-  >
-    <FaWhatsapp />
-  </a>
-
-  <div className="bg-green-500 text-white px-2 md:px-3 py-1.5 md:py-2 rounded-xl shadow-xl animate-pulse">
-    <p className="text-[9px] md:text-[11px] font-bold text-center whitespace-nowrap">
-      🎁 Get Discount
-    </p>
-  </div>
-
-</div>
-
-</main>
+    </main>
   );
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { ObjectId } from "mongodb";
 import clientPromise from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
 
 // ========================================
 // GET SINGLE CAMPAIGN
@@ -14,7 +14,7 @@ export async function GET(request, { params }) {
       return NextResponse.json(
         {
           success: false,
-          message: "Invalid campaign ID",
+          message: "Invalid Campaign ID",
         },
         { status: 400 }
       );
@@ -44,7 +44,7 @@ export async function GET(request, { params }) {
       campaign,
     });
   } catch (error) {
-    console.error("Campaign GET Single Error:", error);
+    console.error("Campaign GET Error:", error);
 
     return NextResponse.json(
       {
@@ -68,7 +68,7 @@ export async function PUT(request, { params }) {
       return NextResponse.json(
         {
           success: false,
-          message: "Invalid campaign ID",
+          message: "Invalid Campaign ID",
         },
         { status: 400 }
       );
@@ -76,29 +76,20 @@ export async function PUT(request, { params }) {
 
     const body = await request.json();
 
-    const {
-      title,
-      description,
-      image,
-      buttonText,
-      buttonLink,
-      startDate,
-      endDate,
-      active,
-    } = body;
-
-    if (!title?.trim()) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Campaign title is required",
-        },
-        { status: 400 }
-      );
-    }
-
     const client = await clientPromise;
     const db = client.db();
+
+    const updatedCampaign = {
+      title: body.title,
+      description: body.description,
+      image: body.image,
+      buttonText: body.buttonText || "Book Now",
+      buttonLink: body.buttonLink || "/book-cab",
+      startDate: body.startDate,
+      endDate: body.endDate,
+      active: body.active ?? true,
+      updatedAt: new Date(),
+    };
 
     const result = await db
       .collection("campaigns")
@@ -107,17 +98,7 @@ export async function PUT(request, { params }) {
           _id: new ObjectId(campaignId),
         },
         {
-          $set: {
-            title: title.trim(),
-            description: description || "",
-            image: image || "",
-            buttonText: buttonText || "Book Now",
-            buttonLink: buttonLink || "/book-cab",
-            startDate: startDate || "",
-            endDate: endDate || "",
-            active: Boolean(active),
-            updatedAt: new Date(),
-          },
+          $set: updatedCampaign,
         }
       );
 
@@ -160,7 +141,7 @@ export async function DELETE(request, { params }) {
       return NextResponse.json(
         {
           success: false,
-          message: "Invalid campaign ID",
+          message: "Invalid Campaign ID",
         },
         { status: 400 }
       );

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { FaWhatsapp } from "react-icons/fa";
 import Footer from "@/components/Footer";
 import AnnouncementPopup from "@/components/AnnouncementPopup";
+import CampaignPopup from "@/components/CampaignPopup";
 import TravelAssistantButton from "@/components/TravelAssistantButton";
 
 import {
@@ -37,6 +38,22 @@ useEffect(() => {
 }, []);
 
 const [isRouteHovered, setIsRouteHovered] = useState(false);
+
+useEffect(() => {
+  if (!isMobile || isRouteHovered || routes.length === 0) {
+    return;
+  }
+
+  const interval = setInterval(() => {
+    setRouteIndex((prev) => {
+      return (prev + 1) % routes.length;
+    });
+  }, 4000);
+
+  return () => {
+    clearInterval(interval);
+  };
+}, [isMobile, isRouteHovered]);
 
 const [pickup, setPickup] = useState("");
 const [drop, setDrop] = useState("");
@@ -395,36 +412,123 @@ const routes = [
 
 const reviews = [
   {
-    name: "Amit Sharma",
-    image: "/review1.jpg",
-    review: "Excellent service. Clean vehicle and polite driver.",
-    time: "1 month ago"
+    name: "Bhairavi Sarpatwar",
+    image: "/reviews/bhairavi sarpatwar.png",
+    review:
+      "Comfortable vehicles.....polite and trained drivers.....keep it up....nice experience with RC Tours & Travels 👍👍",
+    time: "4 weeks ago",
   },
 
   {
-    name: "Priya Verma",
-    image: "/review2.jpg",
+    name: "Mahesh Kulkarni",
+    image: "/reviews/mahesh kulkarni.png",
     review:
-      "Very professional taxi service in Nagpur. Booking process was smooth and pricing was transparent.",
-    time: "3 weeks ago"
+      "I have booked Cab with RC for one day tour to Ramtek including Nagpur points. Cab service was good, clean and comfortable.",
+    time: "15 weeks ago",
   },
+
   {
-    name: "Rahul Deshmukh",
-    image: "/review3.jpg",
+    name: "Shaikh Naeem",
+    image: "/reviews/shaikh naeem.png",
     review:
-      "Used RC Tours & Travels for a family trip. Vehicle was neat and driver was cooperative.",
+      "I had a fantastic experience! Vicky Janpat displayed excellent driving skills, ensuring a smooth and comfortable journey.",
+    time: "19 weeks ago",
   },
+
   {
-    name: "Sneha Patil",
-    image: "/review1.jpg",
+    name: "Rakesh Juneja",
+    image: "/reviews/rakesh juneja.png",
     review:
-      "Best taxi service for airport transfer. Driver arrived before time.",
+      "Good service. Nice behaviour. Very co-operative. Neat, clean, punctual. Highly recommend.",
+    time: "21 weeks ago",
   },
+
   {
-    name: "Vikas Joshi",
-    image: "/review2.jpg",
+    name: "Durgesh Gumgaokar",
+    image: "/reviews/durgesh gumgaokar.png",
     review:
-      "Booked Innova Crysta for family tour. Amazing experience.",
+      "I booked my Jabalpur trip from Nagpur with RC Tours & Travels, and the entire experience was truly wonderful.",
+    time: "21 weeks ago",
+  },
+
+  {
+    name: "Divyanshu Singh",
+    image: "/reviews/divyanshu singh.png",
+    review:
+      "Thank you RC Tours and Travels and Rupesh ji for an excellent experience. Our driver Vicky was very polite and experienced.",
+    time: "22 weeks ago",
+  },
+
+  {
+    name: "Alluri Rakesh",
+    image: "/reviews/alluri rakesh.png",
+    review:
+      "Simply superb service, comfortable ride till the end. Thank you for your services.",
+    time: "22 weeks ago",
+  },
+
+  {
+    name: "Sarnam Singh Kurra",
+    image: "/reviews/sarnam singh kurra.png",
+    review:
+      "Nice experience with RC Tours and Travels. The driver was nice and the car was totally clean. Overall very good service.",
+    time: "30 weeks ago",
+  },
+
+  {
+    name: "Kishor Kumar Nayak",
+    image: "/reviews/kishor kumar nayak.png",
+    review:
+      "I'm traveling with RC Tours and Travels and had the best experience with the driver and supportive RC Tours team. Thank you so much 🙏🏻",
+    time: "30 weeks ago",
+  },
+
+  {
+    name: "Binayak Sarkar",
+    image: "/reviews/binayak sarkar.png",
+    review:
+      "Very good behaviour and polite in nature.",
+    time: "30 weeks ago",
+  },
+
+  {
+    name: "Vineet Goyal",
+    image: "/reviews/vineet goyal.png",
+    review:
+      "We rented an Ertiga car with RC Tours and Travels. The car was neat and clean, in good condition, and the driver was polite.",
+    time: "30 weeks ago",
+  },
+
+  {
+    name: "Kishor Gund",
+    image: "/reviews/kishor gund.png",
+    review:
+      "Aniket is a very good driver. He is very cooperative and soft spoken person.",
+    time: "32 weeks ago",
+  },
+
+  {
+    name: "Mukund Sangolkar",
+    image: "/reviews/mukund sangolkar.png",
+    review:
+      "Very good service.",
+    time: "32 weeks ago",
+  },
+
+  {
+    name: "Raj Kumar Ghasal",
+    image: "/reviews/raj kumar ghasal.png",
+    review:
+      "Excellent service, on-time pickup and drop.",
+    time: "35 weeks ago",
+  },
+
+  {
+    name: "Nitin Mohane",
+    image: "/reviews/nitin.png",
+    review:
+      "Literally one of the best travel experiences. The ambience of the car, professionalism, safety, punctuality and comfort were outstanding. Truly one of the best travel experiences with great expertise and travel knowledge.",
+    time: "35 weeks ago",
   },
 ];
 
@@ -447,6 +551,67 @@ const actions = [
 ];
 const [ctaIndex, setCtaIndex] = useState(0);
 const [isReviewHovered, setIsReviewHovered] = useState(false);
+
+const banners = [
+  {
+    badge: "POPULAR",
+    titleNormal: "Planning an",
+    titleHighlight: "Outstation Trip?",
+    subtext:
+      "Travel comfortably from Nagpur with professional drivers and well-maintained vehicles.",
+    buttonText: "Book Outstation Cab",
+    tripType: "Outstation Trip",
+    images: [
+      "https://images.unsplash.com/photo-1585135497277-ee4e19597172?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1506015391300-4802dc74de2e?auto=format&fit=crop&w=900&q=80",
+    ],
+  },
+
+  {
+    badge: "24×7 SERVICE",
+    titleNormal: "Need a Quick",
+    titleHighlight: "Airport Cab?",
+    subtext:
+      "Reliable airport pickup and drop service with comfortable rides and on-time travel.",
+    buttonText: "Book Airport Cab",
+    tripType: "Airport Pick-Up & Drop",
+    images: [
+      "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=900&q=80",
+    ],
+  },
+
+  {
+    badge: "WEEKEND SPECIAL",
+    titleNormal: "Planning a",
+    titleHighlight: "Weekend Getaway?",
+    subtext:
+      "Explore Tadoba, Pench, Chikhaldara and more amazing destinations from Nagpur.",
+    buttonText: "Explore Tour Packages",
+    tripType: "Outstation Trip",
+    images: [
+      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1511497584788-876761197069?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=80",
+    ],
+  },
+];
+
+const [currentIndex, setCurrentIndex] = useState(0);
+
+useEffect(() => {
+  const timer = setInterval(() => {
+    setCurrentIndex((prevIndex) => {
+      return (prevIndex + 1) % banners.length;
+    });
+  }, 4000);
+
+  return () => clearInterval(timer);
+}, []);
+
+const banner = banners[currentIndex];
 
 let bookCabUrl = "";
 
@@ -507,828 +672,1025 @@ useEffect(() => {
 
     <main className="min-h-screen bg-black text-white pt-20 overflow-x-hidden">
 
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-[#071a52] via-[#0b2a78] to-[#0f4cc9] overflow-hidden">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-500/20 blur-[120px] rounded-full pointer-events-none"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-400/20 blur-[120px] rounded-full pointer-events-none"></div>
+{/* Hero Section */}
+<section className="relative overflow-visible bg-gradient-to-br from-[#051336] via-[#09225c] to-[#08348a] pt-6 pb-12 md:pt-12 md:pb-20">
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10 pt-8 md:pt-10 pb-10 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center relative z-10">
-          {/* Left Hero Content */}
-          <div className="flex flex-col items-center md:items-start text-center md:text-left">
-            <div className="inline-block px-5 py-2 rounded-full border border-blue-500/30 bg-blue-500/10 mb-4 text-sm font-semibold">
-              👑 #1 Taxi Service in Nagpur
-            </div>
+  {/* Background Glow Effects */}
+  <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-cyan-500/10 blur-[180px] rounded-full pointer-events-none" />
+  <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-500/15 blur-[160px] rounded-full pointer-events-none" />
 
-            <h1 className="font-black leading-[1.05] text-3xl sm:text-4xl md:text-5xl lg:text-7xl">
+  <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            {/* Mobile */}
-            <span className="block md:hidden">
-            Taxi Service <span className="text-cyan-400">In Nagpur</span>
-            </span>
+    {/* Top Grid Layout */}
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
 
-            {/* Desktop */}
-            <span className="hidden md:block">
-            Taxi Service
-            <br />
-            In
-            <span className="text-cyan-400"> Nagpur</span>
-            </span>
+      {/* Left Content (Desktop par full, Mobile par compact & SEO strong) */}
+      <div className="lg:col-span-7 text-left">
 
-            </h1>
+        {/* Top Badge */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-cyan-400/30 bg-cyan-950/40 backdrop-blur-md text-xs sm:text-sm font-semibold text-cyan-200 shadow-sm mb-4 lg:mb-6">
+          <span className="text-sm sm:text-base">👑</span>
+          #1 Taxi Service in Nagpur
+        </div>
 
-            <p className="mt-6 text-[14px] sm:text-[15px] md:text-[16px] lg:text-[17px] text-gray-300 leading-7 md:leading-8 max-w-xl">
-              Book the best taxi service in Nagpur for airport transfers, local cab rental,
-              one-way taxi, round trip, outstation travel, corporate cab service, Tempo Traveller
-              rental and tour packages. RC Tours & Travels receives daily taxi booking requests
-              from Nagpur for Pune, Mumbai, Hyderabad, Shirdi, Nashik, Pench, Tadoba,
-              Amravati, Wardha, Chandrapur and many other destinations across Maharashtra
-              and India. Enjoy professional drivers, clean vehicles, transparent pricing and
-              24×7 booking support.
-            </p>
+        {/* Main Heading */}
+        <h1 className="font-extrabold tracking-tight text-2xl sm:text-5xl md:text-[55px] text-white leading-tight">
+          Book Your Cab{" "}
+          <span className="bg-gradient-to-r from-cyan-400 to-blue-300 bg-clip-text text-transparent">
+            from Nagpur
+          </span>
+        </h1>
 
-            <div className="grid grid-cols-3 gap-3 md:gap-4 mt-6 md:mt-8">
-              <div className="bg-white/5 backdrop-blur-md border border-white/10 p-3 sm:p-4 md:p-6 rounded-2xl hover:scale-105 hover:border-cyan-400/40 transition-all duration-300">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">7+</h2>
-                <p className="text-xs md:text-sm text-gray-400">Years Experience</p>
-              </div>
+        {/* SEO Supporting Text */}
+        <p className="mt-2.5 sm:mt-3 text-xs sm:text-base md:text-lg text-blue-200/80 font-medium">
+          Book trusted taxi service in Nagpur for local travel, airport pickup and drop,
+          one way cab and outstation taxi bookings with RC Tours & Travels. Enjoy safe
+          rides, professional drivers, affordable fares and 24×7 cab booking from Nagpur.
+        </p>
 
-              <div className="bg-white/5 backdrop-blur-md border border-white/10 p-3 sm:p-4 md:p-6 rounded-2xl hover:scale-105 hover:border-cyan-400/40 transition-all duration-300">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">4.9★</h2>
-                <p className="text-xs md:text-sm text-gray-400">Google Rating</p>
-              </div>
+      </div>
 
-              <div className="bg-white/5 backdrop-blur-md border border-white/10 p-3 sm:p-4 md:p-6 rounded-2xl hover:scale-105 hover:border-cyan-400/40 transition-all duration-300">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">98%</h2>
-                <p className="text-xs md:text-sm text-gray-400">Satisfaction</p>
-              </div>
-            </div>
-          </div>
+      {/* Right Car Image (Desktop Only) */}
+      <div className="lg:col-span-5 hidden lg:flex justify-center relative">
+        <div className="relative w-full max-w-lg">
+          <div className="absolute inset-0 border-2 border-cyan-400/30 rounded-full blur-sm scale-95 pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-cyan-400/20 rounded-full blur-2xl pointer-events-none" />
+          <img
+            src="/car-hero.png"
+            alt="RC Tours & Travels Cab"
+            className="relative z-10 w-full object-contain drop-shadow-2xl"
+          />
+        </div>
+      </div>
 
-          {/* New Clean & Fixed Booking Box */}
-          <div
-          id="book-ride"
-          className="bg-white rounded-3xl p-3 sm:p-5 md:p-6 max-w-xl w-full mx-auto md:ml-auto shadow-2xl border border-gray-100 text-gray-900 relative z-20 md:-mt-6 lg:-mt-8"
+    </div>
+
+
+{/* ================= TRIP TYPE BUTTONS ================= */}
+<div className="relative z-20 w-full mt-4 mb-3">
+
+  {/* Desktop */}
+  <div className="hidden sm:flex w-full justify-center">
+    <div className="flex items-center justify-center gap-2 sm:gap-3">
+
+      {[
+        {
+          type: "Airport Pick-Up & Drop",
+          label: "Airport",
+        },
+        {
+          type: "One Way Trip",
+          label: "Outstation One-Way",
+        },
+        {
+          type: "Outstation Trip",
+          label: "Outstation Round-Trip",
+        },
+        {
+          type: "Local Rental",
+          label: "Hourly Rental",
+        },
+      ].map((item) => {
+        const isActive = tripType === item.type;
+
+        return (
+          <button
+            key={item.type}
+            type="button"
+            onClick={() => setTripType(item.type)}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
+              isActive
+                ? "bg-gradient-to-r from-[#5068a8] to-[#3d568f] text-white shadow-lg ring-2 ring-white/20"
+                : "bg-white/95 text-gray-800 shadow-md hover:bg-white"
+            }`}
           >
-            <div className="text-center mb-4">
-              <div className="flex justify-center mb-2">
-                <a
-                  href="tel:+919172271464"
-                  className="relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-orange-500 text-white font-bold text-xs uppercase tracking-wider shadow-md hover:bg-orange-600 transition-all"
-                >
-                  <span className="absolute inset-0 rounded-full bg-orange-500 animate-ping opacity-40"></span>
-                  <span className="relative">📞 Call Now</span>
-                </a>
-              </div>
-              <h3 className="text-xl font-black text-gray-950">Book Your Ride</h3>
-              <p className="text-gray-500 text-xs mt-0.5">Book Your Ride In Just 30 Seconds</p>
-            </div>
+            <span
+              className={`h-5 w-5 shrink-0 rounded-full border-2 flex items-center justify-center ${
+                isActive
+                  ? "border-white bg-white/10"
+                  : "border-gray-400"
+              }`}
+            >
+              {isActive && (
+                <span className="w-2.5 h-2.5 rounded-full bg-white" />
+              )}
+            </span>
 
-            <div className="space-y-2 md:space-y-3">
+            {item.label}
+          </button>
+        );
+      })}
 
-              {/* Mobile Trip Type */}
+    </div>
+  </div>
 
-<div className="block lg:hidden mb-5">
 
-  <label className="text-xs font-bold text-gray-700 mb-2 block">
-    Select Trip Type
-  </label>
+{/* ================= MOBILE - ALL 4 IN ONE LINE ================= */}
+<div className="grid sm:hidden grid-cols-4 w-full gap-1 px-0">
 
-  <select
-    value={tripType}
-    onChange={(e) => setTripType(e.target.value)}
-    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm focus:outline-none focus:border-cyan-500"
-  >
-    <option value="">Choose Trip Type</option>
-    <option value="Airport Pick-Up & Drop">
-      ✈ Airport
-    </option>
+  {[
+    {
+      type: "Airport Pick-Up & Drop",
+      label: "Airport",
+    },
+    {
+      type: "One Way Trip",
+      label: "One-Way",
+    },
+    {
+      type: "Outstation Trip",
+      label: "Round-Trip",
+    },
+    {
+      type: "Local Rental",
+      label: "Hourly",
+    },
+  ].map((item) => {
+    const isActive = tripType === item.type;
 
-    <option value="One Way Trip">
-      🚗 One Way
-    </option>
+    return (
+      <button
+        key={item.type}
+        type="button"
+        onClick={() => setTripType(item.type)}
+        className={`w-full min-w-0 h-9 flex items-center justify-center gap-1 rounded-lg px-1 text-[9px] font-semibold whitespace-nowrap transition-all duration-200 ${
+          isActive
+            ? "bg-gradient-to-r from-[#5068a8] to-[#3d568f] text-white shadow-lg ring-1 ring-white/20"
+            : "bg-white/95 text-gray-700 shadow-md"
+        }`}
+      >
+        <span
+          className={`hidden min-[380px]:flex h-3 w-3 shrink-0 rounded-full border items-center justify-center ${
+            isActive
+              ? "border-white bg-white/10"
+              : "border-gray-400"
+          }`}
+        >
+          {isActive && (
+            <span className="w-1 h-1 rounded-full bg-white" />
+          )}
+        </span>
 
-    <option value="Outstation Trip">
-      🔁 Round Trip
-    </option>
-
-    <option value="Local Rental">
-      🏠 Local Rental
-    </option>
-
-  </select>
+        <span className="truncate">
+          {item.label}
+        </span>
+      </button>
+    );
+  })}
 
 </div>
 
-              {/* Premium Trip Type Tabs */}
+</div>
 
-              <div className="hidden lg:block mb-5">
 
-              <p className="text-xs font-bold text-gray-700 mb-3">
-              Select Trip Type
-              </p>
+{/* ================= BOOKING BAR ================= */}
+<div
+  id="book-ride"
+  className="relative z-[100] bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl shadow-black/20 p-3.5 sm:p-6 border border-white/20"
+>
+  <div
+    className={`grid gap-3 sm:gap-4 items-end ${
+      tripType === "Outstation Trip"
+        ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-7"
+        : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-6"
+    }`}
+  >
 
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+    {/* Pickup */}
+    <div className="relative">
+      <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide">
+        📍 Pickup
+      </label>
 
-              <button
-              type="button"
-              onClick={() => setTripType("Airport Pick-Up & Drop")}
-              className={`rounded-xl px-3 py-3 text-sm font-bold transition-all border
-              ${
-              tripType === "Airport Pick-Up & Drop"
-              ? "bg-cyan-500 text-white border-cyan-500 shadow-lg"
-              : "bg-white text-gray-700 border-gray-200 hover:border-cyan-400"
-              }`}
-              >
-              ✈️ Airport
-              </button>
-
-              <button
-              type="button"
-              onClick={() => setTripType("One Way Trip")}
-              className={`rounded-xl px-3 py-3 text-sm font-bold transition-all border
-              ${
-              tripType === "One Way Trip"
-              ? "bg-cyan-500 text-white border-cyan-500 shadow-lg"
-              : "bg-white text-gray-700 border-gray-200 hover:border-cyan-400"
-              }`}
-              >
-              🚗 One Way
-              </button>
-
-              <button
-              type="button"
-              onClick={() => setTripType("Outstation Trip")}
-              className={`rounded-xl px-3 py-3 text-sm font-bold transition-all border
-              ${
-              tripType === "Outstation Trip"
-              ? "bg-cyan-500 text-white border-cyan-500 shadow-lg"
-              : "bg-white text-gray-700 border-gray-200 hover:border-cyan-400"
-              }`}
-              >
-              🔁 Round Trip
-              </button>
-
-              <button
-              type="button"
-              onClick={() => setTripType("Local Rental")}
-              className={`rounded-xl px-2 py-3 text-xs lg:text-sm font-bold transition-all border whitespace-nowrap
-              ${
-              tripType === "Local Rental"
-              ? "bg-cyan-500 text-white border-cyan-500 shadow-lg"
-              : "bg-white text-gray-700 border-gray-200 hover:border-cyan-400"
-              }`}
-              >
-              🏠 Local Rental
-              </button>
-
-            </div>
-
-          </div>
-
-              {/* Pickup + Drop Row */}
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-            {/* Pickup */}
-            <div className="relative">
-
-            <label className="text-xs font-bold text-gray-700 mb-2 block">
-            📍 Pickup Location
-            </label>
-
-            <input
-            type="text"
-            value={pickup}
-            onChange={(e) => {
+      <div className="relative">
+        <input
+          type="text"
+          value={pickup}
+          onChange={(e) => {
             setPickup(e.target.value);
             searchLocation(e.target.value, "pickup");
-            }}
-            placeholder="Enter Pickup Location"
-            className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm focus:outline-none focus:border-cyan-500"
-            />
-
-            <button
-            type="button"
-            onClick={getCurrentLocation}
-            disabled={gettingLocation}
-            className="mt-2 w-full flex items-center justify-center gap-2 text-sm font-semibold text-cyan-600 hover:text-cyan-700 transition disabled:opacity-50"
-            >
-            <span className="flex items-center justify-center w-7 h-7 rounded-full bg-cyan-50">
-            <LocateFixed
-            size={18}
-            strokeWidth={2.3}
-            />
-            </span>
-
-            <span>
-            {gettingLocation
-            ? "Getting your location..."
-            : "Use current location"}
-            </span>
-            </button>
-
-            {pickupSuggestions.length > 0 && (
-            <div className="absolute left-0 right-0 mt-1 bg-white border rounded-xl shadow-xl max-h-48 overflow-y-auto z-50">
-
-            {pickupSuggestions.map((item, index) => (
-
-            <div
-            key={index}
-            onClick={() => {
-            setPickup(item.display_name);
-
-            setPickupCoords({
-            lat: Number(item.lat),
-            lon: Number(item.lon),
-            });
-
-            setPickupSuggestions([]);
-            }}
-            className="px-4 py-3 cursor-pointer hover:bg-cyan-50 text-sm"
-            >
-            📍 {item.display_name}
-            </div>
-
-            ))}
-
-            </div>
-            )}
-
-          </div>
-
-          {/* Drop */}
-
-          <div className="relative">
-
-          <label className="text-xs font-bold text-gray-700 mb-2 block">
-          📍 Drop Location
-          </label>
-
-          <input
-          type="text"
-          value={drop}
-          onChange={(e) => {
-            setDrop(e.target.value);
-            searchLocation(e.target.value, "drop");
           }}
-          placeholder="Enter Drop Location"
-          className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm focus:outline-none focus:border-cyan-500"
-          />
+          placeholder="Pickup Location"
+          className="w-full h-11 sm:h-12 rounded-xl border border-gray-200 bg-gray-50/80 pl-3.5 pr-12 text-xs sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all"
+        />
 
-          {dropSuggestions.length > 0 && (
+        <button
+          type="button"
+          onClick={getCurrentLocation}
+          disabled={gettingLocation}
+          title={
+            gettingLocation
+              ? "Getting your location..."
+              : "Use current location"
+          }
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center text-cyan-600 hover:bg-cyan-50 hover:text-cyan-700 transition disabled:opacity-50"
+        >
+          <LocateFixed size={16} strokeWidth={2.3} />
+        </button>
+      </div>
 
-          <div className="absolute left-0 right-0 mt-1 bg-white border rounded-xl shadow-xl max-h-48 overflow-y-auto z-50">
-
-          {dropSuggestions.map((item, index) => (
-
-          <div
-            key={index}
-            onClick={() => {
-            setDrop(item.display_name);
-
-            setDropCoords({
-            lat: Number(item.lat),
-            lon: Number(item.lon),
-            });
-
-            setDropSuggestions([]);
-            }}
-            className="px-4 py-3 cursor-pointer hover:bg-cyan-50 text-sm"
+      {pickupSuggestions.length > 0 && (
+        <div className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-gray-100 rounded-xl shadow-2xl max-h-52 overflow-y-auto z-[9999] divide-y divide-gray-50">
+          {pickupSuggestions.map((item, index) => (
+            <div
+              key={index}
+              onClick={() => {
+                setPickup(item.display_name);
+                setPickupCoords({
+                  lat: Number(item.lat),
+                  lon: Number(item.lon),
+                });
+                setPickupSuggestions([]);
+              }}
+              className="px-3.5 py-2.5 cursor-pointer hover:bg-cyan-50/70 text-xs sm:text-sm text-gray-800 transition-colors"
             >
-            📍 {item.display_name}
+              📍 {item.display_name}
             </div>
+          ))}
+        </div>
+      )}
+    </div>
 
-            ))}
+    {/* Drop */}
+    <div className="relative">
+      <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide">
+        📍 Drop
+      </label>
 
+      <input
+        type="text"
+        value={drop}
+        onChange={(e) => {
+          setDrop(e.target.value);
+          searchLocation(e.target.value, "drop");
+        }}
+        placeholder="Drop Location"
+        className="w-full h-11 sm:h-12 rounded-xl border border-gray-200 bg-gray-50/80 px-3.5 text-xs sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all"
+      />
+
+      {dropSuggestions.length > 0 && (
+        <div className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-gray-100 rounded-xl shadow-2xl max-h-52 overflow-y-auto z-[9999] divide-y divide-gray-50">
+          {dropSuggestions.map((item, index) => (
+            <div
+              key={index}
+              onClick={() => {
+                setDrop(item.display_name);
+                setDropCoords({
+                  lat: Number(item.lat),
+                  lon: Number(item.lon),
+                });
+                setDropSuggestions([]);
+              }}
+              className="px-3.5 py-2.5 cursor-pointer hover:bg-cyan-50/70 text-xs sm:text-sm text-gray-800 transition-colors"
+            >
+              📍 {item.display_name}
             </div>
+          ))}
+        </div>
+      )}
+    </div>
 
-            )}
+    {/* Journey Date */}
+    <div>
+      <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide">
+        📅 Date
+      </label>
 
-          </div>
+      <input
+        type="date"
+        value={journeyDate}
+        onChange={(e) => setJourneyDate(e.target.value)}
+        className="w-full h-11 sm:h-12 rounded-xl border border-gray-200 bg-gray-50/80 px-3.5 text-xs sm:text-sm text-gray-900 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all"
+      />
+    </div>
 
-          </div>
+    {/* Return Date */}
+    {tripType === "Outstation Trip" && (
+      <div>
+        <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide">
+          🔁 Return
+        </label>
 
-              {/* Date + Return + Vehicle */}
-
-          <div
-          className={`grid gap-4 ${
-          tripType === "Outstation Trip"
-          ? "grid-cols-1 md:grid-cols-4"
-          : "grid-cols-1 md:grid-cols-3"
-          }`}
-          >
-
-          {/* Journey Date */}
-          <div className="md:col-span-1">
-
-          <label className="text-xs font-bold text-gray-700 mb-2 block">
-          📅 Journey Date
-          </label>
-
-          <input
-          type="date"
-          value={journeyDate}
-          onChange={(e) => setJourneyDate(e.target.value)}
-          className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm focus:outline-none focus:border-cyan-500"
-          />
-
-          </div>
-
-          {/* Return Date */}
-
-          {tripType === "Outstation Trip" && (
-
-          <div>
-
-          <label className="text-xs font-bold text-gray-700 mb-2 block">
-          🔁 Return Date
-          </label>
-
-          <input
+        <input
           type="date"
           value={returnDate}
           onChange={(e) => setReturnDate(e.target.value)}
-          className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm focus:outline-none focus:border-cyan-500"
-          />
+          className="w-full h-11 sm:h-12 rounded-xl border border-gray-200 bg-gray-50/80 px-3.5 text-xs sm:text-sm text-gray-900 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all"
+        />
+      </div>
+    )}
 
-          </div>
+    {/* Pickup Time */}
+    <div>
+      <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide">
+        🕒 Time
+      </label>
 
-          )}
+      <input
+        type="time"
+        value={pickupTime}
+        onChange={(e) => setPickupTime(e.target.value)}
+        className="w-full h-11 sm:h-12 rounded-xl border border-gray-200 bg-gray-50/80 px-3.5 text-xs sm:text-sm text-gray-900 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all"
+      />
+    </div>
 
-          {/* Pickup Time */}
+    {/* Vehicle */}
+    <div>
+      <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide">
+        🚘 Vehicle
+      </label>
 
-          <div>
-
-          <label className="text-xs font-bold text-gray-700 mb-2 block">
-          🕒 Select Time
-          </label>
-
-          <input
-          type="time"
-          value={pickupTime}
-          onChange={(e) => setPickupTime(e.target.value)}
-          className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm cursor-pointer focus:outline-none focus:border-cyan-500"
-          />
-
-          </div>
-
-          {/* Vehicle */}
-          
-
-          <div>
-
-          <label className="text-xs font-bold text-gray-700 mb-2 block">
-          🚘 Select Vehicle
-          </label>
-
-          <select
-          value={cabType}
-          onChange={(e) => {
+      <select
+        value={cabType}
+        onChange={(e) => {
           const value = e.target.value;
+
           setCabType(value);
 
-          if (value === "Sedan")
+          if (value === "Sedan") {
             setSelectedVehicle("Swift Dzire");
-
-          else if (value === "Ertiga")
+          } else if (value === "Ertiga") {
             setSelectedVehicle("Ertiga");
-
-          else if (value === "Toyota Rumion")
+          } else if (value === "Toyota Rumion") {
             setSelectedVehicle("Toyota Rumion");
-
-          else if (
+          } else if (
             value === "Innova" ||
             value === "Innova Crysta"
-          )
-          setSelectedVehicle("Innova Crysta");
-          }}
-          className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm focus:outline-none focus:border-cyan-500"
-          >
-
-          <option value="Sedan">
+          ) {
+            setSelectedVehicle("Innova Crysta");
+          } else if (value === "Tempo Traveller 13") {
+            setSelectedVehicle("Tempo Traveller 13");
+          } else if (value === "Tempo Traveller 17") {
+            setSelectedVehicle("Tempo Traveller 17");
+          } else if (value === "Urbania 17") {
+            setSelectedVehicle("Urbania 17");
+          }
+        }}
+        className="w-full h-11 sm:h-12 rounded-xl border border-gray-200 bg-gray-50/80 px-3.5 text-xs sm:text-sm text-gray-900 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all"
+      >
+        <option value="Sedan">
           Sedan (Dzire / Etios)
-          </option>
+        </option>
 
-          <option value="Ertiga">
+        <option value="Ertiga">
           Ertiga (SUV)
-          </option>
+        </option>
 
-          <option value="Toyota Rumion">
+        <option value="Toyota Rumion">
           Toyota Rumion
-          </option>
+        </option>
 
-          <option value="Innova">
+        <option value="Innova">
           Innova
-          </option>
+        </option>
 
-          <option value="Innova Crysta">
+        <option value="Innova Crysta">
           Innova Crysta
-          </option>
+        </option>
 
-          <option value="Tempo Traveller 13">
+        <option value="Tempo Traveller 13">
           Tempo Traveller 13
-          </option>
+        </option>
 
-          <option value="Tempo Traveller 17">
+        <option value="Tempo Traveller 17">
           Tempo Traveller 17
-          </option>
+        </option>
 
-          <option value="Urbania 17">
+        <option value="Urbania 17">
           Urbania 17
-          </option>
-
-        </select>
-
-      </div>
-
+        </option>
+      </select>
     </div>
 
-              {/* Action Button */}
+    {/* Book Button */}
+    <div>
+      <label className="text-xs font-bold text-transparent mb-1 block select-none hidden lg:block">
+        Action
+      </label>
 
-              <div className="pt-1">
+      <Link
+        href={
+          !pickup || !drop || !journeyDate
+            ? "#"
+            : bookCabUrl
+        }
+        onClick={async (e) => {
+          e.preventDefault();
 
-              <Link
-              href={!pickup || !drop || !journeyDate ? "#" : bookCabUrl}
-              onClick={async (e) => {
+          if (!pickup || !drop || !journeyDate) {
+            alert(
+              "Please enter Pickup, Drop and Journey Date"
+            );
+            return;
+          }
 
-              e.preventDefault();
+          const result = await calculateFare();
 
-              if (!pickup || !drop || !journeyDate) {
-              alert("Please enter Pickup, Drop and Journey Date");
-              return;
-              }
+          if (!result) return;
 
-              const result = await calculateFare();
-
-              console.log("HOME RESULT :", result);
-
-              if (!result) return;
-
-              window.location.href =
-  `/book-cab?vehicle=${encodeURIComponent(selectedVehicle)}` +
-  `&tripType=${encodeURIComponent(tripType)}` +
-  `&pickup=${encodeURIComponent(pickup)}` +
-  `&drop=${encodeURIComponent(drop)}` +
-  `&journeyDate=${journeyDate}` +
-  `&pickupTime=${pickupTime}` +
-  `&returnDate=${returnDate}` +
-  `&distance=${result.distance}` +
-  `&fare=${result.fare}` +
-  `&pickupLat=${pickupCoords?.lat ?? ""}` +
-  `&pickupLon=${pickupCoords?.lon ?? ""}` +
-  `&dropLat=${dropCoords?.lat ?? ""}` +
-  `&dropLon=${dropCoords?.lon ?? ""}`;
-
-              }}
-              className="w-full h-12 md:h-14 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-600 hover:from-cyan-600 hover:to-blue-700 text-white text-lg font-bold flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-[1.02]"
-              >
-              🚖 Book Taxi Now
-              </Link>
-
-              <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-[11px] md:text-xs text-gray-500">
-
-              <div className="flex items-center gap-1">
-              🛡 Secure Booking
-              </div>
-
-              <div className="flex items-center gap-1">
-              ⚡ Instant Confirmation
-              </div>
-
-              <div className="flex items-center gap-1">
-              📞 24×7 Support
-            </div>
-
-          </div>
-
-      </div>
-              </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Bar */}
-      <section className="bg-slate-950 border-y border-white/10 py-5">
-
-      <div className="max-w-7xl mx-auto px-4 md:px-10">
-
-      <div className="flex overflow-x-auto gap-3 scrollbar-hide">
-
-      {/* Card 1 */}
-      <div className="min-w-[230px] flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3 border border-white/10">
-
-        <span className="text-2xl">🕒</span>
-
-        <div>
-          <h3 className="text-sm font-bold text-white">
-            24×7 Availability
-          </h3>
-
-          <p className="text-xs text-gray-400">
-            Instant Booking Support
-          </p>
-        </div>
-
-      </div>
-
-      {/* Card 2 */}
-      <div className="min-w-[230px] flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3 border border-white/10">
-
-        <span className="text-2xl">🛡️</span>
-
-        <div>
-          <h3 className="text-sm font-bold text-white">
-            Verified Drivers
-          </h3>
-
-          <p className="text-xs text-gray-400">
-            Safe & Reliable Journey
-          </p>
-        </div>
-
-      </div>
-
-      {/* Card 3 */}
-      <div className="min-w-[230px] flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3 border border-white/10">
-
-        <span className="text-2xl">🚘</span>
-
-        <div>
-          <h3 className="text-sm font-bold text-white">
-            Premium Fleet
-          </h3>
-
-          <p className="text-xs text-gray-400">
-            Sedan • SUV • Traveller
-          </p>
-        </div>
-
-      </div>
-
-      {/* Card 4 */}
-      <div className="min-w-[230px] flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3 border border-white/10">
-
-        <span className="text-2xl">✨</span>
-
-        <div>
-          <h3 className="text-sm font-bold text-white">
-            Clean Vehicles
-          </h3>
-
-          <p className="text-xs text-gray-400">
-            Well Maintained
-          </p>
-        </div>
-
-      </div>
-
-      {/* Card 5 */}
-      <div className="min-w-[230px] flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3 border border-white/10">
-
-        <span className="text-2xl">💰</span>
-
-        <div>
-          <h3 className="text-sm font-bold text-white">
-            No Hidden Charges
-          </h3>
-
-          <p className="text-xs text-gray-400">
-            Transparent Pricing
-          </p>
-        </div>
-
-      </div>
-
+          window.location.href =
+            `/book-cab?vehicle=${encodeURIComponent(
+              selectedVehicle
+            )}` +
+            `&tripType=${encodeURIComponent(tripType)}` +
+            `&pickup=${encodeURIComponent(pickup)}` +
+            `&drop=${encodeURIComponent(drop)}` +
+            `&journeyDate=${journeyDate}` +
+            `&pickupTime=${pickupTime}` +
+            `&returnDate=${returnDate}` +
+            `&distance=${result.distance}` +
+            `&fare=${result.fare}` +
+            `&pickupLat=${pickupCoords?.lat ?? ""}` +
+            `&pickupLon=${pickupCoords?.lon ?? ""}` +
+            `&dropLat=${dropCoords?.lat ?? ""}` +
+            `&dropLon=${dropCoords?.lon ?? ""}`;
+        }}
+        className="w-full h-11 sm:h-12 rounded-xl bg-gradient-to-r from-cyan-500 via-cyan-600 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+      >
+        🚖 Book Now →
+      </Link>
     </div>
 
   </div>
-
-</section>
-
-
-{/* Popular Routes Section */}
-<section className="pt-4 pb-8 md:py-12 bg-slate-50 text-black">
-
-  <div className="max-w-7xl mx-auto px-6 md:px-10">
-
-    <p className="text-cyan-500 uppercase tracking-[6px] text-center mb-3">
-      Most Booked Routes
-    </p>
-
-    <h2 className="text-3xl md:text-5xl font-black text-center mb-3 text-black leading-tight">
-      Popular Routes From Nagpur
-    </h2>
-
-    <p className="text-center text-sm md:text-base text-gray-600 mb-5">
-      Affordable One Way & Round Trip Taxi Service
-    </p>
-
-    <div className="max-w-5xl mx-auto text-center mb-6 md:mb-12">
-  <p className="text-black text-sm md:text-[16px] leading-7">
-    Looking for a reliable taxi service from Nagpur? RC Tours & Travels
-    provides safe and affordable cab services for airport transfers,
-    local travel, outstation trips, and tour packages. Travel comfortably
-    to Tadoba, Pench, Wardha, Chandrapur, Pune, Hyderabad, Shirdi, and
-    other destinations with professional drivers, clean vehicles, and
-    transparent pricing.
-  </p>
-
-</div>
-{/* Desktop Navigation */}
-
-<div className="hidden md:flex justify-center items-center gap-3 md:gap-5 mb-6">
-
-  <button
-    onClick={() =>
-      setRouteIndex((prev) =>
-        prev === 0 ? 11 : prev - 1
-      )
-    }
-    className="w-12 h-12 rounded-full bg-white border border-slate-300 shadow-md hover:bg-cyan-500 hover:text-white hover:border-cyan-500 transition-all duration-300"
-  >
-    <ChevronLeft className="mx-auto" size={22} />
-  </button>
-
-  <div className="px-5 py-2 rounded-full bg-cyan-500 text-white text-sm font-semibold shadow-lg">
-    Swipe Routes
-  </div>
-
-  <button
-    onClick={() =>
-      setRouteIndex((prev) =>
-        prev === routes.length - 1 ? 0 : prev + 1
-      )
-    }
-    className="w-12 h-12 rounded-full bg-white border border-slate-300 shadow-md hover:bg-cyan-500 hover:text-white hover:border-cyan-500 transition-all duration-300"
-  >
-    <ChevronRight className="mx-auto" size={22} />
-  </button>
-
 </div>
 
-{/* Mobile Navigation */}
+{/* ================= TRUST CARDS ================= */}
+<div className="grid grid-cols-4 gap-1.5 sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 mt-4">
 
-<div className="md:hidden flex items-center justify-between mb-5">
-
-  <div>
-
-    <h3 className="text-xl font-bold text-black">
-      Popular Routes
-    </h3>
-
-    <div className="flex items-center gap-1 mt-2">
-
-    {Array.from({ length: 12 }).map((_, index) => (
+  {[
+    {
+      title: "Trusted & Safe",
+      desc: "100% Secure Journey",
+      icon: "🛡️",
+    },
+    {
+      title: "24×7 Support",
+      desc: "Always Available",
+      icon: "🎧",
+    },
+    {
+      title: "Best Price",
+      desc: "No Hidden Charges",
+      icon: "🏷️",
+    },
+    {
+      title: "Professional Drivers",
+      desc: "Verified & Trained",
+      icon: "👨‍✈️",
+    },
+  ].map((item, idx) => (
 
     <div
-      key={index}
-      className={`rounded-full transition-all duration-300 ${
-        index === routeIndex
-          ? "w-6 h-2 bg-cyan-500"
-          : "w-2 h-2 bg-gray-300"
-      }`}
-    />
+      key={idx}
+      className="
+        bg-white/5
+        border border-white/10
+        rounded-lg sm:rounded-2xl
+        p-1.5 sm:p-4
+        flex flex-col sm:flex-row
+        items-center
+        justify-center sm:justify-start
+        text-center sm:text-left
+        gap-1 sm:gap-3
+        backdrop-blur-md
+        min-w-0
+      "
+    >
+
+      {/* Icon */}
+      <div className="
+        w-7 h-7
+        sm:w-10 sm:h-10
+        rounded-md sm:rounded-xl
+        bg-cyan-500/20
+        flex items-center justify-center
+        text-xs sm:text-lg
+        shrink-0
+      ">
+        {item.icon}
+      </div>
+
+      {/* Text */}
+      <div className="min-w-0">
+
+        <h4 className="
+          text-white
+          font-bold
+          text-[8px] sm:text-sm
+          leading-tight
+          truncate
+        ">
+          {item.title}
+        </h4>
+
+        <p className="
+          text-blue-200/70
+          text-[7px] sm:text-xs
+          leading-tight
+          mt-0.5
+          truncate
+        ">
+          {item.desc}
+        </p>
+
+      </div>
+
+    </div>
 
   ))}
 
 </div>
 
-  </div>
-
-  <div className="flex gap-2">
-
-    <button
-      onClick={() =>
-        setRouteIndex((prev) =>
-          prev === 0 ? 11 : prev - 1
-        )
-      }
-      className="w-10 h-10 rounded-full bg-white border border-slate-300 shadow"
-    >
-      <ChevronLeft className="mx-auto" size={18} />
-    </button>
-
-    <button
-      onClick={() =>
-        setRouteIndex((prev) =>
-          prev === 11 ? 0 : prev + 1
-        )
-      }
-      className="w-10 h-10 rounded-full bg-white border border-slate-300 shadow"
-    >
-      <ChevronRight className="mx-auto" size={18} />
-    </button>
-
-  </div>
-
 </div>
+</section>
 
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
+{/* ================= OUTSTATION TRIP BANNER SECTION ================= */}
+<section className="relative overflow-hidden bg-white py-5 sm:py-6 md:py-8 border-b border-gray-100">
 
-{(isMobile ? [0] : [0,1,2]).map((offset) => {
+  <div className="w-full max-w-[1450px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
 
-const route =
-routes[(routeIndex + offset) % routes.length];
 
-return (
+    {/* ========================================================= */}
+    {/* MOBILE VERSION (Fixed Height & Better Proportions) */}
+    {/* ========================================================= */}
 
-<div
-  key={offset}
-  onMouseEnter={() => setIsRouteHovered(true)}
-  onMouseLeave={() => setIsRouteHovered(false)}
-  className="rounded-3xl p-4 md:p-5 flex flex-col flex-col lg:flex-row justify-between gap-4 bg-white min-h-auto md:min-h-[240px]"
->
-   {/* Left Side */}
-  <div>
+    <div className="block md:hidden">
 
-    <div className="inline-block mb-3 px-3 py-1 rounded-full bg-cyan-500 text-white text-xs font-bold">
-      MOST BOOKED
+      {/* Mobile Banner Card Container */}
+      <div className="relative w-full rounded-2xl overflow-hidden bg-gradient-to-r from-[#030d29] via-[#081b4b] to-[#0d2a75] shadow-lg border border-blue-900/30">
+
+        {/* Banner Image with proper min-height so it doesn't look squished */}
+        <div className="relative w-full h-48 sm:h-56 overflow-hidden">
+          <img
+            src={banner.images[0]}
+            alt="RC Tours & Travels Outstation Trip"
+            loading="lazy"
+            className="w-full h-full object-cover"
+          />
+          {/* Gradient Overlay for better contrast */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#030d29] via-transparent to-transparent opacity-80" />
+        </div>
+
+        {/* Mobile Content Overlay inside the card */}
+        <div className="p-4 relative z-10 -mt-10">
+          <div>
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-red-500/20 border border-red-400/30 text-red-300 text-[10px] font-bold tracking-wider">
+              {banner.badge}
+            </span>
+          </div>
+
+          <h3 className="mt-2 text-lg font-bold text-white leading-snug">
+            {banner.titleNormal}{" "}
+            <span className="text-red-500">
+              {banner.titleHighlight}
+            </span>
+          </h3>
+
+          <p className="mt-1.5 text-xs text-gray-300 leading-relaxed line-clamp-2">
+            {banner.subtext}
+          </p>
+
+          {/* Book Button */}
+          <div className="mt-4 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => {
+                setTripType(banner.tripType);
+                setTimeout(() => {
+                  document
+                    .getElementById("book-ride")
+                    ?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "center",
+                    });
+                }, 100);
+              }}
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md transition-all active:scale-95"
+            >
+              {banner.buttonText}
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Mobile Text Content below card if needed, or keep it inside. (Ab ye card format mein zyada premium lagega) */}
+
     </div>
 
-    <h3 className="text-xl md:text-2xl font-bold text-black">
-      Nagpur → {route[0]}
-    </h3>
 
-    <div className="flex gap-2 mt-4 flex-wrap">
 
-      <span className="px-3 py-1 rounded-full bg-slate-100 text-gray-700 text-xs border border-slate-200">
-        One Way
-      </span>
+    {/* ========================================================= */}
+    {/* DESKTOP VERSION (Aapka current design unchanged) */}
+    {/* ========================================================= */}
 
-      <span className="px-3 py-1 rounded-full bg-slate-100 text-gray-700 text-xs border border-slate-200">
-        Round Trip
-      </span>
+    <div className="hidden md:block">
 
-      <span className="px-3 py-1 rounded-full bg-slate-100 text-gray-700 text-xs border border-slate-200">
-        24×7 Service
-      </span>
+      <div className="relative w-full overflow-hidden rounded-3xl bg-gradient-to-r from-[#030d29] via-[#081b4b] to-[#0d2a75] shadow-xl border border-blue-900/30 transition-all duration-700 ease-in-out">
+
+        <div className="grid grid-cols-12 min-h-[280px]">
+
+          {/* LEFT CONTENT */}
+          <div className="col-span-6 relative z-10 p-7 flex flex-col justify-center">
+            <div>
+              <span className="inline-flex items-center px-3 py-1 rounded-full bg-red-500/15 border border-red-400/20 text-red-300 text-[10px] font-bold tracking-wider">
+                {banner.badge}
+              </span>
+            </div>
+
+            <h3 className="mt-3 text-2xl lg:text-3xl font-black text-white tracking-tight leading-tight">
+              {banner.titleNormal}
+              <br />
+              <span className="text-red-500">
+                {banner.titleHighlight}
+              </span>
+            </h3>
+
+            <p className="mt-2 text-sm text-gray-300 font-medium leading-relaxed max-w-md">
+              {banner.subtext}
+            </p>
+
+            {/* Features */}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-4 pt-3 border-t border-white/10">
+              <div className="flex items-center gap-1.5">
+                <span className="text-cyan-400 text-xs">⏱️</span>
+                <span className="text-[10px] font-semibold text-gray-300">Flexible Booking</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-cyan-400 text-xs">👨‍✈️</span>
+                <span className="text-[10px] font-semibold text-gray-300">Verified Drivers</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-cyan-400 text-xs">🛡️</span>
+                <span className="text-[10px] font-semibold text-gray-300">Safe Journey</span>
+              </div>
+            </div>
+
+            {/* Button */}
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setTripType(banner.tripType);
+                  setTimeout(() => {
+                    document
+                      .getElementById("book-ride")
+                      ?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center",
+                      });
+                  }, 100);
+                }}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-lg shadow-red-600/30 transition-all hover:scale-105 active:scale-95"
+              >
+                {banner.buttonText}
+                <span className="text-base">→</span>
+              </button>
+            </div>
+          </div>
+
+          {/* RIGHT IMAGE COLLAGE */}
+          <div className="col-span-6 relative min-h-[280px] overflow-hidden">
+            <div className="absolute inset-0 flex w-full h-full">
+              {/* Image 1 */}
+              <div className="relative flex-1 h-full overflow-hidden skew-x-[-10deg] translate-x-3 border-r border-white/20">
+                <img
+                  src={banner.images[0]}
+                  alt="RC Tours travel destination"
+                  loading="lazy"
+                  className="absolute inset-0 w-[170%] h-full object-cover -translate-x-1/4 scale-110"
+                />
+              </div>
+              {/* Image 2 */}
+              <div className="relative flex-1 h-full overflow-hidden skew-x-[-10deg] translate-x-1 border-r border-white/20">
+                <img
+                  src={banner.images[1]}
+                  alt="RC Tours taxi service"
+                  loading="lazy"
+                  className="absolute inset-0 w-[170%] h-full object-cover -translate-x-1/4 scale-110"
+                />
+              </div>
+              {/* Image 3 */}
+              <div className="relative flex-[1.35] h-full overflow-hidden skew-x-[-10deg]">
+                <img
+                  src={banner.images[2]}
+                  alt="Nagpur tour package destination"
+                  loading="lazy"
+                  className="absolute inset-0 w-[170%] h-full object-cover -translate-x-1/4 scale-110"
+                />
+              </div>
+            </div>
+
+            {/* Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#030d29] via-[#030d29]/30 to-transparent pointer-events-none" />
+          </div>
+
+        </div>
+
+        {/* Bottom Red Line */}
+        <div className="h-1.5 w-full bg-red-600" />
+
+      </div>
 
     </div>
 
-    <div className="flex flex-col gap-2 mt-5 text-gray-700">
 
-      <span>⭐ 4.9 Rating</span>
 
-      <span>🚖 Sedan / SUV</span>
-
-      <span>🛡️ Verified Drivers</span>
-
+    {/* Navigation Dots */}
+    <div className="flex justify-center items-center gap-2 mt-3">
+      {banners.map((_, idx) => (
+        <button
+          key={idx}
+          type="button"
+          onClick={() => setCurrentIndex(idx)}
+          className={`h-2 rounded-full transition-all duration-300 ${
+            currentIndex === idx
+              ? "w-5 bg-red-600"
+              : "w-2 bg-gray-300"
+          }`}
+          aria-label={`Go to slide ${idx + 1}`}
+        />
+      ))}
     </div>
 
   </div>
+</section>
 
-  {/* Right Side */}
-  <div className="text-left md:text-right w-full md:min-w-[170px]">
 
-    <p className="text-gray-500 text-sm">
-      Starting From
-    </p>
+{/* ================= POPULAR ROUTES SECTION ================= */}
+<section className="relative bg-[#f5f6f8] pt-6 pb-10 md:pt-10 md:pb-14 text-black overflow-hidden">
+  <div className="max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-10">
 
-    <p className="text-3xl md:text-4xl font-black text-black mt-1">
-      {route[1]}
-    </p>
+    {/* Section Heading */}
+    <div className="text-center mb-6 md:mb-10">
+      <p className="text-cyan-500 uppercase tracking-[4px] md:tracking-[6px] text-[10px] md:text-xs font-bold mb-2">
+        Most Booked Routes
+      </p>
 
-    <p className="text-cyan-500 font-semibold text-sm mt-2">
-      Best Price Guarantee
-    </p>
+      <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-gray-900 leading-tight">
+        Popular Routes From Nagpur
+      </h2>
 
-    <div className="flex flex-col gap-2 mt-4 w-full md:w-[130px] md:ml-auto">
-
-      <a
-        href="tel:+919172271464"
-        className="w-full h-10 rounded-xl flex items-center justify-center text-sm font-semibold text-white bg-blue-500 hover:scale-105 transition"
-      >
-        Call Now
-      </a>
-
-      <Link
-        href="/book-cab"
-        className="w-full h-10 rounded-xl flex items-center justify-center text-sm font-semibold text-white bg-green-500 hover:scale-105 transition"
-      >
-        Book Now
-      </Link>
-
-      <Link
-        href="/fleet"
-        className="w-full h-10 rounded-xl flex items-center justify-center text-sm font-semibold text-white bg-orange-500 hover:scale-105 transition"
-      >
-        View Cabs
-      </Link>
-
+      <p className="text-center text-xs sm:text-sm md:text-base text-gray-600 mt-2">
+        Affordable One Way & Round Trip Taxi Service
+      </p>
     </div>
 
+    {/* Route Description */}
+    <div className="max-w-5xl mx-auto text-center mb-8 md:mb-12">
+      <p className="text-gray-700 text-xs sm:text-sm md:text-base leading-6 md:leading-7">
+        Looking for a reliable taxi service from Nagpur? RC Tours & Travels
+        provides safe and affordable cab services for airport transfers,
+        local travel, outstation trips, and tour packages. Travel comfortably
+        to Tadoba, Pench, Wardha, Chandrapur, Pune, Hyderabad, Shirdi, and
+        other destinations with professional drivers, clean vehicles, and
+        transparent pricing.
+      </p>
+    </div>
+
+    {/* Slider Container */}
+    <div className="relative max-w-[1450px] mx-auto px-2 md:px-12">
+
+      {/* Desktop Left Arrow */}
+      <button
+        type="button"
+        onClick={() =>
+          setRouteIndex((prev) =>
+            prev === 0 ? routes.length - 1 : prev - 1
+          )
+        }
+        className="hidden md:flex absolute -left-2 lg:-left-4 top-[42%] -translate-y-1/2 z-30 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border border-gray-200 shadow-xl items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white hover:scale-105 transition-all duration-300"
+        aria-label="Previous Route"
+      >
+        <ChevronLeft size={28} strokeWidth={2} />
+      </button>
+
+      {/* Desktop Right Arrow */}
+      <button
+        type="button"
+        onClick={() =>
+          setRouteIndex((prev) =>
+            prev === routes.length - 1 ? 0 : prev + 1
+          )
+        }
+        className="hidden md:flex absolute -right-2 lg:-right-4 top-[42%] -translate-y-1/2 z-30 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-white border border-gray-200 shadow-xl items-center justify-center text-blue-600 hover:bg-blue-600 hover:text-white hover:scale-105 transition-all duration-300"
+        aria-label="Next Route"
+      >
+        <ChevronRight size={28} strokeWidth={2} />
+      </button>
+
+      {/* Desktop 4 Cards */}
+      <div className="hidden md:grid grid-cols-4 gap-6">
+        {[0, 1, 2, 3].map((offset) => {
+          const route = routes[(routeIndex + offset) % routes.length];
+
+          const routeImages: Record<string, string> = {
+            Tadoba: "/tadoba.jpg",
+            Pench: "/pench.jpg",
+            Wardha: "/wardha.jpg",
+            Pune: "/pune.jpg",
+            Hyderabad: "/hyderabad.jpg",
+            Mumbai: "/mumbai.jpg",
+            Shirdi: "/shirdi.jpg",
+            Amravati: "/amravati.webp",
+            Bhandara: "/bhandara.jpg",
+            Shegaon: "/shegaon.jpg",
+            Chandrapur: "/chandarapur.webp",
+            Gondia: "/gondia.jpg",
+          };
+
+          const routeImage =
+            routeImages[route[0]] ||
+            route[2] ||
+            "/outstation-travel.jpg";
+
+          return (
+            <div
+              key={`${route[0]}-${offset}`}
+              onMouseEnter={() => setIsRouteHovered(true)}
+              onMouseLeave={() => setIsRouteHovered(false)}
+              className="relative group flex flex-col justify-end"
+            >
+              {/* Image Card */}
+              <div className="relative h-[250px] lg:h-[280px] rounded-[36px] overflow-hidden shadow-xl">
+                <img
+                  src={routeImage}
+                  alt={`Nagpur to ${route[0]}`}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+              </div>
+
+              {/* Floating White Content Card */}
+              <div className="relative z-10 -mt-16 mx-3.5 bg-white rounded-[24px] p-3.5 lg:p-4 shadow-2xl border border-gray-100 flex flex-col justify-between">
+                <h3 className="text-sm lg:text-base font-black text-gray-900 tracking-tight flex items-center gap-1 flex-wrap">
+                  <span>Nagpur</span>
+                  <span className="text-gray-400 font-normal text-xs">
+                    to
+                  </span>
+                  <span className="text-gray-900 truncate">
+                    {route[0]}
+                  </span>
+                </h3>
+
+                <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">
+                      Starting From
+                    </p>
+
+                    <p className="text-sm lg:text-base font-black text-gray-900 mt-0.5">
+                      {route[1]}
+                    </p>
+                  </div>
+
+                  <Link
+                    href={`/book-cab?tripType=${encodeURIComponent(
+                    "One Way Trip"
+                    )}&pickup=${encodeURIComponent(
+                    "Nagpur"
+                    )}&drop=${encodeURIComponent(route[0])}`}
+                    className="h-9 px-3.5 rounded-xl flex items-center justify-center text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/30 transition-all hover:scale-105 shrink-0"
+                  >
+                    Book Now →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Mobile Single Card */}
+      <div className="md:hidden">
+        {(() => {
+          const route = routes[routeIndex];
+
+          const routeImages: Record<string, string> = {
+            Tadoba: "/tadoba.jpg",
+            Pench: "/pench.jpg",
+            Wardha: "/wardha.jpg",
+            Pune: "/pune.jpg",
+            Hyderabad: "/hyderabad.jpg",
+            Mumbai: "/mumbai.jpg",
+            Shirdi: "/shirdi.jpg",
+            Amravati: "/amravati.webp",
+            Bhandara: "/bhandara.jpg",
+            Shegaon: "/shegaon.jpg",
+            Chandrapur: "/chandarapur.webp",
+            Gondia: "/gondia.jpg",
+          };
+
+          const routeImage =
+            routeImages[route?.[0]] ||
+            route?.[2] ||
+            "/outstation-travel.jpg";
+
+          return (
+            <div className="relative max-w-sm mx-auto">
+              {/* Mobile Image */}
+              <div className="relative h-[260px] rounded-[36px] overflow-hidden shadow-xl">
+                <img
+                  src={routeImage}
+                  alt={`Nagpur to ${route?.[0] || ""}`}
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+              </div>
+
+              {/* Mobile Floating Card */}
+              <div className="relative z-10 -mt-16 mx-4 bg-white rounded-[24px] p-4 shadow-2xl border border-gray-100">
+                <h3 className="text-base font-black text-gray-900 tracking-tight flex items-center gap-1 flex-wrap">
+                  <span>Nagpur</span>
+
+                  <span className="text-gray-400 font-normal text-xs">
+                    to
+                  </span>
+
+                  <span className="text-gray-900 truncate">
+                    {route?.[0]}
+                  </span>
+                </h3>
+
+                <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">
+                      Starting From
+                    </p>
+
+                    <p className="text-sm font-black text-gray-900 mt-0.5">
+                      {route?.[1]}
+                    </p>
+                  </div>
+
+                  <Link
+                    href={`/book-cab?tripType=${encodeURIComponent(
+                    "One Way Trip"
+                    )}&pickup=${encodeURIComponent(
+                    "Nagpur"
+                    )}&drop=${encodeURIComponent(route?.[0] || "")}`}
+                    className="h-9 px-3.5 rounded-xl flex items-center justify-center text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/30 shrink-0"
+                  >
+                    Book Now →
+                  </Link>
+                </div>
+              </div>
+
+              {/* Mobile Navigation */}
+              <div className="flex items-center justify-center gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setRouteIndex((prev) =>
+                      prev === 0 ? routes.length - 1 : prev - 1
+                    )
+                  }
+                  className="w-11 h-11 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center text-blue-600"
+                  aria-label="Previous Route"
+                >
+                  <ChevronLeft size={22} />
+                </button>
+
+                <div className="flex items-center gap-1.5 max-w-[180px] overflow-hidden">
+                  {routes.map((_, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => setRouteIndex(index)}
+                      className={`rounded-full transition-all duration-300 ${
+                        index === routeIndex
+                          ? "w-5 h-2 bg-blue-600"
+                          : "w-2 h-2 bg-gray-300"
+                      }`}
+                      aria-label={`Go to route ${index + 1}`}
+                    />
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setRouteIndex((prev) =>
+                      prev === routes.length - 1 ? 0 : prev + 1
+                    )
+                  }
+                  className="w-11 h-11 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center text-blue-600"
+                  aria-label="Next Route"
+                >
+                  <ChevronRight size={22} />
+                </button>
+              </div>
+            </div>
+          );
+        })()}
+      </div>
+    </div>
   </div>
-
-</div>
-
-);
-
-})}
-
-</div>
-
-  </div>
-
 </section>
 
 {/* Local Rental Packages */}
@@ -1403,7 +1765,7 @@ return (
   <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col h-full">
 
     <Image
-      src="/dezire.jpeg"
+      src="/swift-dzire.jpeg"
       alt="Swift Dzire"
       width={500}
       height={300}
@@ -1613,7 +1975,7 @@ return (
   <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-lg flex flex-col h-full">
 
     <Image
-      src="/crysta.jpeg"
+      src="/innova-crysta.jpeg"
       alt="Innova Crysta"
       width={500}
       height={300}
@@ -1948,11 +2310,16 @@ return (
           <div className="flex items-center gap-4 mb-6">
 
             <Image
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(review.name)}&background=0ea5e9&color=fff&size=128`}
+            src={review.image}
             alt={review.name}
             width={60}
             height={60}
-            className="rounded-full"
+            className="w-[60px] h-[60px] rounded-full object-cover"
+            onError={(e) => {
+            e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+            review.name
+            )}&background=0ea5e9&color=fff&size=128`;
+            }}
             />
 
             <div>
@@ -2010,7 +2377,7 @@ return (
 </section>
 
 {/* Areas We Serve */}
-<section className="pt-2 pb-6 md:pt-4 md:pb-8 bg-white text-black">
+<section className="-mt-6 pt-2 pb-6 md:-mt-8 md:pt-4 md:pb-8 bg-white text-black">
 
   <div className="bg-gray-50 border border-gray-200 rounded-3xl p-5 md:p-10">
 
@@ -2864,6 +3231,9 @@ return (
       {/* RC Travel Assistant Floating Button - TEMPORARILY HIDDEN
 <TravelAssistantButton />
 */}
+
+      {/* Campaign Popup - Home Page */}
+      <CampaignPopup />
 
     </main>
   </>
