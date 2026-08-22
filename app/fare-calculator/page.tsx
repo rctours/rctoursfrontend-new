@@ -381,12 +381,12 @@ return (
     }`}
   >
     <Image
-  src="/gallery/innova.png"
-  alt="Innova Crysta"
-  width={200}
-  height={120}
-  className="mx-auto"
-/>
+    src="/gallery/innova.webp"
+    alt="Innova Crysta"
+    width={200}
+    height={120}
+    className="mx-auto"
+    />
     <p className="mt-2 font-semibold">Innova Crysta</p>
   </button>
 

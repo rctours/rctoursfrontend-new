@@ -943,7 +943,12 @@ useEffect(() => {
       </div>
 
       <div className="relative h-32 md:h-52 rounded-2xl md:rounded-3xl overflow-hidden">
-        <Image src="/gallery/traveller.png" alt="Innova Crysta" fill className="object-cover hover:scale-110 transition duration-700" />
+        <Image
+        src="/gallery/traveller.webp"
+        alt="Innova Crysta"
+        fill
+        className="object-cover hover:scale-110 transition duration-700"
+        />
       </div>
 
       <div className="relative h-32 md:h-52 rounded-2xl md:rounded-3xl overflow-hidden">

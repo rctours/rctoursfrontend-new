@@ -82,7 +82,7 @@ export const metadata: Metadata = {
       "Book reliable airport, local and outstation taxi services in Nagpur. 24x7 cab booking, one-way cabs, round trips, tempo travellers and tour packages.",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-image.webp",
         width: 1200,
         height: 630,
         alt: "RC Tours & Travels",
@@ -96,7 +96,7 @@ export const metadata: Metadata = {
       "Taxi Service in Nagpur | Airport, Local & Outstation Cabs | RC Tours & Travels",
     description:
       "Reliable taxi service in Nagpur for airport transfers, local rides, outstation trips and tour packages.",
-    images: ["/og-image.png"],
+    images: ["/og-image.webp"],
   },
 
   icons: {

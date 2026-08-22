@@ -63,7 +63,7 @@ const services = [
     title: "Tempo Traveller Rental",
     description:
       "Comfortable Tempo Traveller rental for family tours, group travel and pilgrimage trips.",
-    image: "/services/tempo-traveller.png",
+    image: "/services/tempo-traveller.webp",
     alt: "Tempo Traveller Rental Nagpur",
     icon: Bus,
   },

@@ -716,7 +716,7 @@ useEffect(() => {
           <div className="absolute inset-0 border-2 border-cyan-400/30 rounded-full blur-sm scale-95 pointer-events-none" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-cyan-400/20 rounded-full blur-2xl pointer-events-none" />
           <img
-            src="/car-hero.png"
+            src="/car-hero.webp"
             alt="RC Tours & Travels Cab"
             className="relative z-10 w-full object-contain drop-shadow-2xl"
           />
@@ -950,35 +950,43 @@ useEffect(() => {
       )}
     </div>
 
-    {/* Journey Date */}
-    <div>
-      <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide">
-        📅 Date
-      </label>
+{/* Journey Date */}
+<div>
+  <label
+    htmlFor="journey-date"
+    className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide"
+  >
+    📅 Date
+  </label>
 
-      <input
-        type="date"
-        value={journeyDate}
-        onChange={(e) => setJourneyDate(e.target.value)}
-        className="w-full h-11 sm:h-12 rounded-xl border border-gray-200 bg-gray-50/80 px-3.5 text-xs sm:text-sm text-gray-900 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all"
-      />
-    </div>
+  <input
+    id="journey-date"
+    type="date"
+    value={journeyDate}
+    onChange={(e) => setJourneyDate(e.target.value)}
+    className="w-full h-11 sm:h-12 rounded-xl border border-gray-200 bg-gray-50/80 px-3.5 text-xs sm:text-sm text-gray-900 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all"
+  />
+</div>
 
-    {/* Return Date */}
-    {tripType === "Outstation Trip" && (
-      <div>
-        <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide">
-          🔁 Return
-        </label>
+{/* Return Date */}
+{tripType === "Outstation Trip" && (
+  <div>
+    <label
+      htmlFor="return-date"
+      className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide"
+    >
+      🔁 Return
+    </label>
 
-        <input
-          type="date"
-          value={returnDate}
-          onChange={(e) => setReturnDate(e.target.value)}
-          className="w-full h-11 sm:h-12 rounded-xl border border-gray-200 bg-gray-50/80 px-3.5 text-xs sm:text-sm text-gray-900 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all"
-        />
-      </div>
-    )}
+    <input
+      id="return-date"
+      type="date"
+      value={returnDate}
+      onChange={(e) => setReturnDate(e.target.value)}
+      className="w-full h-11 sm:h-12 rounded-xl border border-gray-200 bg-gray-50/80 px-3.5 text-xs sm:text-sm text-gray-900 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all"
+    />
+  </div>
+)}
 
     {/* Pickup Time */}
     <div>
@@ -1424,7 +1432,7 @@ useEffect(() => {
 
     {/* Section Heading */}
     <div className="text-center mb-6 md:mb-10">
-      <p className="text-cyan-500 uppercase tracking-[4px] md:tracking-[6px] text-[10px] md:text-xs font-bold mb-2">
+      <p className="text-cyan-700 uppercase tracking-[4px] md:tracking-[6px] text-[10px] md:text-xs font-bold mb-2">
         Most Booked Routes
       </p>
 
@@ -1702,7 +1710,7 @@ useEffect(() => {
 
   <div className="bg-gray-50 border border-gray-200 rounded-3xl p-5 md:p-10">
 
-    <p className="text-cyan-500 uppercase tracking-[6px] text-center mb-3">
+    <p className="text-cyan-700 uppercase tracking-[6px] text-center mb-3">
       Local Rental
     </p>
 
@@ -2258,14 +2266,15 @@ useEffect(() => {
 <div className="md:hidden flex justify-center items-center gap-4 mb-5">
 
   <button
-    onClick={() =>
-      setReviewIndex((prev) =>
-        prev === 0 ? reviews.length - 1 : prev - 1
-      )
-    }
-    className="w-10 h-10 rounded-full bg-cyan-500 text-white shadow-lg active:scale-95 transition"
+  onClick={() =>
+    setReviewIndex((prev) =>
+      prev === reviews.length - 1 ? 0 : prev + 1
+    )
+  }
+  aria-label="Next review"
+  className="w-10 h-10 rounded-full bg-cyan-500 text-white shadow-lg active:scale-95 transition"
   >
-    <ChevronLeft className="mx-auto" size={18} />
+  <ChevronRight className="mx-auto" size={18} />
   </button>
 
   <span className="text-sm font-semibold text-gray-600">
@@ -2661,7 +2670,7 @@ useEffect(() => {
 
     <div className="text-center mb-8 md:mb-8">
 
-      <p className="text-cyan-500 uppercase tracking-[5px] mb-3">
+      <p className="text-cyan-700 uppercase tracking-[5px] mb-3">
         Taxi Service In Nagpur
       </p>
 
@@ -3210,21 +3219,22 @@ useEffect(() => {
   </a>
 
   {/* WhatsApp */}
-  <a
-    href="https://wa.me/919172271464"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="bg-green-500 hover:bg-green-600 text-white w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl md:text-4xl"
-  >
-    <FaWhatsapp />
-  </a>
+<a
+  href="https://wa.me/919172271464"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Chat on WhatsApp"
+  className="bg-green-500 hover:bg-green-600 text-white w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl md:text-4xl"
+>
+  <FaWhatsapp />
+</a>
 
-  {/* Discount Badge */}
-  <div className="bg-green-500 text-white px-2 py-1 rounded-xl shadow-xl animate-pulse">
-    <p className="text-[9px] md:text-[11px] font-bold text-center whitespace-nowrap">
-      🎁 Get Discount
-    </p>
-  </div>
+{/* Discount Badge */}
+<div className="bg-green-500 text-white px-2 py-1 rounded-xl shadow-xl animate-pulse">
+  <p className="text-[9px] md:text-[11px] font-bold text-center whitespace-nowrap">
+    🎁 Get Discount
+  </p>
+</div>
 
 </div>
 
