@@ -271,28 +271,28 @@ const services = [
 const fleet = [
   {
     name: "Swift Dzire",
-    image: "/cars/dzire.jpg",
+    image: "/cars/dzire.webp",
     description:
       "Comfortable sedan for local and outstation taxi travel.",
   },
 
   {
     name: "Maruti Ertiga",
-    image: "/cars/ertiga.jpg",
+    image: "/ertiga.webp",
     description:
       "Practical family vehicle for comfortable group travel.",
   },
 
   {
     name: "Toyota Rumion",
-    image: "/cars/rumion.jpg",
+    image: "/cars/rumion.webp",
     description:
       "Spacious vehicle suitable for family and outstation journeys.",
   },
 
   {
     name: "Innova Crysta",
-    image: "/cars/crysta.jpg",
+    image: "/cars/crysta.webp",
     description:
       "Premium option for comfortable long-distance travel.",
   },

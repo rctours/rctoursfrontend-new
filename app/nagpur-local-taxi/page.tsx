@@ -174,28 +174,28 @@ const packages = [
 const fleet = [
   {
     name: "Swift Dzire",
-    image: "/cars/dzire.jpg",
+    image: "/cars/dzire.webp",
     package: "Ideal for small families",
     description:
       "Comfortable sedan for everyday local taxi requirements in Nagpur.",
   },
   {
     name: "Ertiga",
-    image: "/cars/ertiga.jpg",
+    image: "/ertiga.webp",
     package: "Ideal for families",
     description:
       "Spacious MPV suitable for family and group local travel.",
   },
   {
     name: "Toyota Rumion",
-    image: "/cars/rumion.jpg",
+    image: "/cars/rumion.webp",
     package: "Comfortable family option",
     description:
       "A practical vehicle for longer local trips and family travel.",
   },
   {
     name: "Innova Crysta",
-    image: "/cars/crysta.jpg",
+    image: "/cars/crysta.webp",
     package: "Premium comfort",
     description:
       "Premium option for business travel, families and comfortable city journeys.",

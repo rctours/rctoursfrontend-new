@@ -31,7 +31,7 @@ const services = [
     title: "Airport Taxi Service",
     description:
       "Reliable airport pickup and drop taxi service in Nagpur with professional drivers and clean vehicles.",
-    image: "/services/airport-taxi.jpeg",
+    image: "/services/airport-taxi.webp",
     alt: "Airport Taxi Service Nagpur",
     icon: Plane,
   },
@@ -39,7 +39,7 @@ const services = [
     title: "Local Cab Booking",
     description:
       "Affordable local taxi services for city travel, shopping, meetings and daily transportation.",
-    image: "/services/cab-local.jpeg",
+    image: "/services/cab-local.webp",
     alt: "Local Cab Booking Nagpur",
     icon: MapPin,
   },
@@ -47,7 +47,7 @@ const services = [
     title: "Outstation Taxi",
     description:
       "Comfortable outstation taxi service from Nagpur to Pune, Mumbai, Hyderabad, Indore and more cities.",
-    image: "/services/outstation-taxi.jpeg",
+    image: "/services/outstation-taxi.webp",
     alt: "Outstation Taxi Nagpur",
     icon: Navigation,
   },
@@ -55,7 +55,7 @@ const services = [
     title: "Corporate Travel",
     description:
       "Professional transportation solutions for companies, business meetings and corporate events.",
-    image: "/services/corporate-travel.png",
+    image: "/services/corporate-travel.webp",
     alt: "Corporate Travel Nagpur",
     icon: Building2,
   },
@@ -71,7 +71,7 @@ const services = [
     title: "Tour Packages",
     description:
       "Customized tour packages for Pench, Tadoba, Chikhaldara, Shirdi, Goa and more.",
-    image: "/services/tour-packages.jpg",
+    image: "/services/tour-packages.webp",
     alt: "Tour Packages Nagpur",
     icon: MapPin,
   },
@@ -265,22 +265,22 @@ export default function ServicesPage() {
       {[
         {
           name: "Swift Dzire",
-          image: "/swift-dzire.jpeg",
+          image: "/swift-dzire.webp",
           type: "Sedan",
         },
         {
           name: "Maruti Ertiga",
-          image: "/ertiga.jpeg",
+          image: "/ertiga.webp",
           type: "SUV",
         },
         {
           name: "Innova Crysta",
-          image: "/innova-crysta.jpeg",
+          image: "/innova-crysta.webp",
           type: "Premium",
         },
         {
           name: "Tempo Traveller",
-          image: "/tempo traveller.jpg",
+          image: "/tempo traveller.webp",
           type: "Group Travel",
         },
       ].map((car) => (

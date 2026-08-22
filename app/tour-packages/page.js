@@ -10,14 +10,14 @@ const maharashtraPackages = [
   {
     title: "Tadoba Safari",
     duration: "1 Day",
-    image: "/tours/tadoba1.jpg",
+    image: "/tours/tadoba1.webp",
     features: ["🐅 Tiger Reserve", "🚖 Pickup & Drop", "👨‍✈️ Experienced Drivers", "📞 24×7 Support"],
   },
 
   {
     title: "Pench Safari",
     duration: "1 Day",
-    image: "/tours/pench1.jpg",
+    image: "/tours/pench1.webp",
     features: ["🐅 Jungle Safari", "🚖 Pickup & Drop", "👨‍✈️ Experienced Drivers", "📞 24×7 Support"],
   },
 
@@ -26,21 +26,21 @@ const maharashtraPackages = [
   {
     title: "Chikhaldara Tour",
     duration: "2 Days",
-    image: "/tours/chikhaldara1.jpg",
+    image: "/tours/chikhaldara1.webp",
     features: ["🏞️ Hill Station", "📸 Scenic Views", "🚖 Comfortable Travel", "📞 24×7 Support"],
   },
 
   {
     title: "Mahabaleshwar Tour",
     duration: "4 Days",
-    image: "/tours/mahabaleshwar.jpg",
+    image: "/tours/mahabaleshwar.webp",
     features: ["🏞️ Hill Station", "📸 Scenic Views", "🚖 Comfortable Travel", "📞 24×7 Support"],
   },
 
   {
     title: "Lonavala Tour",
     duration: "3 Days",
-    image: "/tours/lonavala.jpg",
+    image: "/tours/lonavala.webp",
     features: ["🏞️ Hill Station", "🌧️ Nature Views", "🚖 Comfortable Travel", "📞 24×7 Support"],
   },
 
@@ -49,77 +49,77 @@ const maharashtraPackages = [
   {
     title: "Shirdi Darshan",
     duration: "2 Days",
-    image: "/tours/shirdi.jpeg",
+    image: "/tours/shirdi.webp",
     features: ["🙏 Sai Baba Darshan", "🚖 Comfortable Travel", "👨‍✈️ Experienced Drivers", "📞 24×7 Support"],
   },
 
   {
     title: "Shani Shingnapur",
     duration: "2 Days",
-    image: "/tours/shani-shingnapur.jpg",
+    image: "/tours/shani-shingnapur.webp",
     features: ["🙏 Shanidev Temple", "🚖 Comfortable Travel", "👨‍✈️ Experienced Drivers", "📞 24×7 Support"],
   },
 
   {
     title: "Nashik Tour",
     duration: "3 Days",
-    image: "/tours/nashik1.jpg",
+    image: "/tours/nashik1.webp",
     features: ["🙏 Trimbakeshwar", "🍇 Sightseeing", "🚖 Comfortable Travel", "📞 24×7 Support"],
   },
 
   {
     title: "Grishneshwar",
     duration: "2 Days",
-    image: "/tours/grishneshwar.jpg",
+    image: "/tours/grishneshwar.webp",
     features: ["🙏 Jyotirling Darshan", "🏛️ Temple Visit", "🚖 Comfortable Travel", "📞 24×7 Support"],
   },
 
   {
     title: "Mahurgad Darshan",
     duration: "1 Day",
-    image: "/tours/mahurgad.jpeg",
+    image: "/tours/mahurgad.webp",
     features: ["🙏 Renuka Mata", "⛰️ Hill Temple", "🚖 Comfortable Travel", "📞 24×7 Support"],
   },
 
   {
     title: "Tuljapur Darshan",
     duration: "2 Days",
-    image: "/tours/tuljapur.jpg",
+    image: "/tours/tuljapur.webp",
     features: ["🙏 Tulja Bhavani", "🚖 Comfortable Travel", "👨‍✈️ Experienced Drivers", "📞 24×7 Support"],
   },
 
   {
     title: "Akkalkot Darshan",
     duration: "2 Days",
-    image: "/tours/akkalkot.jpg",
+    image: "/tours/akkalkot.webp",
     features: ["🙏 Swami Samarth", "🚖 Comfortable Travel", "👨‍✈️ Experienced Drivers", "📞 24×7 Support"],
   },
 
   {
     title: "Pandharpur Darshan",
     duration: "2 Days",
-    image: "/tours/pandharpur.jpg",
+    image: "/tours/pandharpur.webp",
     features: ["🙏 Vitthal Rukmini", "🚖 Comfortable Travel", "👨‍✈️ Experienced Drivers", "📞 24×7 Support"],
   },
 
   {
     title: "Kolhapur Mahalaxmi",
     duration: "3 Days",
-    image: "/tours/kolhapur.jpg",
+    image: "/tours/kolhapur.webp",
     features: ["🙏 Mahalaxmi Temple", "🏛️ Sightseeing", "🚖 Comfortable Travel", "📞 24×7 Support"],
   },
 
   {
     title: "Ashtavinayak Yatra",
     duration: "3 Days",
-    image: "/tours/ashtavinayak.png",
+    image: "/tours/ashtavinayak.webp",
     features: ["🐘 8 Ganpati Temples", "🙏 Religious Tour", "🚖 Comfortable Travel", "📞 24×7 Support"],
   },
 
   {
     title: "Shegaon Darshan",
     duration: "2 Days",
-    image: "/tours/shegaon.jpg",
+    image: "/tours/shegaon.webp",
     features: ["🙏 Gajanan Maharaj", "🚖 Comfortable Travel", "👨‍✈️ Experienced Drivers", "📞 24×7 Support"],
   },
 
@@ -128,21 +128,21 @@ const maharashtraPackages = [
   {
     title: "Konkan Tour",
     duration: "5 Days",
-    image: "/tours/konkan.jpg",
+    image: "/tours/konkan.webp",
     features: ["🏖️ Beaches", "🌊 Sea Views", "🚖 Comfortable Travel", "📞 24×7 Support"],
   },
 
   {
     title: "Ganpatipule Tour",
     duration: "4 Days",
-    image: "/tours/ganpatipule.jpg",
+    image: "/tours/ganpatipule.webp",
     features: ["🙏 Ganpati Temple", "🏖️ Beach", "🚖 Comfortable Travel", "📞 24×7 Support"],
   },
 
   {
     title: "Alibaug Tour",
     duration: "3 Days",
-    image: "/tours/alibaug.jpg",
+    image: "/tours/alibaug.webp",
     features: ["🏖️ Beach Destination", "🚖 Comfortable Travel", "👨‍✈️ Experienced Drivers", "📞 24×7 Support"],
   },
 
@@ -151,14 +151,14 @@ const maharashtraPackages = [
   {
     title: "Ajanta Ellora",
     duration: "2 Days",
-    image: "/tours/ajanta.jpg",
+    image: "/tours/ajanta.webp",
     features: ["🏛️ UNESCO Heritage", "📸 Historic Caves", "🚖 Comfortable Travel", "📞 24×7 Support"],
   },
 
   {
     title: "Ch. Sambhajinagar Tour",
     duration: "2 Days",
-    image: "/tours/sambhajinagar.jpg",
+    image: "/tours/sambhajinagar.webp",
     features: ["🏛️ Historic City", "📸 Local Sightseeing", "🚖 Comfortable Travel", "📞 24×7 Support"],
   },
 ];
@@ -167,7 +167,7 @@ const mpPackages = [
   {
     title: "Kanha Safari",
     duration: "2 Days",
-    image: "/tours/kanha.jpg",
+    image: "/tours/kanha.webp",
     features: [
       "🐅 Tiger Reserve",
       "🌳 Forest Experience",
@@ -179,7 +179,7 @@ const mpPackages = [
   {
     title: "Satpura Safari",
     duration: "2 Days",
-    image: "/tours/satpura.jpg",
+    image: "/tours/satpura.webp",
     features: [
       "🦌 Wildlife Safari",
       "🌳 Nature Experience",
@@ -191,7 +191,7 @@ const mpPackages = [
   {
     title: "Pachmarhi Tour",
     duration: "3 Days",
-    image: "/tours/pachmarhi.jpg",
+    image: "/tours/pachmarhi.webp",
     features: [
       "🏞️ Hill Station",
       "🌳 Nature Views",
@@ -203,7 +203,7 @@ const mpPackages = [
   {
     title: "Ujjain Mahakal",
     duration: "2 Days",
-    image: "/tours/ujjain.jpg",
+    image: "/tours/ujjain.webp",
     features: [
       "🙏 Mahakal Darshan",
       "🚖 Comfortable Travel",
@@ -214,7 +214,7 @@ const mpPackages = [
   {
     title: "Omkareshwar",
     duration: "2 Days",
-    image: "/tours/omkareshwar.jpg",
+    image: "/tours/omkareshwar.webp",
     features: [
       "🙏 Jyotirling Darshan",
       "🚖 Comfortable Travel",
@@ -227,7 +227,7 @@ const upPackages = [
   {
     title: "Ayodhya Ram Mandir",
     duration: "3 Days",
-    image: "/tours/ayodhya.jpg",
+    image: "/tours/ayodhya.webp",
     features: [
       "🙏 Ram Mandir Darshan",
       "🏛️ Religious Tour",
@@ -239,7 +239,7 @@ const upPackages = [
   {
     title: "Kashi Vishwanath",
     duration: "3 Days",
-    image: "/tours/varanasi.jpg",
+    image: "/tours/varanasi.webp",
     features: [
       "🙏 Kashi Vishwanath",
       "🌊 Ganga Aarti",
@@ -251,7 +251,7 @@ const upPackages = [
   {
     title: "Prayagraj Sangam",
     duration: "3 Days",
-    image: "/tours/prayagraj.jpg",
+    image: "/tours/prayagraj.webp",
     features: [
       "🙏 Triveni Sangam",
       "🚖 Comfortable Travel",
@@ -262,7 +262,7 @@ const upPackages = [
   {
     title: "Mathura Vrindavan",
     duration: "3 Days",
-    image: "/tours/mathura.jpg",
+    image: "/tours/mathura.webp",
     features: [
       "🙏 Krishna Janmabhoomi",
       "🦚 Vrindavan Temples",
@@ -276,7 +276,7 @@ const rajasthanPackages = [
   {
     title: "Jaipur Tour",
     duration: "3 Days",
-    image: "/tours/jaipur.jpg",
+    image: "/tours/jaipur.webp",
     features: [
       "🏰 Pink City",
       "📸 Amer Fort",
@@ -288,7 +288,7 @@ const rajasthanPackages = [
   {
     title: "Udaipur Tour",
     duration: "4 Days",
-    image: "/tours/udaipur.jpg",
+    image: "/tours/udaipur.webp",
     features: [
       "🏞️ City of Lakes",
       "🏰 Royal Palaces",
@@ -300,7 +300,7 @@ const rajasthanPackages = [
   {
     title: "Jodhpur Tour",
     duration: "4 Days",
-    image: "/tours/jodhpur.jpg",
+    image: "/tours/jodhpur.webp",
     features: [
       "🏰 Mehrangarh Fort",
       "📸 Blue City",
@@ -312,7 +312,7 @@ const rajasthanPackages = [
   {
     title: "Jaisalmer Tour",
     duration: "5 Days",
-    image: "/tours/jaisalmer.jpg",
+    image: "/tours/jaisalmer.webp",
     features: [
       "🐪 Desert Safari",
       "🏰 Golden Fort",
@@ -324,7 +324,7 @@ const rajasthanPackages = [
   {
     title: "Khatu Shyam Darshan",
     duration: "3 Days",
-    image: "/tours/khatu-shyam.jpg",
+    image: "/tours/khatu-shyam.webp",
     features: [
       "🙏 Khatu Shyam Ji",
       "🚖 Comfortable Travel",
@@ -336,7 +336,7 @@ const rajasthanPackages = [
   {
     title: "Salasar Balaji",
     duration: "3 Days",
-    image: "/tours/salasar-balaji.jpg",
+    image: "/tours/salasar-balaji.webp",
     features: [
       "🙏 Balaji Darshan",
       "🚖 Comfortable Travel",
@@ -350,7 +350,7 @@ const southIndiaPackages = [
   {
     title: "Tirupati Balaji",
     duration: "4 Days",
-    image: "/tours/tirupati.jpg",
+    image: "/tours/tirupati.webp",
     features: [
       "🙏 Balaji Darshan",
       "🚖 Comfortable Travel",
@@ -362,7 +362,7 @@ const southIndiaPackages = [
   {
     title: "Srisailam Tour",
     duration: "3 Days",
-    image: "/tours/srisailam.jpg",
+    image: "/tours/srisailam.webp",
     features: [
       "🙏 Jyotirling Darshan",
       "🏞️ Scenic Route",
@@ -374,7 +374,7 @@ const southIndiaPackages = [
   {
     title: "Rameshwaram Tour",
     duration: "5 Days",
-    image: "/tours/rameshwaram.jpg",
+    image: "/tours/rameshwaram.webp",
     features: [
       "🙏 Jyotirling Darshan",
       "🌊 Sea Bridge",
@@ -398,7 +398,7 @@ const southIndiaPackages = [
   {
     title: "Kanyakumari Tour",
     duration: "6 Days",
-    image: "/tours/kanyakumari.jpg",
+    image: "/tours/kanyakumari.webp",
     features: [
       "🌅 Sunrise Point",
       "🌊 Three Sea Meeting Point",
@@ -412,7 +412,7 @@ const premiumPackages = [
   {
     title: "Goa Tour",
     duration: "5 Days",
-    image: "/tours/goa1.jpg",
+    image: "/tours/goa1.webp",
     features: [
       "🏖️ Famous Beaches",
       "🌅 Sunset Views",
@@ -424,7 +424,7 @@ const premiumPackages = [
   {
     title: "Coorg Tour",
     duration: "4 Days",
-    image: "/tours/coorg.jpg",
+    image: "/tours/coorg.webp",
     features: [
       "☕ Coffee Estates",
       "🌳 Nature Views",
@@ -460,7 +460,7 @@ const premiumPackages = [
   {
     title: "Munnar Tour",
     duration: "5 Days",
-    image: "/tours/munnar.jpg",
+    image: "/tours/munnar.webp",
     features: [
       "🍃 Tea Gardens",
       "🏞️ Hill Station",
@@ -472,7 +472,7 @@ const premiumPackages = [
   {
     title: "Alleppey Tour",
     duration: "5 Days",
-    image: "/tours/alleppey.jpg",
+    image: "/tours/alleppey.webp",
     features: [
       "🚤 Backwaters",
       "🌴 Kerala Beauty",
@@ -486,7 +486,7 @@ const gujaratPackages = [
   {
     title: "Statue of Unity",
     duration: "4 Days",
-    image: "/tours/statue-of-unity.jpg",
+    image: "/tours/statue-of-unity.webp",
     features: [
       "🗽 World's Tallest Statue",
       "📸 Valley of Flowers",
@@ -498,7 +498,7 @@ const gujaratPackages = [
   {
     title: "Somnath Darshan",
     duration: "4 Days",
-    image: "/tours/somnath.jpg",
+    image: "/tours/somnath.webp",
     features: [
       "🙏 Jyotirling Darshan",
       "🌊 Sea Temple View",
@@ -522,7 +522,7 @@ const gujaratPackages = [
   {
     title: "Gir National Park",
     duration: "4 Days",
-    image: "/tours/gir.jpg",
+    image: "/tours/gir.webp",
     features: [
       "🦁 Asiatic Lions",
       "🌳 Wildlife Experience",
@@ -534,7 +534,7 @@ const gujaratPackages = [
   {
     title: "Ahmedabad Tour",
     duration: "3 Days",
-    image: "/tours/ahmedabad.jpg",
+    image: "/tours/ahmedabad.webp",
     features: [
       "🏛️ Heritage City",
       "📸 Sightseeing",
@@ -1520,31 +1520,31 @@ export default function TourPackagesPage() {
           name: "Swift Dzire",
           tag: "Comfortable",
           seats: "4+1 Seater",
-          image: "/swift-dzire.jpeg",
+          image: "/swift-dzire.webp",
         },
         {
           name: "Ertiga",
           tag: "Family SUV",
           seats: "6+1 Seater",
-          image: "/ertiga.jpeg",
+          image: "/ertiga.webp",
         },
         {
           name: "Innova Crysta",
           tag: "Luxury Travel",
           seats: "7+1 Seater",
-          image: "/innova-crysta.jpeg",
+          image: "/innova-crysta.webp",
         },
         {
           name: "Tempo Traveller",
           tag: "Group Travel",
           seats: "12-20 Seater",
-          image: "/tempo traveller.jpg",
+          image: "/tempo traveller.webp",
         },
         {
           name: "Force Urbania",
           tag: "Ultra Luxury",
           seats: "13-17 Seater",
-          image: "/urbania.jpg",
+          image: "/urbania.webp",
         },
       ].map((car) => (
         <div

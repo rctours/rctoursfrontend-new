@@ -125,7 +125,7 @@ export default async function BlogPage() {
       description: getExcerpt(blog, 160),
       datePublished: blog.createdAt || blog.updatedAt,
       dateModified: blog.updatedAt || blog.createdAt,
-      image: blog.image || `${siteUrl}/blogs/cab-service.jpg`,
+      image: blog.image || `${siteUrl}/blogs/local-taxi-nagpur.webp`,
       mainEntityOfPage: `${siteUrl}/blog/${blog.slug}`,
       url: `${siteUrl}/blog/${blog.slug}`,
       author: {
@@ -208,7 +208,7 @@ export default async function BlogPage() {
             {/* FEATURED IMAGE */}
             <div className="relative h-[260px] overflow-hidden sm:h-[320px] md:h-[390px] lg:h-[430px]">
             <img
-            src={featuredBlog.image || "/blogs/featured.jpeg"}
+            src={featuredBlog.image || "/blogs/featured.webp"}
             alt={featuredBlog.title}
             className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 hover:scale-105"
             />
@@ -329,7 +329,7 @@ export default async function BlogPage() {
                 {/* BLOG IMAGE */}
                 <div className="relative h-52 overflow-hidden bg-slate-100 sm:h-56">
                   <img
-                    src={blog.image || "/blogs/cab-service.jpg"}
+                    src={blog.image || "/blogs/local-taxi-nagpur.webp"}
                     alt={blog.title}
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />

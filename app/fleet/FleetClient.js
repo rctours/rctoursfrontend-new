@@ -32,7 +32,7 @@ import {
 const cars = [
   {
     name: "Swift Dzire",
-    image: "/swift-dzire.jpeg",
+    image: "/swift-dzire.webp",
     seats: "4+1 Seats",
     luggage: "2 Bags",
     price: "₹13/km",
@@ -41,7 +41,7 @@ const cars = [
   },
   {
     name: "Hyundai Aura",
-    image: "/aura.jpg",
+    image: "/aura.webp",
     seats: "4+1 Seats",
     luggage: "2 Bags",
     price: "₹13/km",
@@ -50,7 +50,7 @@ const cars = [
   },
   {
     name: "Toyota Glanza",
-    image: "/glanza.jpg",
+    image: "/glanza.webp",
     seats: "4+1 Seats",
     luggage: "2 Bags",
     price: "₹13/km",
@@ -59,7 +59,7 @@ const cars = [
   },
   {
     name: "Maruti Ertiga",
-    image: "/ertiga.jpeg",
+    image: "/ertiga.webp",
     seats: "6+1 Seats",
     luggage: "4 Bags",
     price: "₹15/km",
@@ -68,7 +68,7 @@ const cars = [
   },
   {
     name: "Toyota Rumion",
-    image: "/rumion.png",
+    image: "/rumion.webp",
     seats: "6+1 Seats",
     luggage: "4 Bags",
     price: "₹15/km",
@@ -77,7 +77,7 @@ const cars = [
   },
   {
     name: "Kia Carens",
-    image: "/carens.jpg",
+    image: "/carens.webp",
     seats: "6+1 Seats",
     luggage: "4 Bags",
     price: "₹17/km",
@@ -86,7 +86,7 @@ const cars = [
   },
   {
     name: "Innova Crysta",
-    image: "/innova-crysta.jpeg",
+    image: "/innova-crysta.webp",
     seats: "7+1 Seats",
     luggage: "5 Bags",
     price: "₹19/km",
@@ -95,7 +95,7 @@ const cars = [
   },
   {
     name: "Toyota Hycross",
-    image: "/hycross.png",
+    image: "/hycross.webp",
     seats: "7+1 Seats",
     luggage: "5 Bags",
     price: "₹25/km",
@@ -104,7 +104,7 @@ const cars = [
   },
   {
     name: "Traveller 13 Seater",
-    image: "/traveller13.jpg",
+    image: "/traveller13.webp",
     seats: "13 Seats",
     luggage: "10 Bags",
     price: "Contact Us",
@@ -113,7 +113,7 @@ const cars = [
   },
   {
     name: "Traveller 17 Seater",
-    image: "/traveller17.jpg",
+    image: "/traveller17.webp",
     seats: "17 Seats",
     luggage: "12 Bags",
     price: "Contact Us",
@@ -122,7 +122,7 @@ const cars = [
   },
   {
     name: "Traveller 26 Seater",
-    image: "/traveller26.jpg",
+    image: "/traveller26.webp",
     seats: "26 Seats",
     luggage: "20 Bags",
     price: "Contact Us",
@@ -131,7 +131,7 @@ const cars = [
   },
   {
     name: "Force Urbania",
-    image: "/urbania.jpg",
+    image: "/urbania.webp",
     seats: "17 Seats",
     luggage: "12 Bags",
     price: "Contact Us",
@@ -702,7 +702,7 @@ Please share booking details.`;
 
       <div className="relative h-52 overflow-hidden">
         <Image
-          src="/well-maintained-vehicles.jpg"
+          src="/well-maintained-vehicles.webp"
           alt="Clean and Well Maintained Cab"
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -737,7 +737,7 @@ Please share booking details.`;
 
       <div className="relative h-52 overflow-hidden">
         <Image
-          src="/why-professional-driver.jpeg"
+          src="/why-professional-driver.webp"
           alt="Professional Cab Driver"
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -772,7 +772,7 @@ Please share booking details.`;
 
       <div className="relative h-52 overflow-hidden">
         <Image
-          src="/on-time-pickup.jpg"
+          src="/on-time-pickup.webp"
           alt="On Time Cab Pickup Service"
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-110"

@@ -53,7 +53,7 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: finalTitle,
       description: finalDesc,
-      images: [blog.image || "/blogs/cab-service.jpg"],
+      images: [blog.image || "/blogs/local-taxi-nagpur.webp"],
       type: "article",
     },
     alternates: {
@@ -92,7 +92,7 @@ export default async function BlogDetailsPage({ params }) {
             "@type": "BlogPosting",
             "headline": blog.title,
             "description": blog.metaDescription || blog.excerpt || blog.content?.substring(0, 160),
-            "image": blog.image || "https://www.rctoursandtravels.in/blogs/cab-service.jpg",
+            "image": blog.image || "https://www.rctoursandtravels.in/blogs/local-taxi-nagpur.webp",
             "author": {
               "@type": "Organization",
               "name": "RC Tours & Travels",
@@ -132,7 +132,7 @@ export default async function BlogDetailsPage({ params }) {
         </div>
 
         <img
-          src={blog.image || "/blogs/cab-service.jpg"}
+          src={blog.image || "/blogs/local-taxi-nagpur.webp"}
           alt={blog.title}
           loading="eager"
           className="w-full h-[220px] md:h-[480px] object-cover rounded-3xl mb-10 shadow-md bg-gray-100"
@@ -200,7 +200,7 @@ export default async function BlogDetailsPage({ params }) {
                   className="group border rounded-3xl overflow-hidden bg-white shadow-sm hover:shadow-md transition flex flex-col"
                 >
                   <img
-                    src={item.image || "/blogs/cab-service.jpg"}
+                    src={item.image || "/blogs/local-taxi-nagpur.webp"}
                     alt={item.title}
                     className="w-full h-52 object-cover group-hover:scale-101 transition duration-300"
                   />

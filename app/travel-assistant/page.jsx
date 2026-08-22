@@ -409,7 +409,7 @@ export default function TravelAssistantPage() {
 
               <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border-2 border-white/30 bg-white shadow-xl md:h-16 md:w-16">
                 <Image
-                  src="/logo.png"
+                  src="/logo.webp"
                   alt="RC Tours & Travels"
                   fill
                   sizes="64px"
@@ -479,7 +479,7 @@ export default function TravelAssistantPage() {
               <div className="relative">
                 <div className="relative h-11 w-11 overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm">
                 <Image
-                src="/logo.png"
+                src="/logo.webp"
                 alt="RC Tours & Travels AI Assistant"
                 fill
                 sizes="44px"
@@ -593,7 +593,7 @@ export default function TravelAssistantPage() {
                   ) : (
                   <div className="relative mt-0.5 h-9 w-9 shrink-0 overflow-hidden rounded-xl border border-blue-100 bg-white shadow-sm md:h-10 md:w-10">
                   <Image
-                  src="/logo.png"
+                  src="/logo.webp"
                   alt="RC Tours & Travels AI Assistant"
                   fill
                   sizes="40px"
@@ -723,7 +723,7 @@ export default function TravelAssistantPage() {
                   <div className="flex max-w-[90%] items-start gap-2.5 md:gap-3">
                     <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-xl border border-blue-100 bg-white shadow-sm md:h-10 md:w-10">
                   <Image
-                  src="/logo.png"
+                  src="/logo.webp"
                   alt="RC Tours & Travels AI Assistant"
                   fill
                   sizes="40px"

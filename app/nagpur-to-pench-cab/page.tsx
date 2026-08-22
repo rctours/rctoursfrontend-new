@@ -69,25 +69,25 @@ const localBusinessSchema = {
 const fleet = [
   {
     name: "Swift Dzire",
-    image: "/cars/dzire.jpg",
+    image: "/cars/dzire.webp",
     price: "Starting ₹2499",
   },
 
   {
     name: "Ertiga",
-    image: "/cars/ertiga.jpg",
+    image: "/ertiga.webp",
     price: "Starting ₹3499",
   },
 
   {
     name: "Rumion",
-    image: "/cars/rumion.jpg",
+    image: "/cars/rumion.webp",
     price: "Starting ₹3799",
   },
 
   {
     name: "Innova Crysta",
-    image: "/cars/crysta.jpg",
+    image: "/cars/crysta.webp",
     price: "Starting ₹4999",
   },
 ];

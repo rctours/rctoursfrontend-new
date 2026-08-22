@@ -96,7 +96,7 @@ export default function Navbar() {
           <a href="/" className="flex items-center gap-2.5 sm:gap-3 shrink-0">
             <div className="bg-white rounded-full p-1.5 shadow-xl">
               <Image
-                src="/logo.png"
+                src="/logo.webp"
                 alt="RC Tours & Travels"
                 width={42}
                 height={42}
@@ -240,7 +240,7 @@ export default function Navbar() {
           <div className="flex items-center gap-3">
             <div className="bg-white rounded-full p-2 shadow-md">
               <Image
-                src="/logo.png"
+                src="/logo.webp"
                 alt="RC Tours & Travels"
                 width={45}
                 height={45}

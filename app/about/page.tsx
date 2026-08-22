@@ -378,7 +378,7 @@ useEffect(() => {
         <div className="relative h-48 md:h-64 overflow-hidden">
 
           <Image
-            src="/airport-transfer.jpg"
+            src="/airport-transfer.webp"
             alt="Nagpur Airport Taxi Pickup and Drop Service"
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -427,7 +427,7 @@ useEffect(() => {
         <div className="relative h-48 md:h-64 overflow-hidden">
 
           <Image
-            src="/corporate-travel.jpg"
+            src="/corporate-travel.webp"
             alt="Corporate Taxi and Business Travel Service in Nagpur"
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -475,7 +475,7 @@ useEffect(() => {
         <div className="relative h-48 md:h-64 overflow-hidden">
 
           <Image
-            src="/outstation-travel.jpg"
+            src="/outstation-travel.webp"
             alt="Outstation Taxi Service From Nagpur"
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -557,7 +557,7 @@ useEffect(() => {
         <div>
           <div className="relative h-52 sm:h-56 overflow-hidden bg-slate-100">
             <Image
-              src="/swift-dzire.jpeg"
+              src="/swift-dzire.webp"
               alt="Swift Dzire"
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -648,7 +648,7 @@ useEffect(() => {
         <div>
           <div className="relative h-52 sm:h-56 overflow-hidden bg-slate-100">
             <Image
-              src="/ertiga.jpeg"
+              src="/ertiga.webp"
               alt="Ertiga"
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -739,7 +739,7 @@ useEffect(() => {
         <div>
           <div className="relative h-52 sm:h-56 overflow-hidden bg-slate-100">
             <Image
-              src="/innova-crysta.jpeg"
+              src="/innova-crysta.webp"
               alt="Innova Crysta"
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -830,7 +830,7 @@ useEffect(() => {
         <div>
           <div className="relative h-52 sm:h-56 overflow-hidden bg-slate-100">
             <Image
-              src="/traveller17.jpg"
+              src="/traveller17.webp"
               alt="Tempo Traveller"
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -935,7 +935,7 @@ useEffect(() => {
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
 
       <div className="relative h-32 md:h-52 rounded-2xl md:rounded-3xl overflow-hidden">
-        <Image src="/gallery/tour.jpg" alt="Swift Dzire" fill className="object-cover hover:scale-110 transition duration-700" />
+        <Image src="/gallery/tour.webp" alt="Swift Dzire" fill className="object-cover hover:scale-110 transition duration-700" />
       </div>
 
       <div className="relative h-32 md:h-52 rounded-2xl md:rounded-3xl overflow-hidden">
@@ -952,15 +952,15 @@ useEffect(() => {
       </div>
 
       <div className="relative h-32 md:h-52 rounded-2xl md:rounded-3xl overflow-hidden">
-        <Image src="/gallery/rumion.jpeg" alt="Tempo Traveller" fill className="object-cover hover:scale-110 transition duration-700" />
+        <Image src="/gallery/rumion.webp" alt="Tempo Traveller" fill className="object-cover hover:scale-110 transition duration-700" />
       </div>
 
       <div className="relative h-32 md:h-52 rounded-2xl md:rounded-3xl overflow-hidden">
-        <Image src="/gallery/traveller17.jpeg" alt="Airport Pickup" fill className="object-cover hover:scale-110 transition duration-700" />
+        <Image src="/gallery/traveller17.webp" alt="Airport Pickup" fill className="object-cover hover:scale-110 transition duration-700" />
       </div>
 
       <div className="relative h-32 md:h-52 rounded-2xl md:rounded-3xl overflow-hidden">
-        <Image src="/gallery/friend-tour.jpeg" alt="Tour Package" fill className="object-cover hover:scale-110 transition duration-700" />
+        <Image src="/gallery/friend-tour.webp" alt="Tour Package" fill className="object-cover hover:scale-110 transition duration-700" />
       </div>
 
     </div>

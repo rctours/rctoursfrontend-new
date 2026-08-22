@@ -621,7 +621,7 @@ const cabs = [
     fuel: "CNG / Petrol",
     rate: 12,
     extraHour: 150,
-    image: "/cars/dzire.jpeg",
+    image: "/cars/dzire.webp",
 
     packageFare: {
       "40 KM / 4 Hrs": 1200,
@@ -638,7 +638,7 @@ const cabs = [
     fuel: "CNG / Petrol",
     rate: 14,
     extraHour: 250,
-    image: "/ertiga.jpeg",
+    image: "/ertiga.webp",
 
     packageFare: {
       "40 KM / 4 Hrs": 1500,
@@ -655,7 +655,7 @@ const cabs = [
     fuel: "CNG / Petrol",
     rate: 15,
     extraHour: 250,
-    image: "/cars/rumion.png",
+    image: "/cars/rumion.webp",
 
     packageFare: {
       "40 KM / 4 Hrs": 1600,
@@ -672,7 +672,7 @@ const cabs = [
     fuel: "Diesel",
     rate: 19,
     extraHour: 350,
-    image: "/cars/crysta.jpeg",
+    image: "/cars/crysta.webp",
 
     packageFare: {
       "40 KM / 4 Hrs": 3500,

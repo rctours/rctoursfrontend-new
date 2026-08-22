@@ -413,7 +413,7 @@ const routes = [
 const reviews = [
   {
     name: "Bhairavi Sarpatwar",
-    image: "/reviews/bhairavi sarpatwar.png",
+    image: "/reviews/bhairavi sarpatwar.webp",
     review:
       "Comfortable vehicles.....polite and trained drivers.....keep it up....nice experience with RC Tours & Travels 👍👍",
     time: "4 weeks ago",
@@ -421,7 +421,7 @@ const reviews = [
 
   {
     name: "Mahesh Kulkarni",
-    image: "/reviews/mahesh kulkarni.png",
+    image: "/reviews/mahesh kulkarni.webp",
     review:
       "I have booked Cab with RC for one day tour to Ramtek including Nagpur points. Cab service was good, clean and comfortable.",
     time: "15 weeks ago",
@@ -429,7 +429,7 @@ const reviews = [
 
   {
     name: "Shaikh Naeem",
-    image: "/reviews/shaikh naeem.png",
+    image: "/reviews/shaikh naeem.webp",
     review:
       "I had a fantastic experience! Vicky Janpat displayed excellent driving skills, ensuring a smooth and comfortable journey.",
     time: "19 weeks ago",
@@ -437,7 +437,7 @@ const reviews = [
 
   {
     name: "Rakesh Juneja",
-    image: "/reviews/rakesh juneja.png",
+    image: "/reviews/rakesh juneja.webp",
     review:
       "Good service. Nice behaviour. Very co-operative. Neat, clean, punctual. Highly recommend.",
     time: "21 weeks ago",
@@ -445,7 +445,7 @@ const reviews = [
 
   {
     name: "Durgesh Gumgaokar",
-    image: "/reviews/durgesh gumgaokar.png",
+    image: "/reviews/durgesh gumgaokar.webp",
     review:
       "I booked my Jabalpur trip from Nagpur with RC Tours & Travels, and the entire experience was truly wonderful.",
     time: "21 weeks ago",
@@ -453,7 +453,7 @@ const reviews = [
 
   {
     name: "Divyanshu Singh",
-    image: "/reviews/divyanshu singh.png",
+    image: "/reviews/divyanshu singh.webp",
     review:
       "Thank you RC Tours and Travels and Rupesh ji for an excellent experience. Our driver Vicky was very polite and experienced.",
     time: "22 weeks ago",
@@ -461,7 +461,7 @@ const reviews = [
 
   {
     name: "Alluri Rakesh",
-    image: "/reviews/alluri rakesh.png",
+    image: "/reviews/alluri rakesh.webp",
     review:
       "Simply superb service, comfortable ride till the end. Thank you for your services.",
     time: "22 weeks ago",
@@ -469,7 +469,7 @@ const reviews = [
 
   {
     name: "Sarnam Singh Kurra",
-    image: "/reviews/sarnam singh kurra.png",
+    image: "/reviews/sarnam singh kurra.webp",
     review:
       "Nice experience with RC Tours and Travels. The driver was nice and the car was totally clean. Overall very good service.",
     time: "30 weeks ago",
@@ -477,7 +477,7 @@ const reviews = [
 
   {
     name: "Kishor Kumar Nayak",
-    image: "/reviews/kishor kumar nayak.png",
+    image: "/reviews/kishor kumar nayak.webp",
     review:
       "I'm traveling with RC Tours and Travels and had the best experience with the driver and supportive RC Tours team. Thank you so much 🙏🏻",
     time: "30 weeks ago",
@@ -485,7 +485,7 @@ const reviews = [
 
   {
     name: "Binayak Sarkar",
-    image: "/reviews/binayak sarkar.png",
+    image: "/reviews/binayak sarkar.webp",
     review:
       "Very good behaviour and polite in nature.",
     time: "30 weeks ago",
@@ -493,7 +493,7 @@ const reviews = [
 
   {
     name: "Vineet Goyal",
-    image: "/reviews/vineet goyal.png",
+    image: "/reviews/vineet goyal.webp",
     review:
       "We rented an Ertiga car with RC Tours and Travels. The car was neat and clean, in good condition, and the driver was polite.",
     time: "30 weeks ago",
@@ -501,7 +501,7 @@ const reviews = [
 
   {
     name: "Kishor Gund",
-    image: "/reviews/kishor gund.png",
+    image: "/reviews/kishor gund.webp",
     review:
       "Aniket is a very good driver. He is very cooperative and soft spoken person.",
     time: "32 weeks ago",
@@ -509,7 +509,7 @@ const reviews = [
 
   {
     name: "Mukund Sangolkar",
-    image: "/reviews/mukund sangolkar.png",
+    image: "/reviews/mukund sangolkar.webp",
     review:
       "Very good service.",
     time: "32 weeks ago",
@@ -517,7 +517,7 @@ const reviews = [
 
   {
     name: "Raj Kumar Ghasal",
-    image: "/reviews/raj kumar ghasal.png",
+    image: "/reviews/raj kumar ghasal.webp",
     review:
       "Excellent service, on-time pickup and drop.",
     time: "35 weeks ago",
@@ -525,7 +525,7 @@ const reviews = [
 
   {
     name: "Nitin Mohane",
-    image: "/reviews/nitin.png",
+    image: "/reviews/nitin.webp",
     review:
       "Literally one of the best travel experiences. The ambience of the car, professionalism, safety, punctuality and comfort were outstanding. Truly one of the best travel experiences with great expertise and travel knowledge.",
     time: "35 weeks ago",
@@ -1494,24 +1494,24 @@ useEffect(() => {
           const route = routes[(routeIndex + offset) % routes.length];
 
           const routeImages: Record<string, string> = {
-            Tadoba: "/tadoba.jpg",
-            Pench: "/pench.jpg",
-            Wardha: "/wardha.jpg",
-            Pune: "/pune.jpg",
-            Hyderabad: "/hyderabad.jpg",
-            Mumbai: "/mumbai.jpg",
-            Shirdi: "/shirdi.jpg",
+            Tadoba: "/tadoba.webp",
+            Pench: "/pench.webp",
+            Wardha: "/wardha.webp",
+            Pune: "/pune.webp",
+            Hyderabad: "/hyderabad.webp",
+            Mumbai: "/mumbai.webp",
+            Shirdi: "/shirdi.webp",
             Amravati: "/amravati.webp",
-            Bhandara: "/bhandara.jpg",
-            Shegaon: "/shegaon.jpg",
+            Bhandara: "/bhandara.webp",
+            Shegaon: "/shegaon.JPG.webp",
             Chandrapur: "/chandarapur.webp",
-            Gondia: "/gondia.jpg",
+            Gondia: "/gondia.webp",
           };
 
           const routeImage =
             routeImages[route[0]] ||
             route[2] ||
-            "/outstation-travel.jpg";
+            "/outstation-travel.webp";
 
           return (
             <div
@@ -1578,24 +1578,24 @@ useEffect(() => {
           const route = routes[routeIndex];
 
           const routeImages: Record<string, string> = {
-            Tadoba: "/tadoba.jpg",
-            Pench: "/pench.jpg",
-            Wardha: "/wardha.jpg",
-            Pune: "/pune.jpg",
-            Hyderabad: "/hyderabad.jpg",
-            Mumbai: "/mumbai.jpg",
-            Shirdi: "/shirdi.jpg",
+            Tadoba: "/tadoba.webp",
+            Pench: "/pench.webp",
+            Wardha: "/wardha.webp",
+            Pune: "/pune.webp",
+            Hyderabad: "/hyderabad.webp",
+            Mumbai: "/mumbai.webp",
+            Shirdi: "/shirdi.webp",
             Amravati: "/amravati.webp",
-            Bhandara: "/bhandara.jpg",
-            Shegaon: "/shegaon.jpg",
+            Bhandara: "/bhandara.webp",
+            Shegaon: "/shegaon.JPG.webp",
             Chandrapur: "/chandarapur.webp",
-            Gondia: "/gondia.jpg",
+            Gondia: "/gondia.webp",
           };
 
           const routeImage =
             routeImages[route?.[0]] ||
             route?.[2] ||
-            "/outstation-travel.jpg";
+            "/outstation-travel.webp";
 
           return (
             <div className="relative max-w-sm mx-auto">
@@ -1773,7 +1773,7 @@ useEffect(() => {
   <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col h-full">
 
     <Image
-      src="/swift-dzire.jpeg"
+      src="/swift-dzire.webp"
       alt="Swift Dzire"
       width={500}
       height={300}
@@ -1878,7 +1878,7 @@ useEffect(() => {
   <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-lg flex flex-col h-full">
 
     <Image
-      src="/ertiga.jpeg"
+      src="/ertiga.webp"
       alt="Ertiga"
       width={500}
       height={300}
@@ -1983,7 +1983,7 @@ useEffect(() => {
   <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-lg flex flex-col h-full">
 
     <Image
-      src="/innova-crysta.jpeg"
+      src="/innova-crysta.webp"
       alt="Innova Crysta"
       width={500}
       height={300}
@@ -2117,7 +2117,7 @@ useEffect(() => {
       <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition">
 
         <Image
-          src="/fleet1.jpg"
+          src="/fleet1.webp"
           alt="Wide Fleet"
           width={400}
           height={250}
@@ -2143,7 +2143,7 @@ useEffect(() => {
       <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition">
 
         <Image
-          src="/driver.jpg"
+          src="/driver.webp"
           alt="Professional Drivers"
           width={400}
           height={250}
@@ -2169,7 +2169,7 @@ useEffect(() => {
       <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition">
 
         <Image
-          src="/service.jpg"
+          src="/service.webp"
           alt="24x7 Service"
           width={400}
           height={250}
@@ -2195,7 +2195,7 @@ useEffect(() => {
       <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition">
 
         <Image
-          src="/pricing.jpg"
+          src="/pricing.webp"
           alt="Transparent Pricing"
           width={400}
           height={250}
@@ -2353,7 +2353,7 @@ useEffect(() => {
 
             <div className="flex items-center gap-2">
               <Image
-              src="/google.png"
+              src="/google.webp"
               alt="Google"
               width={32}
               height={32}

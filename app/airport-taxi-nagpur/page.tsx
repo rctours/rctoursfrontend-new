@@ -18,10 +18,10 @@ const routes = [
 ];
 
 const fleet = [
-  { name: "New Dzire Taxi", img: "/cars/dzire.jpg" },
-  { name: "New Ertiga Taxi", img: "/cars/ertiga.jpg" },
-  { name: "Innova Crysta Taxi", img: "/cars/crysta.jpg" },
-  { name: "Tempo Traveller", img: "/cars/traveller17.jpg" },
+  { name: "New Dzire Taxi", img: "/cars/dzire.webp" },
+  { name: "New Ertiga Taxi", img: "/ertiga.webp" },
+  { name: "Innova Crysta Taxi", img: "/cars/crysta.webp" },
+  { name: "Tempo Traveller", img: "/cars/traveller17.webp" },
 ];
 
 const testimonials = [

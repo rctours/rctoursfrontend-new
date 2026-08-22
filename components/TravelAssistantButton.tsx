@@ -78,7 +78,7 @@ export default function TravelAssistantButton() {
           "
         >
           <Image
-            src="/logo.png"
+            src="/logo.webp"
             alt="RC Tours & Travels"
             width={48}
             height={48}

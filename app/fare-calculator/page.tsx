@@ -4,13 +4,13 @@ import Image from "next/image";
 import { useState } from "react";
 
 const vehicleImages: any = {
-  dzire: "/gallery/dzire.jpg",
-  ertiga: "/gallery/ertiga.jpg",
-  rumion: "/gallery/Rumion.jpg",
-  crysta: "/gallery/innova.jpg",
-  tt13: "/gallery/traveller.jpg",
-  tt17: "/gallery/traveller.jpg",
-  urbania: "/gallery/Urbania.jpg",
+  dzire: "/swift-dzire.webp",
+  ertiga: "/ertiga.webp",
+  rumion: "/gallery/Rumion.webp",
+  crysta: "/gallery/innova.webp",
+  tt13: "/gallery/traveller.webp",
+  tt17: "/gallery/traveller.webp",
+  urbania: "/urbania.webp",
 };
 
 export default function FareCalculator() {
@@ -196,7 +196,7 @@ return (
     className="min-h-screen text-white p-6 bg-cover bg-center bg-fixed"
     style={{
     backgroundImage:
-      "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('/gallery/travel-bg.jpg')",
+      "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('/outstation-travel.webp')",
     }}
     >
       <div className="max-w-5xl mx-auto bg-gradient-to-br from-slate-900/60 via-black/40 to-blue-950/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-[0_0_60px_rgba(59,130,246,0.15)]">
@@ -214,16 +214,16 @@ return (
       <Image
         src={
           vehicle === "dzire"
-          ? "/gallery/dzire.jpg"
+          ? "/swift-dzire.webp"
           : vehicle === "ertiga"
-          ? "/gallery/ertiga.jpg"
+          ? "/ertiga.webp"
           : vehicle === "rumion"
-          ? "/gallery/Rumion.jpg"
+          ? "/gallery/Rumion.webp"
           : vehicle === "crysta"
-          ? "/gallery/innova.jpg"
+          ? "/gallery/innova.webp"
           : vehicle === "urbania"
-          ? "/gallery/Urbania.jpg"
-          : "/gallery/traveller.jpg"
+          ? "/urbania.webp"
+          : "/gallery/traveller.webp"
       }
       alt={vehicle}
       width={500}
@@ -327,7 +327,7 @@ return (
     }`}
   >
     <Image
-  src="/gallery/dzire.jpg"
+  src="/swift-dzire.webp"
   alt="Swift Dzire"
   width={200}
   height={120}
@@ -345,7 +345,7 @@ return (
     }`}
   >
     <Image
-  src="/gallery/ertiga.jpg"
+  src="/ertiga.webp"
   alt="Ertiga"
   width={200}
   height={120}
@@ -363,7 +363,7 @@ return (
     }`}
   >
     <Image
-  src="/gallery/Rumion.jpg"
+  src="/gallery/Rumion.webp"
   alt="Rumion"
   width={200}
   height={120}

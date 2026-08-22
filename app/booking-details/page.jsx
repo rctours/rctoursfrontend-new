@@ -14,31 +14,31 @@ import MobileBookingCard from "@/components/MobileBookingCard";
 import Script from "next/script";
 
 const vehicleImages = {
-  "Swift Dzire": "/swift-dzire.jpeg",
-  "Dzire": "/swift-dzire.jpeg",
+  "Swift Dzire": "/swift-dzire.webp",
+  "Dzire": "/swift-dzire.webp",
 
-  "Hyundai Aura": "/Aura.jpg",
+  "Hyundai Aura": "/Aura.webp",
 
-  "Toyota Glanza": "/glanza.jpg",
+  "Toyota Glanza": "/glanza.webp",
 
-  "Ertiga": "/ertiga.jpeg",
-  "Maruti Ertiga": "/ertiga.jpeg",
+  "Ertiga": "/ertiga.webp",
+  "Maruti Ertiga": "/ertiga.webp",
 
-  "Toyota Rumion": "/rumion.png",
+  "Toyota Rumion": "/rumion.webp",
 
-  "Kia Carens": "/carens.jpg",
+  "Kia Carens": "/carens.webp",
 
-  "Innova Crysta": "/innova-crysta.jpeg",
+  "Innova Crysta": "/innova-crysta.webp",
 
-  "Toyota Hycross": "/hycross.png",
+  "Toyota Hycross": "/hycross.webp",
 
-  "Traveller 13 Seater": "/traveller13.jpg",
+  "Traveller 13 Seater": "/traveller13.webp",
 
-  "Traveller 17 Seater": "/traveller17.jpg",
+  "Traveller 17 Seater": "/traveller17.webp",
 
-  "Traveller 26 Seater": "/traveller26.jpg",
+  "Traveller 26 Seater": "/traveller26.webp",
 
-  "Force Urbania": "/urbania.jpg",
+  "Force Urbania": "/urbania.webp",
 };
 
 const vehicleCapacity = {
@@ -154,7 +154,7 @@ const fare = Number(
 //});
 
 const vehicleImage =
-  vehicleImages[vehicle] || "/swift-dzire.jpeg";
+  vehicleImages[vehicle] || "/swift-dzire.webp";
 
   const [paymentType, setPaymentType] = useState("partial");
 
