@@ -175,8 +175,9 @@ const totalDays =
   ) + 1;
 
   const driverAllowance =
-  tripType === "One Way"
-    ? 500
+  tripType === "One Way" ||
+  tripType === "One Way Trip"
+    ? 250
     : tripType === "Outstation Trip"
     ? totalDays <= 1
       ? 300

@@ -21,7 +21,9 @@ import {
   Gift,
   CircleParking,
   ReceiptText,
-} from "lucide-react";
+  Gauge,
+  Clock,
+  } from "lucide-react";
 
 function BookCabContent() {
   const searchParams = useSearchParams();
@@ -82,6 +84,10 @@ const [fare, setFare] = useState(
   Number(searchParams.get("fare")) || 0
 );
 
+const [toll, setToll] = useState(
+  Number(searchParams.get("toll")) || 0
+);
+
 console.log("BOOK DISTANCE :", searchParams.get("distance"));
 
 console.log("BOOK FARE :", searchParams.get("fare"));
@@ -98,7 +104,26 @@ const [pickupCoords, setPickupCoords] = useState<{
   const lat = searchParams.get("pickupLat");
   const lon = searchParams.get("pickupLon");
 
-  if (!lat || !lon) return null;
+  if (lat === null || lon === null) {
+  return null;
+}
+
+const latitude = Number(lat);
+const longitude = Number(lon);
+
+if (
+  !Number.isFinite(latitude) ||
+  !Number.isFinite(longitude) ||
+  latitude === 0 ||
+  longitude === 0
+) {
+  return null;
+}
+
+return {
+  lat: latitude,
+  lon: longitude,
+};
 
   return {
     lat: Number(lat),
@@ -113,7 +138,26 @@ const [dropCoords, setDropCoords] = useState<{
   const lat = searchParams.get("dropLat");
   const lon = searchParams.get("dropLon");
 
-  if (!lat || !lon) return null;
+  if (lat === null || lon === null) {
+  return null;
+}
+
+const latitude = Number(lat);
+const longitude = Number(lon);
+
+if (
+  !Number.isFinite(latitude) ||
+  !Number.isFinite(longitude) ||
+  latitude === 0 ||
+  longitude === 0
+) {
+  return null;
+}
+
+return {
+  lat: latitude,
+  lon: longitude,
+};
 
   return {
     lat: Number(lat),
@@ -135,19 +179,28 @@ const getCurrentLocation = () => {
     async (position) => {
       const { latitude, longitude } = position.coords;
 
-      try {
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`
-        );
+try {
+    const res = await fetch(
+    `/api/location-search?lat=${latitude}&lon=${longitude}`
+    );
 
-        const data = await res.json();
+    const data = await res.json();
 
-        if (data?.display_name) {
-          setPickup(data.display_name);
-          setPickupSuggestions([]);
-        } else {
-          alert("Unable to find your current location.");
-        }
+    if (
+    res.ok &&
+    data?.display_name
+    ) {
+      setPickup(data.display_name);
+
+      setPickupCoords({
+      lat: latitude,
+      lon: longitude,
+      });
+
+      setPickupSuggestions([]);
+      } else {
+      alert("Unable to find your current location.");
+      }
       } catch (error) {
         console.log("CURRENT LOCATION ERROR:", error);
         alert("Unable to get your current location.");
@@ -178,44 +231,213 @@ const getCurrentLocation = () => {
   );
 };
 
-const searchLocation = async (
+const searchAbortControllers = {
+  pickup: null as AbortController | null,
+  drop: null as AbortController | null,
+};
+
+const searchTimers = {
+  pickup: null as ReturnType<typeof setTimeout> | null,
+  drop: null as ReturnType<typeof setTimeout> | null,
+};
+
+const getValidCoordinates = (item: any) => {
+  const lat = Number(item?.lat);
+  const lon = Number(item?.lon);
+
+  if (
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lon) ||
+    lat === 0 ||
+    lon === 0 ||
+    lat < -90 ||
+    lat > 90 ||
+    lon < -180 ||
+    lon > 180
+  ) {
+    return null;
+  }
+
+  return {
+    lat,
+    lon,
+  };
+};
+
+const selectLocation = async (
+  item: any,
+  type: "pickup" | "drop"
+) => {
+  try {
+    const placeId = item?.place_id;
+
+    let finalItem = item;
+
+    // Google autocomplete result me coordinates nahi hote,
+    // isliye Place Details API se exact coordinates lao
+    if (placeId) {
+      const res = await fetch(
+        `/api/location-search?place_id=${encodeURIComponent(
+          placeId
+        )}`
+      );
+
+      if (res.ok) {
+        finalItem = await res.json();
+      } else {
+        console.log(
+          "PLACE DETAILS ERROR:",
+          res.status
+        );
+      }
+    }
+
+    const coords =
+      getValidCoordinates(finalItem);
+
+    const locationName =
+      finalItem?.display_name ||
+      item?.display_name ||
+      "";
+
+    if (type === "pickup") {
+      setPickup(locationName);
+
+      if (coords) {
+        setPickupCoords(coords);
+      } else {
+        setPickupCoords(null);
+
+        console.warn(
+          "INVALID PICKUP COORDINATES:",
+          finalItem
+        );
+      }
+
+      setPickupSuggestions([]);
+    } else {
+      setDrop(locationName);
+
+      if (coords) {
+        setDropCoords(coords);
+      } else {
+        setDropCoords(null);
+
+        console.warn(
+          "INVALID DROP COORDINATES:",
+          finalItem
+        );
+      }
+
+      setDropSuggestions([]);
+    }
+  } catch (error) {
+    console.log(
+      "SELECT LOCATION ERROR:",
+      error
+    );
+
+    if (type === "pickup") {
+      setPickupCoords(null);
+      setPickupSuggestions([]);
+    } else {
+      setDropCoords(null);
+      setDropSuggestions([]);
+    }
+  }
+};
+
+const searchLocation = (
   text: string,
   type: "pickup" | "drop"
 ) => {
   const value = text.trim();
 
-  // 3 letters se kam hone par search nahi karega
+  // Old debounce timer clear
+  if (searchTimers[type]) {
+    clearTimeout(searchTimers[type]!);
+    searchTimers[type] = null;
+  }
+
+  // Old API request cancel
+  if (searchAbortControllers[type]) {
+    searchAbortControllers[type]!.abort();
+    searchAbortControllers[type] = null;
+  }
+
+  // Pickup/Drop edit hone par old coordinates invalid
+  if (type === "pickup") {
+    setPickupCoords(null);
+  } else {
+    setDropCoords(null);
+  }
+
+  // 3 characters se kam par API call nahi
   if (value.length < 3) {
     if (type === "pickup") {
       setPickupSuggestions([]);
     } else {
       setDropSuggestions([]);
     }
+
     return;
   }
 
-  try {
-    const res = await fetch(
-      `/api/location-search?q=${encodeURIComponent(value)}`
-    );
+  // Debounce
+  searchTimers[type] = setTimeout(async () => {
+    const controller = new AbortController();
 
-    if (!res.ok) {
-      console.log("LOCATION SEARCH ERROR:", res.status);
-      return;
+    searchAbortControllers[type] = controller;
+
+    try {
+      const res = await fetch(
+        `/api/location-search?q=${encodeURIComponent(value)}`,
+        {
+          signal: controller.signal,
+        }
+      );
+
+      if (!res.ok) {
+        console.log(
+          "LOCATION SEARCH ERROR:",
+          res.status
+        );
+        return;
+      }
+
+      const data = await res.json();
+
+      // User ne typing continue ki ho to
+      // purana result show nahi hoga
+      if (controller.signal.aborted) {
+        return;
+      }
+
+      const results = Array.isArray(data)
+        ? data
+        : [];
+
+      if (type === "pickup") {
+        setPickupSuggestions(results);
+      } else {
+        setDropSuggestions(results);
+      }
+    } catch (error: any) {
+      // Abort normal behavior hai
+      if (error?.name !== "AbortError") {
+        console.log(
+          "LOCATION SEARCH ERROR:",
+          error
+        );
+      }
+    } finally {
+      if (
+        searchAbortControllers[type] === controller
+      ) {
+        searchAbortControllers[type] = null;
+      }
     }
-
-    const data = await res.json();
-
-    const results = Array.isArray(data) ? data : [];
-
-    if (type === "pickup") {
-      setPickupSuggestions(results);
-    } else {
-      setDropSuggestions(results);
-    }
-  } catch (error) {
-    console.log("LOCATION SEARCH ERROR:", error);
-  }
+  }, 350);
 };
 
 const handleSearch = () => {
@@ -363,6 +585,8 @@ const handleModifySearch = async () => {
 
     setDistance(finalDistance);
 
+    setToll(Number(data.toll) || 0);
+
     const defaultRate = 13;
 
     const newFare =
@@ -506,6 +730,8 @@ setDistance(billableDistance);
 } else {
 
   setDistance(data.distance);
+
+  setToll(Number(data.toll) || 0);
 
   sessionStorage.setItem(
     cacheKey,
@@ -1022,10 +1248,14 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
     onClick={() => {
       setPickup(item.display_name);
 
-      setPickupCoords({
-        lat: Number(item.lat),
-        lon: Number(item.lon),
-      });
+      const coords = getValidCoordinates(item);
+
+  if (coords) {
+  setPickupCoords(coords);
+} else {
+  setPickupCoords(null);
+  console.warn("INVALID PICKUP COORDINATES:", item);
+}
 
       setPickupSuggestions([]);
     }}
@@ -1063,19 +1293,27 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
     key={item.place_id || index}
     className="cursor-pointer px-4 py-3 hover:bg-orange-50 transition"
     onClick={() => {
-      setDrop(item.display_name);
+    setDrop(item.display_name);
 
-      setDropCoords({
-        lat: Number(item.lat),
-        lon: Number(item.lon),
-      });
+    const coords = getValidCoordinates(item);
 
-      setDropSuggestions([]);
-    }}
+    if (coords) {
+    setDropCoords(coords);
+    } else {
+    setDropCoords(null);
+
+    console.warn(
+      "INVALID DROP COORDINATES:",
+      item
+    );
+  }
+
+  setDropSuggestions([]);
+  }}
   >
     {item.display_name}
   </div>
-))}
+  ))}
 
     </div>
   )}
@@ -1271,20 +1509,28 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
   <div
     key={item.place_id || index}
     onClick={() => {
-      setPickup(item.display_name);
+    setPickup(item.display_name);
 
-      setPickupCoords({
-        lat: Number(item.lat),
-        lon: Number(item.lon),
-      });
+    const coords = getValidCoordinates(item);
 
-      setPickupSuggestions([]);
-    }}
+    if (coords) {
+    setPickupCoords(coords);
+    } else {
+    setPickupCoords(null);
+
+    console.warn(
+      "INVALID PICKUP COORDINATES:",
+      item
+    );
+  }
+
+  setPickupSuggestions([]);
+  }}
     className="px-4 py-3 cursor-pointer hover:bg-orange-50"
   >
     {item.display_name}
   </div>
-))}
+  ))}
 
     </div>
   )}
@@ -1325,20 +1571,28 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
   {dropSuggestions.length > 0 && (
     <div className="absolute left-0 right-0 top-full mt-1 bg-white border rounded-xl shadow-lg max-h-52 overflow-y-auto z-50">
 
-      {dropSuggestions.map((item, index) => (
+{dropSuggestions.map((item, index) => (
   <div
     key={item.place_id || index}
+    className="cursor-pointer px-4 py-3 hover:bg-orange-50 transition"
     onClick={() => {
       setDrop(item.display_name);
 
-      setDropCoords({
-        lat: Number(item.lat),
-        lon: Number(item.lon),
-      });
+      const coords = getValidCoordinates(item);
+
+      if (coords) {
+        setDropCoords(coords);
+      } else {
+        setDropCoords(null);
+
+        console.warn(
+          "INVALID DROP COORDINATES:",
+          item
+        );
+      }
 
       setDropSuggestions([]);
     }}
-    className="px-4 py-3 cursor-pointer hover:bg-orange-50"
   >
     {item.display_name}
   </div>
@@ -1556,17 +1810,29 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
 </p>
 
 {tripType === "Local Rental" && (
-  <p className="text-xs text-red-500 mt-1">
-    Extra Hour ₹{cab.extraHour}/Hour
-  </p>
+  <div className="flex flex-wrap items-center gap-2 mt-1 text-xs">
+    
+    <span className="flex items-center gap-1 text-orange-600 font-medium">
+      <Gauge size={14} />
+      Extra KM ₹{cab.rate}/KM
+    </span>
+
+    <span className="text-gray-300">|</span>
+
+    <span className="flex items-center gap-1 text-red-500 font-medium">
+      <Clock size={14} />
+      Extra Hour ₹{cab.extraHour}/Hour
+    </span>
+
+  </div>
 )}
 
 
 </div>
                   
-                  </div>
+   </div>
 
-                  <div className="hidden md:block mt-3 md:mt-0 text-left md:text-right">
+  <div className="hidden md:block mt-3 md:mt-0 text-left md:text-right">
 
   {/* Trip Type Badge */}
   <div className="inline-flex items-center gap-2 bg-red-50 border border-red-100 text-red-500 px-3 py-2 rounded-xl">
@@ -1687,7 +1953,7 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
 
   {/* Book Now Button */}
   <Link
-    href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=0&fare=${getFinalCabFare(cab)}`}
+    href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=${toll}&fare=${getFinalCabFare(cab)}`}
     className="h-14 md:h-16 min-w-[180px] md:min-w-[210px] px-8 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold text-lg md:text-xl flex items-center justify-center gap-4 shadow-lg hover:shadow-xl transition-all duration-300"
   >
     <span>
@@ -1840,7 +2106,7 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
 
       {/* Book Now */}
       <Link
-        href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=0&fare=${getFinalCabFare(cab)}`}
+        href={`/booking-details?vehicle=${encodeURIComponent(cab.name)}&tripType=${encodeURIComponent(tripType)}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&pickupDate=${encodeURIComponent(pickupDate)}&returnDate=${encodeURIComponent(returnDate)}&pickupTime=${encodeURIComponent(pickupTime)}&distance=${distance}&toll=${toll}&fare=${getFinalCabFare(cab)}`}
         className="h-11 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shrink-0"
       >
 

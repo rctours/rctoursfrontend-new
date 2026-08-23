@@ -41,11 +41,11 @@ export default function CampaignForm({ onCampaignSaved }) {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Image must be smaller than 5 MB.");
-      e.target.value = "";
-      return;
-    }
+    if (file.size > 10 * 1024 * 1024) {
+    alert("Image must be smaller than 10 MB.");
+    e.target.value = "";
+    return;
+  }
 
     setSelectedFile(file);
 
@@ -230,7 +230,8 @@ export default function CampaignForm({ onCampaignSaved }) {
             />
 
             <p className="text-xs sm:text-sm text-gray-500">
-              JPG, PNG, WEBP or AVIF. Maximum size 5 MB.
+            JPG, PNG, WEBP or AVIF. Maximum original size 10 MB.
+            Image will automatically be resized, compressed and converted to WebP.
             </p>
           </div>
 

@@ -8,6 +8,8 @@ export default function EditBlogPage() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
@@ -18,13 +20,14 @@ export default function EditBlogPage() {
   const [status, setStatus] = useState("Draft");
 
   useEffect(() => {
-    fetchBlog();
-  }, []);
+    if (params?.id) {
+      fetchBlog();
+    }
+  }, [params?.id]);
 
   const fetchBlog = async () => {
     try {
       const res = await fetch("/api/admin/blogs");
-
       const data = await res.json();
 
       if (data.success) {
@@ -43,14 +46,49 @@ export default function EditBlogPage() {
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error("Blog fetch error:", error);
+      alert("Failed to load blog");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    try {
+      setUploading(true);
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.imageUrl) {
+        setImage(data.imageUrl);
+        alert("Image uploaded successfully ✅");
+      } else {
+        alert(data.message || "Image upload failed");
+      }
+    } catch (error) {
+      console.error("Image upload error:", error);
+      alert("Image upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const updateBlog = async () => {
     try {
+      setUpdating(true);
+
       const res = await fetch(
         `/api/blogs/${params.id}`,
         {
@@ -74,31 +112,30 @@ export default function EditBlogPage() {
 
       if (data.success) {
         alert("Blog updated successfully ✅");
-
         router.push("/admin/blogs");
       } else {
-        alert("Update failed ❌");
+        alert(data.message || "Update failed");
       }
     } catch (error) {
-      console.log(error);
-
-      alert("Server Error ❌");
+      console.error("Blog update error:", error);
+      alert("Something went wrong while updating");
+    } finally {
+      setUpdating(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="p-10 text-center">
-        Loading...
+      <div className="p-6">
+        Loading blog...
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-4">
-
-      <h1 className="text-3xl font-bold">
-        ✏️ Edit Blog
+    <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-5">
+      <h1 className="text-2xl md:text-3xl font-bold">
+        Edit Blog
       </h1>
 
       <input
@@ -117,13 +154,48 @@ export default function EditBlogPage() {
         className="w-full border p-3 rounded-xl"
       />
 
-      <input
-        type="text"
-        placeholder="Image URL"
-        value={image}
-        onChange={(e) => setImage(e.target.value)}
-        className="w-full border p-3 rounded-xl"
-      />
+      {/* IMAGE UPLOAD */}
+      <div className="border rounded-xl p-4 space-y-3">
+        <label className="block font-semibold">
+          Blog Image
+        </label>
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          disabled={uploading}
+          className="w-full border p-3 rounded-xl"
+        />
+
+        {uploading && (
+          <p className="text-sm text-blue-600">
+            Uploading image...
+          </p>
+        )}
+
+        {image && (
+          <div className="space-y-2">
+            <p className="text-sm text-gray-500">
+              Current Image
+            </p>
+
+            <img
+              src={image}
+              alt="Blog preview"
+              className="w-full max-w-md h-56 object-cover rounded-xl border"
+            />
+
+            <input
+              type="text"
+              placeholder="Image URL"
+              value={image}
+              onChange={(e) => setImage(e.target.value)}
+              className="w-full border p-3 rounded-xl text-sm"
+            />
+          </div>
+        )}
+      </div>
 
       <textarea
         rows={3}
@@ -162,11 +234,15 @@ export default function EditBlogPage() {
 
       <button
         onClick={updateBlog}
-        className="bg-green-600 text-white px-6 py-3 rounded-xl"
+        disabled={updating || uploading}
+        className="bg-green-600 disabled:bg-gray-400 text-white px-6 py-3 rounded-xl font-semibold"
       >
-        Update Blog
+        {updating
+          ? "Updating..."
+          : uploading
+          ? "Please wait..."
+          : "Update Blog"}
       </button>
-
     </div>
   );
 }

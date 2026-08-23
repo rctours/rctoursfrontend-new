@@ -396,18 +396,18 @@ const [openService, setOpenService] = useState(0);
 const [showAllAreas, setShowAllAreas] = useState(false);
 
 const routes = [
-  ["Wardha","₹1800"],
-  ["Amravati","₹3000"],
-  ["Chandrapur","₹2500"],
-  ["Bhandara","₹1500"],
-  ["Gondia","₹2200"],
-  ["Tadoba","₹2999"],
-  ["Pench","₹2499"],
-  ["Chikhaldara","₹4999"],
-  ["Shegaon","₹3500"],
-  ["Shirdi","₹5999"],
-  ["Pune","₹6999"],
-  ["Hyderabad","₹7499"],
+  ["Wardha","₹1824"],
+  ["Amravati","₹3803"],
+  ["Chandrapur","₹4088"],
+  ["Bhandara","₹1802"],
+  ["Gondia","₹3495"],
+  ["Tadoba","₹2528"],
+  ["Pench","₹3165"],
+  ["Chikhaldara","₹5451"],
+  ["Shegaon","₹7056"],
+  ["Shirdi","₹12155"],
+  ["Pune","₹14968"],
+  ["Hyderabad","₹10924"],
 ];
 
 const reviews = [

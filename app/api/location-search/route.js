@@ -1,287 +1,717 @@
 import { NextResponse } from "next/server";
 
 // ===============================================
-// LOCATION SEARCH CACHE
+// RC TOURS & TRAVELS
+// GOOGLE LOCATION SEARCH
+// AUTOCOMPLETE + PLACE DETAILS
+// + REVERSE GEOCODING
 // ===============================================
 
 const cache = new Map();
 
-const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
+const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
+const MAX_CACHE_SIZE = 5000;
+
+// Same request duplicate hone se bachane ke liye
+const activeRequests = new Map();
+
+// ===============================================
+// CACHE RESPONSE
+// ===============================================
+
+function cachedResponse(data) {
+  return NextResponse.json(data, {
+    headers: {
+      "Cache-Control":
+        "public, max-age=3600, stale-while-revalidate=86400",
+    },
+  });
+}
+
+// ===============================================
+// CLEAN CACHE
+// ===============================================
+
+function cleanCache() {
+  if (cache.size <= MAX_CACHE_SIZE) return;
+
+  const firstKey = cache.keys().next().value;
+
+  if (firstKey) {
+    cache.delete(firstKey);
+  }
+}
+
+// ===============================================
+// VALIDATE COORDINATES
+// ===============================================
+
+function validCoordinates(lat, lon) {
+  const latitude = Number(lat);
+  const longitude = Number(lon);
+
+  return (
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude) &&
+    latitude >= -90 &&
+    latitude <= 90 &&
+    longitude >= -180 &&
+    longitude <= 180
+  );
+}
+
+// ===============================================
+// GET GOOGLE PLACE DETAILS
+// Returns exact latitude + longitude
+// ===============================================
+
+async function getPlaceDetails(placeId, apiKey) {
+  if (!placeId || !apiKey) {
+    return null;
+  }
+
+  try {
+    const response = await fetch(
+      `https://places.googleapis.com/v1/places/${encodeURIComponent(
+        placeId
+      )}`,
+      {
+        method: "GET",
+        headers: {
+          "X-Goog-Api-Key": apiKey,
+          "X-Goog-FieldMask":
+            "id,displayName,formattedAddress,location,types,addressComponents",
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+
+      console.error(
+        "GOOGLE PLACE DETAILS ERROR:",
+        response.status,
+        errorText
+      );
+
+      return null;
+    }
+
+    const data = await response.json();
+
+    const latitude = Number(
+      data?.location?.latitude
+    );
+
+    const longitude = Number(
+      data?.location?.longitude
+    );
+
+    if (
+      !validCoordinates(
+        latitude,
+        longitude
+      )
+    ) {
+      console.error(
+        "GOOGLE PLACE INVALID COORDINATES:",
+        placeId,
+        data?.location
+      );
+
+      return null;
+    }
+
+    const address = {};
+
+    if (
+      Array.isArray(
+        data?.addressComponents
+      )
+    ) {
+      data.addressComponents.forEach(
+        (component) => {
+          const type =
+            component?.types?.[0];
+
+          if (type) {
+            address[type] =
+              component?.longText || "";
+          }
+        }
+      );
+    }
+
+    return {
+      place_id:
+        data?.id || placeId,
+
+      display_name:
+        data?.formattedAddress ||
+        data?.displayName?.text ||
+        "",
+
+      lat: latitude,
+
+      lon: longitude,
+
+      type:
+        data?.types?.[0] ||
+        "location",
+
+      category: "location",
+
+      address,
+    };
+  } catch (error) {
+    console.error(
+      "GOOGLE PLACE DETAILS EXCEPTION:",
+      error
+    );
+
+    return null;
+  }
+}
+
+// ===============================================
+// GOOGLE REVERSE GEOCODING
+// Current latitude + longitude se address
+// ===============================================
+
+async function getReverseGeocodedLocation(
+  lat,
+  lon,
+  apiKey
+) {
+  if (
+    !validCoordinates(lat, lon) ||
+    !apiKey
+  ) {
+    return null;
+  }
+
+  try {
+    const url =
+      "https://maps.googleapis.com/maps/api/geocode/json?" +
+      new URLSearchParams({
+        latlng: `${lat},${lon}`,
+        key: apiKey,
+      }).toString();
+
+    const response = await fetch(
+      url,
+      {
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      console.error(
+        "GOOGLE REVERSE GEOCODING ERROR:",
+        response.status
+      );
+
+      return null;
+    }
+
+    const data =
+      await response.json();
+
+    const result =
+      data?.results?.[0];
+
+    if (
+      !result?.formatted_address
+    ) {
+      console.error(
+        "GOOGLE REVERSE GEOCODING NO RESULT:",
+        data?.status
+      );
+
+      return null;
+    }
+
+    return {
+      display_name:
+        result.formatted_address,
+
+      lat: Number(lat),
+
+      lon: Number(lon),
+
+      type:
+        result?.types?.[0] ||
+        "location",
+
+      category: "location",
+    };
+  } catch (error) {
+    console.error(
+      "GOOGLE REVERSE GEOCODING EXCEPTION:",
+      error
+    );
+
+    return null;
+  }
+}
+
+// ===============================================
+// GOOGLE PLACES AUTOCOMPLETE
+// ===============================================
+
+async function searchGooglePlaces(
+  query,
+  apiKey
+) {
+  if (!apiKey) {
+    console.error(
+      "GOOGLE_MAPS_SERVER_API_KEY is missing"
+    );
+
+    return [];
+  }
+
+  try {
+    const response = await fetch(
+      "https://places.googleapis.com/v1/places:autocomplete",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+
+          "X-Goog-Api-Key":
+            apiKey,
+        },
+
+        body: JSON.stringify({
+          input: query,
+
+          includedRegionCodes: [
+            "in",
+          ],
+
+          languageCode:
+            "en",
+
+          regionCode:
+            "IN",
+
+          inputOffset:
+            query.length,
+        }),
+
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      const errorText =
+        await response.text();
+
+      console.error(
+        "GOOGLE PLACES AUTOCOMPLETE ERROR:",
+        response.status,
+        errorText
+      );
+
+      return [];
+    }
+
+    const data =
+      await response.json();
+
+    const suggestions =
+      Array.isArray(
+        data?.suggestions
+      )
+        ? data.suggestions
+        : [];
+
+    const placePredictions =
+      suggestions
+        .filter(
+          (item) =>
+            item?.placePrediction?.placeId
+        )
+        .slice(0, 5);
+
+    const results =
+      await Promise.all(
+        placePredictions.map(
+          async (item) => {
+            const prediction =
+              item.placePrediction;
+
+            const placeId =
+              prediction?.placeId;
+
+            if (!placeId) {
+              return null;
+            }
+
+            const details =
+              await getPlaceDetails(
+                placeId,
+                apiKey
+              );
+
+            if (!details) {
+              return null;
+            }
+
+            return details;
+          }
+        )
+      );
+
+    return results.filter(Boolean);
+  } catch (error) {
+    console.error(
+      "GOOGLE PLACES SEARCH ERROR:",
+      error
+    );
+
+    return [];
+  }
+}
 
 // ===============================================
 // GET METHOD
-// - Normal location autocomplete
-// - Current location reverse geocoding
 // ===============================================
 
 export async function GET(request) {
   try {
-    const { searchParams } = new URL(request.url);
+    const apiKey =
+      process.env
+        .GOOGLE_MAPS_SERVER_API_KEY;
+
+    if (!apiKey) {
+      console.error(
+        "GOOGLE_MAPS_SERVER_API_KEY is missing"
+      );
+
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Google Maps API key missing",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    const { searchParams } =
+      new URL(request.url);
 
     // ===========================================
-    // CURRENT LOCATION
-    // latitude + longitude -> address
+    // GOOGLE REVERSE GEOCODING
+    // Example:
+    // /api/location-search?lat=21.1458&lon=79.0882
     // ===========================================
 
-    const latitude = searchParams.get("lat");
-    const longitude = searchParams.get("lon");
+    const lat =
+      searchParams.get("lat");
 
-    if (latitude && longitude) {
-      const reverseUrl =
-        "https://nominatim.openstreetmap.org/reverse?" +
-        new URLSearchParams({
-          lat: latitude,
-          lon: longitude,
-          format: "json",
-          addressdetails: "1",
-          "accept-language": "en",
-        }).toString();
+    const lon =
+      searchParams.get("lon");
 
-      const controller = new AbortController();
-
-      const timeout = setTimeout(() => {
-        controller.abort();
-      }, 8000);
-
-      let response;
-
-      try {
-        response = await fetch(reverseUrl, {
-          method: "GET",
-
-          headers: {
-            "User-Agent":
-              "RC-Tours-Travels/1.0 (https://www.rctoursandtravels.in)",
-            Accept: "application/json",
+    if (lat && lon) {
+      if (
+        !validCoordinates(
+          lat,
+          lon
+        )
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+            message:
+              "Invalid coordinates",
           },
-
-          signal: controller.signal,
-
-          cache: "no-store",
-        });
-      } finally {
-        clearTimeout(timeout);
+          {
+            status: 400,
+          }
+        );
       }
 
-      // =========================================
-      // REVERSE GEOCODING ERROR
-      // =========================================
+      const cacheKey =
+        `reverse:${Number(lat).toFixed(6)},` +
+        `${Number(lon).toFixed(6)}`;
 
-      if (!response.ok) {
-        console.error(
-          "NOMINATIM REVERSE ERROR:",
-          response.status,
-          response.statusText
+      const cached =
+        cache.get(cacheKey);
+
+      if (
+        cached &&
+        Date.now() -
+          cached.timestamp <
+          CACHE_DURATION
+      ) {
+        return cachedResponse(
+          cached.data
+        );
+      }
+
+      if (
+        activeRequests.has(
+          cacheKey
+        )
+      ) {
+        const existingData =
+          await activeRequests.get(
+            cacheKey
+          );
+
+        return cachedResponse(
+          existingData
+        );
+      }
+
+      const reversePromise =
+        getReverseGeocodedLocation(
+          lat,
+          lon,
+          apiKey
         );
 
-        return NextResponse.json({
-          display_name: `${latitude}, ${longitude}`,
-          lat: latitude,
-          lon: longitude,
-          address: {},
-        });
+      activeRequests.set(
+        cacheKey,
+        reversePromise
+      );
+
+      try {
+        const result =
+          await reversePromise;
+
+        if (!result) {
+          return NextResponse.json(
+            {
+              success: false,
+              message:
+                "Unable to find address for current location",
+            },
+            {
+              status: 404,
+            }
+          );
+        }
+
+        cache.set(
+          cacheKey,
+          {
+            timestamp:
+              Date.now(),
+
+            data:
+              result,
+          }
+        );
+
+        cleanCache();
+
+        return cachedResponse(
+          result
+        );
+      } finally {
+        activeRequests.delete(
+          cacheKey
+        );
+      }
+    }
+
+    // ===========================================
+    // PLACE DETAILS BY PLACE ID
+    // ===========================================
+
+    const placeId =
+      searchParams.get("place_id");
+
+    if (placeId) {
+      const cacheKey =
+        `place:${placeId}`;
+
+      const cached =
+        cache.get(cacheKey);
+
+      if (
+        cached &&
+        Date.now() -
+          cached.timestamp <
+          CACHE_DURATION
+      ) {
+        return cachedResponse(
+          cached.data
+        );
       }
 
-      const data = await response.json();
+      const result =
+        await getPlaceDetails(
+          placeId,
+          apiKey
+        );
 
-      // =========================================
-      // CURRENT LOCATION RESPONSE
-      // =========================================
+      if (!result) {
+        return NextResponse.json(
+          {
+            success: false,
+            message:
+              "Unable to get valid location coordinates",
+          },
+          {
+            status: 404,
+          }
+        );
+      }
 
-      return NextResponse.json({
-        display_name:
-          data?.display_name ||
-          `${latitude}, ${longitude}`,
+      cache.set(
+        cacheKey,
+        {
+          timestamp:
+            Date.now(),
 
-        lat: data?.lat || latitude,
-        lon: data?.lon || longitude,
+          data:
+            result,
+        }
+      );
 
-        address: data?.address || {},
-      });
+      cleanCache();
+
+      return cachedResponse(
+        result
+      );
     }
 
     // ===========================================
     // NORMAL LOCATION SEARCH
     // ===========================================
 
-    const rawQuery = searchParams.get("q") || "";
+    const rawQuery =
+      searchParams.get("q") || "";
 
-    const query = rawQuery.trim();
+    const query =
+      rawQuery.trim();
 
-    // ===========================================
-    // EMPTY / VERY SHORT QUERY
-    // ===========================================
-
-    if (!query || query.length < 2) {
+    // 3 characters se kam par search nahi
+    if (
+      query.length < 3
+    ) {
       return NextResponse.json([]);
     }
 
+    const normalizedQuery =
+      query.toLowerCase();
+
+    const cacheKey =
+      `search:${normalizedQuery}`;
+
     // ===========================================
-    // CACHE KEY
+    // CACHE CHECK
     // ===========================================
 
-    const cacheKey = query.toLowerCase();
+    const cached =
+      cache.get(cacheKey);
 
-    const cached = cache.get(cacheKey);
-
-    if (cached) {
-      const age = Date.now() - cached.timestamp;
-
-      if (age < CACHE_DURATION) {
-        return NextResponse.json(cached.data, {
-          headers: {
-            "Cache-Control":
-              "public, max-age=600, stale-while-revalidate=3600",
-          },
-        });
-      }
-
-      cache.delete(cacheKey);
+    if (
+      cached &&
+      Date.now() -
+        cached.timestamp <
+        CACHE_DURATION
+    ) {
+      return cachedResponse(
+        cached.data
+      );
     }
 
     // ===========================================
-    // NOMINATIM SEARCH
+    // SAME REQUEST ALREADY RUNNING
     // ===========================================
 
-    const url =
-      "https://nominatim.openstreetmap.org/search?" +
-      new URLSearchParams({
-        q: query + ", India",
-        format: "json",
-        addressdetails: "1",
-        limit: "5",
-        countrycodes: "in",
-        "accept-language": "en",
-      }).toString();
+    if (
+      activeRequests.has(
+        cacheKey
+      )
+    ) {
+      const existingData =
+        await activeRequests.get(
+          cacheKey
+        );
 
-    const controller = new AbortController();
-
-    const timeout = setTimeout(() => {
-      controller.abort();
-    }, 5000);
-
-    let response;
-
-    try {
-      response = await fetch(url, {
-        method: "GET",
-
-        headers: {
-          "User-Agent":
-            "RC-Tours-Travels/1.0 (https://www.rctoursandtravels.in)",
-          Accept: "application/json",
-        },
-
-        signal: controller.signal,
-
-        cache: "no-store",
-      });
-    } finally {
-      clearTimeout(timeout);
+      return cachedResponse(
+        existingData
+      );
     }
 
     // ===========================================
-    // PROVIDER ERROR
+    // GOOGLE PLACES SEARCH
     // ===========================================
 
-    if (!response.ok) {
-      console.error(
-        "NOMINATIM ERROR:",
-        response.status,
-        response.statusText
+    const searchPromise =
+      searchGooglePlaces(
+        query,
+        apiKey
       );
 
-      return NextResponse.json([], {
-        status: 200,
+    activeRequests.set(
+      cacheKey,
+      searchPromise
+    );
 
-        headers: {
-          "Cache-Control": "no-store",
-        },
-      });
+    try {
+      const results =
+        await searchPromise;
+
+      // Sirf valid coordinates
+      // wale results cache honge
+      const validResults =
+        results.filter(
+          (item) =>
+            validCoordinates(
+              item?.lat,
+              item?.lon
+            )
+        );
+
+      cache.set(
+        cacheKey,
+        {
+          timestamp:
+            Date.now(),
+
+          data:
+            validResults,
+        }
+      );
+
+      cleanCache();
+
+      return cachedResponse(
+        validResults
+      );
+    } finally {
+      activeRequests.delete(
+        cacheKey
+      );
     }
-
-    const data = await response.json();
-
-    // ===========================================
-    // CLEAN RESULTS
-    // ===========================================
-
-    const results = Array.isArray(data)
-      ? data.map((item) => ({
-          place_id: item.place_id,
-
-          display_name: item.display_name,
-
-          lat: item.lat,
-
-          lon: item.lon,
-
-          type: item.type,
-
-          category: item.category,
-
-          address: item.address || {},
-        }))
-      : [];
-
-    // ===========================================
-    // SAVE TO CACHE
-    // ===========================================
-
-    cache.set(cacheKey, {
-      timestamp: Date.now(),
-      data: results,
-    });
-
-    // ===========================================
-    // LIMIT CACHE SIZE
-    // ===========================================
-
-    if (cache.size > 500) {
-      const firstKey = cache.keys().next().value;
-
-      if (firstKey) {
-        cache.delete(firstKey);
-      }
-    }
-
-    // ===========================================
-    // RESPONSE
-    // ===========================================
-
-    return NextResponse.json(results, {
-      headers: {
-        "Cache-Control":
-          "public, max-age=600, stale-while-revalidate=3600",
-      },
-    });
   } catch (error) {
-    // ===========================================
-    // TIMEOUT
-    // ===========================================
-
-    if (error?.name === "AbortError") {
-      console.error("LOCATION SEARCH TIMEOUT");
-
-      return NextResponse.json([], {
-        status: 200,
-      });
-    }
-
-    // ===========================================
-    // GENERAL ERROR
-    // ===========================================
-
     console.error(
-      "LOCATION SEARCH PIPELINE EXCEPTION:",
+      "LOCATION SEARCH EXCEPTION:",
       error
     );
 
-    // Frontend should never break because
-    // location provider failed.
-
-    return NextResponse.json([], {
-      status: 200,
-    });
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          "Location search failed",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }

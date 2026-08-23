@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
+import sharp from "sharp";
 
 export async function POST(request) {
   try {
@@ -29,12 +30,12 @@ export async function POST(request) {
       );
     }
 
-    // Maximum 5 MB
-    if (file.size > 5 * 1024 * 1024) {
+    // Maximum original upload size: 10 MB
+    if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json(
         {
           success: false,
-          message: "Image must be smaller than 5 MB",
+          message: "Image must be smaller than 10 MB",
         },
         { status: 400 }
       );
@@ -44,10 +45,7 @@ export async function POST(request) {
     const buffer = Buffer.from(bytes);
 
     // Safe file name
-    const originalName = file.name || "campaign-image";
-
-    const extension =
-      path.extname(originalName).toLowerCase() || ".jpg";
+    const originalName = file.name || "image";
 
     const baseName = path
       .basename(originalName, path.extname(originalName))
@@ -55,11 +53,12 @@ export async function POST(request) {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
 
+    // Always save as WebP
     const fileName = `${Date.now()}-${
-      baseName || "campaign"
-    }${extension}`;
+      baseName || "image"
+    }.webp`;
 
-    // public/uploads/campaigns
+    // Upload directory
     const uploadDirectory = path.join(
       process.cwd(),
       "public",
@@ -76,17 +75,30 @@ export async function POST(request) {
       fileName
     );
 
-    await fs.writeFile(filePath, buffer);
+    // Resize + compress + convert to WebP
+    await sharp(buffer)
+      .rotate()
+      .resize({
+        width: 1600,
+        height: 900,
+        fit: "inside",
+        withoutEnlargement: true,
+      })
+      .webp({
+        quality: 82,
+        effort: 6,
+      })
+      .toFile(filePath);
 
     const imageUrl = `/uploads/campaigns/${fileName}`;
 
     return NextResponse.json({
       success: true,
-      message: "Image uploaded successfully",
+      message: "Image optimized and uploaded successfully",
       imageUrl,
     });
   } catch (error) {
-    console.error("Campaign Image Upload Error:", error);
+    console.error("Image Upload Error:", error);
 
     return NextResponse.json(
       {
