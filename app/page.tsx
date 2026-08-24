@@ -3094,8 +3094,6 @@ useEffect(() => {
 <TravelAssistantButton />
 */}
 
-      {/* Campaign Popup - Home Page */}
-      <CampaignPopup />
 
     </main>
   </>
