@@ -68,14 +68,17 @@ export async function POST(request) {
 
     const campaign = {
       // Basic Details
+      // Title optional rakha hai
       title: body.title?.trim() || "",
+
       description: body.description?.trim() || "",
+
       image: body.image?.trim() || "",
 
       // ========================================
       // CAMPAIGN TYPE
-      // popup  = Home page open होते ही Popup
-      // banner = Home page के अंदर Poster/Banner
+      // popup  = Homepage open hote hi Popup
+      // banner = Homepage ke andar Banner
       // ========================================
       campaignType:
         body.campaignType === "popup"
@@ -115,15 +118,8 @@ export async function POST(request) {
     // VALIDATION
     // ========================================
 
-    if (!campaign.title) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Campaign title is required",
-        },
-        { status: 400 }
-      );
-    }
+    // Campaign Title optional hai
+    // Sirf image required hai
 
     if (!campaign.image) {
       return NextResponse.json(

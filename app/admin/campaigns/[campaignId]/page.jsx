@@ -15,11 +15,7 @@ export default function EditCampaignPage() {
   const [preview, setPreview] = useState("");
 
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
     image: "",
-    buttonText: "Book Now",
-    buttonLink: "/book-cab",
     startDate: "",
     endDate: "",
     active: true,
@@ -28,12 +24,14 @@ export default function EditCampaignPage() {
   // ========================================
   // LOAD EXISTING CAMPAIGN
   // ========================================
-
   useEffect(() => {
     const loadCampaign = async () => {
       try {
         const response = await fetch(
-          `/api/admin/campaigns/${campaignId}`
+          `/api/admin/campaigns/${campaignId}`,
+          {
+            cache: "no-store",
+          }
         );
 
         const data = await response.json();
@@ -47,11 +45,7 @@ export default function EditCampaignPage() {
         const campaign = data.campaign;
 
         setFormData({
-          title: campaign.title || "",
-          description: campaign.description || "",
           image: campaign.image || "",
-          buttonText: campaign.buttonText || "Book Now",
-          buttonLink: campaign.buttonLink || "/book-cab",
           startDate: campaign.startDate || "",
           endDate: campaign.endDate || "",
           active: campaign.active ?? true,
@@ -72,9 +66,8 @@ export default function EditCampaignPage() {
   }, [campaignId, router]);
 
   // ========================================
-  // NORMAL INPUT CHANGE
+  // INPUT CHANGE
   // ========================================
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -87,27 +80,26 @@ export default function EditCampaignPage() {
   // ========================================
   // POSTER IMAGE UPLOAD
   // ========================================
-
   const handleImageChange = async (e) => {
     const file = e.target.files?.[0];
 
-    if (!file) {
-      return;
-    }
+    if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      alert("Please select an image file.");
+      alert("Please select a valid image file.");
       e.target.value = "";
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      alert("Image must be smaller than 5 MB.");
+      alert("Poster image must be smaller than 5 MB.");
       e.target.value = "";
       return;
     }
 
-    // Local preview immediately
+    const oldPreview = preview;
+
+    // Immediate local preview
     const localPreview = URL.createObjectURL(file);
     setPreview(localPreview);
 
@@ -126,7 +118,7 @@ export default function EditCampaignPage() {
 
       if (!response.ok || !data.success) {
         throw new Error(
-          data.message || "Image upload failed"
+          data.message || "Poster upload failed."
         );
       }
 
@@ -140,10 +132,10 @@ export default function EditCampaignPage() {
       console.error("Image Upload Error:", error);
 
       alert(
-        error.message || "Failed to upload poster image."
+        error.message || "Failed to upload poster."
       );
 
-      setPreview(formData.image || "");
+      setPreview(oldPreview);
     } finally {
       setUploading(false);
     }
@@ -152,7 +144,6 @@ export default function EditCampaignPage() {
   // ========================================
   // REMOVE POSTER
   // ========================================
-
   const handleRemoveImage = () => {
     setFormData((prev) => ({
       ...prev,
@@ -165,12 +156,16 @@ export default function EditCampaignPage() {
   // ========================================
   // UPDATE CAMPAIGN
   // ========================================
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (uploading) {
       alert("Please wait for poster upload to finish.");
+      return;
+    }
+
+    if (!formData.image) {
+      alert("Please upload a campaign poster.");
       return;
     }
 
@@ -184,7 +179,15 @@ export default function EditCampaignPage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            ...formData,
+
+            // Old database fields safe values
+            title: "",
+            description: "",
+            buttonText: "",
+            buttonLink: "",
+          }),
         }
       );
 
@@ -192,11 +195,11 @@ export default function EditCampaignPage() {
 
       if (!response.ok || !data.success) {
         throw new Error(
-          data.message || "Failed to update campaign"
+          data.message || "Failed to update campaign."
         );
       }
 
-      alert("Campaign Updated Successfully!");
+      alert("Campaign Poster Updated Successfully!");
 
       router.push("/admin/campaigns");
       router.refresh();
@@ -204,7 +207,7 @@ export default function EditCampaignPage() {
       console.error("Update Campaign Error:", error);
 
       alert(
-        error.message || "Failed to update campaign"
+        error.message || "Failed to update campaign."
       );
     } finally {
       setSaving(false);
@@ -214,13 +217,15 @@ export default function EditCampaignPage() {
   // ========================================
   // LOADING
   // ========================================
-
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center p-4 sm:p-6">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 sm:p-12 text-center max-w-sm w-full">
-          <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-gray-600 font-medium">Loading Campaign...</p>
+      <div className="flex min-h-[60vh] items-center justify-center p-4">
+        <div className="w-full max-w-sm rounded-2xl border border-gray-100 bg-white p-10 text-center shadow-sm">
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+
+          <p className="font-medium text-gray-600">
+            Loading Campaign...
+          </p>
         </div>
       </div>
     );
@@ -229,88 +234,62 @@ export default function EditCampaignPage() {
   // ========================================
   // PAGE
   // ========================================
-
   return (
-    <div className="min-h-screen bg-gray-50/50 py-6 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header Section */}
-        <div>
+    <div className="min-h-screen bg-gray-50/50 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-4xl">
+
+        {/* HEADER */}
+        <div className="mb-6">
           <button
             type="button"
             onClick={() => router.push("/admin/campaigns")}
-            className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 mb-4 transition-colors group"
+            className="mb-4 inline-flex items-center text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700"
           >
-            <span className="transform transition-transform group-hover:-translate-x-1 mr-1">←</span> Back to Campaigns
+            ← Back to Campaigns
           </button>
 
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
-            Edit Campaign
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+            Edit Campaign Poster
           </h1>
 
-          <p className="text-sm sm:text-base text-gray-500 mt-1">
-            Update promotional campaign details and poster.
+          <p className="mt-1 text-sm text-gray-500 sm:text-base">
+            Upload and manage your campaign banner.
           </p>
         </div>
 
-        {/* Main Form */}
+        {/* FORM */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-8 space-y-6"
+          className="space-y-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-8"
         >
-          {/* TITLE */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Campaign Title <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              placeholder="e.g. Summer Special Discount"
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all text-sm sm:text-base"
-              required
-            />
-          </div>
-
-          {/* DESCRIPTION */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Description
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows={4}
-              placeholder="Write a short description about the campaign..."
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all text-sm sm:text-base resize-y"
-            />
-          </div>
 
           {/* POSTER UPLOAD */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">
-              Campaign Poster
-            </label>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-semibold text-gray-800">
+                Campaign Poster
+              </label>
 
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/avif"
-                onChange={handleImageChange}
-                disabled={uploading}
-                className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm bg-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-60 cursor-pointer"
-              />
+              <p className="mt-1 text-xs text-gray-500">
+                Recommended banner size: 1920 × 350 px
+              </p>
             </div>
 
-            <p className="text-xs sm:text-sm text-gray-500">
-              JPG, PNG, WEBP or AVIF. Maximum size 5 MB.
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/avif"
+              onChange={handleImageChange}
+              disabled={uploading}
+              className="w-full cursor-pointer rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
+            />
+
+            <p className="text-xs text-gray-500">
+              JPG, PNG, WEBP or AVIF · Maximum 5 MB
             </p>
 
             {uploading && (
-              <div className="flex items-center gap-2 text-sm text-blue-600 font-medium pt-1">
-                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <div className="flex items-center gap-2 text-sm font-medium text-blue-600">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
                 Uploading poster...
               </div>
             )}
@@ -318,114 +297,109 @@ export default function EditCampaignPage() {
 
           {/* POSTER PREVIEW */}
           {preview && (
-            <div className="bg-gray-50/70 border border-gray-200/80 rounded-xl p-4 space-y-3">
-              <p className="text-sm font-semibold text-gray-700">
-                Poster Preview
-              </p>
+            <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-sm font-bold text-gray-800">
+                    Poster Preview
+                  </h2>
 
-              <div className="w-full max-w-md border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm">
-                <img
-                  src={preview}
-                  alt={formData.title || "Campaign Poster"}
-                  className="w-full h-auto max-h-[300px] object-contain mx-auto"
-                  onError={(e) => {
-                    e.currentTarget.style.display = "none";
-                  }}
-                />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Recommended display ratio: 1920 × 350
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  disabled={uploading}
+                  className="shrink-0 rounded-lg px-3 py-2 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50"
+                >
+                  Remove
+                </button>
               </div>
 
-              <button
-                type="button"
-                onClick={handleRemoveImage}
-                className="inline-flex items-center text-sm font-semibold text-red-600 hover:text-red-700 transition-colors"
-              >
-                Remove Image
-              </button>
+              {/* 1920 × 350 BANNER PREVIEW */}
+              <div className="relative w-full overflow-hidden rounded-xl border border-gray-200 bg-white">
+                <div className="aspect-[192/35] w-full">
+                  <img
+                    src={preview}
+                    alt="Campaign Poster Preview"
+                    className="h-full w-full object-cover object-center"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           )}
 
-          {/* BUTTON FIELDS */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Button Text
-              </label>
-              <input
-                type="text"
-                name="buttonText"
-                value={formData.buttonText}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all text-sm sm:text-base"
-              />
-            </div>
+          {/* DATE SECTION */}
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Button Link
-              </label>
-              <input
-                type="text"
-                name="buttonLink"
-                value={formData.buttonLink}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all text-sm sm:text-base"
-              />
-            </div>
-          </div>
-
-          {/* DATES */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="mb-2 block text-sm font-semibold text-gray-700">
                 Start Date
               </label>
+
               <input
                 type="date"
                 name="startDate"
                 value={formData.startDate}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all text-sm sm:text-base bg-white"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-950 transition-all focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="mb-2 block text-sm font-semibold text-gray-700">
                 End Date
               </label>
+
               <input
                 type="date"
                 name="endDate"
                 value={formData.endDate}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all text-sm sm:text-base bg-white"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-950 transition-all focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
+
           </div>
 
-          {/* ACTIVE CHECKBOX */}
-          <div className="flex items-center pt-2">
-            <label className="relative flex items-center gap-3 cursor-pointer select-none">
+          {/* ACTIVE */}
+          <div className="flex items-center rounded-xl border border-gray-200 bg-gray-50 px-4 py-4">
+            <label className="flex cursor-pointer items-center gap-3">
               <input
                 type="checkbox"
                 name="active"
                 checked={formData.active}
                 onChange={handleChange}
-                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                className="h-5 w-5 cursor-pointer rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
-              <span className="text-sm sm:text-base font-semibold text-gray-800">
-                Active Campaign
-              </span>
+
+              <div>
+                <p className="text-sm font-semibold text-gray-800">
+                  Active Campaign
+                </p>
+
+                <p className="text-xs text-gray-500">
+                  Enable this poster to display it on the website.
+                </p>
+              </div>
             </label>
           </div>
 
-          <hr className="border-gray-100 my-4" />
+          <hr className="border-gray-100" />
 
-          {/* ACTIONS */}
-          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+          {/* ACTION BUTTONS */}
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center">
+
             <button
               type="button"
               onClick={() => router.push("/admin/campaigns")}
-              className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold text-sm sm:text-base transition-colors text-center"
+              className="rounded-xl bg-gray-100 px-6 py-3 text-center text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-200"
             >
               Cancel
             </button>
@@ -433,16 +407,21 @@ export default function EditCampaignPage() {
             <button
               type="submit"
               disabled={saving || uploading}
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-6 py-3 rounded-xl font-semibold text-sm sm:text-base shadow-sm transition-all text-center flex items-center justify-center gap-2"
+              className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-center text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
             >
-              {saving && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
+              {saving && (
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              )}
+
               {saving
                 ? "Updating..."
                 : uploading
                 ? "Uploading Poster..."
-                : "Update Campaign"}
+                : "Update Campaign Poster"}
             </button>
+
           </div>
+
         </form>
       </div>
     </div>

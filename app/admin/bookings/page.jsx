@@ -154,8 +154,40 @@ export default function BookingsPage() {
                 <div className="space-y-1.5 text-xs text-slate-600 font-medium">
                   <p><strong className="text-slate-400 uppercase text-[10px]">Client:</strong> {booking.name}</p>
                   <p><strong className="text-slate-400 uppercase text-[10px]">Contact:</strong> {booking.mobile}</p>
-                  <p className="truncate"><strong className="text-slate-400 uppercase text-[10px]">Origin:</strong> {booking.pickup}</p>
-                  <p className="truncate"><strong className="text-slate-400 uppercase text-[10px]">Dest:</strong> {booking.drop}</p>
+                  <p>
+                  <strong className="text-slate-400 uppercase text-[10px]">
+                  Trip:
+                  </strong>{" "}
+                  {booking.tripType || "Not Available"}
+                  </p>
+
+                  <p>
+                  <strong className="text-slate-400 uppercase text-[10px]">
+                  Journey Date:
+                  </strong>{" "}
+                  {booking.journeyDate || "Not Available"}
+                  </p>
+
+                  <p>
+                  <strong className="text-slate-400 uppercase text-[10px]">
+                  Journey Time:
+                  </strong>{" "}
+                  {booking.journeyTime || "Not Available"}
+                  </p>
+
+                  <p className="truncate">
+                  <strong className="text-slate-400 uppercase text-[10px]">
+                  Origin:
+                  </strong>{" "}
+                  {booking.pickup || "Not Available"}
+                  </p>
+
+                  <p className="truncate">
+                  <strong className="text-slate-400 uppercase text-[10px]">
+                  Dest:
+                  </strong>{" "}
+                  {booking.drop || "Not Available"}
+                  </p>
                   <div className="flex justify-between items-center pt-2 border-t mt-2">
                     <span className="text-slate-900 font-black text-base">₹{Number(booking.fare || booking.totalFare || 0).toLocaleString("en-IN")}</span>
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -187,12 +219,14 @@ export default function BookingsPage() {
           {/* Desktop Table Layout */}
           <div className="hidden md:block bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[1100px] border-collapse text-left">
+              <table className="w-full min-w-[1400px] border-collapse text-left">
                 <thead>
                   <tr className="bg-slate-50/70 border-b border-slate-100 text-slate-400 uppercase tracking-wider font-bold text-[11px]">
                     <th className="p-4 pl-6">Token ID</th>
                     <th className="p-4">Client Identity</th>
                     <th className="p-4">Contact</th>
+                    <th className="p-4">Trip Type</th>
+                    <th className="p-4">Journey Date & Time</th>
                     <th className="p-4">Origin Point</th>
                     <th className="p-4">Destination Target</th>
                     <th className="p-4">Gross Fare</th>
@@ -216,6 +250,23 @@ export default function BookingsPage() {
                       </td>
                       <td className="p-4 font-semibold text-slate-900">{booking.name}</td>
                       <td className="p-4 text-slate-500 font-mono text-xs">{booking.mobile}</td>
+                      
+                      <td className="p-4">
+                      <span className="inline-flex px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-bold">
+                      {booking.tripType || "Not Available"}
+                      </span>
+                      </td>
+
+                      <td className="p-4 text-xs text-slate-600">
+                      <div className="font-semibold">
+                      {booking.journeyDate || "Not Available"}
+                      </div>
+
+                      <div className="text-slate-400 mt-1">
+                      {booking.journeyTime || ""}
+                      </div>
+                      </td>
+
                       <td className="p-4 max-w-[180px] truncate text-slate-600">{booking.pickup}</td>
                       <td className="p-4 max-w-[180px] truncate text-slate-600">{booking.drop}</td>
                       <td className="p-4 font-bold text-slate-900">

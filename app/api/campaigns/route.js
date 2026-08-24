@@ -6,8 +6,8 @@ export async function GET() {
     const client = await clientPromise;
     const db = client.db();
 
-    // Today's date: YYYY-MM-DD
-    const today = new Date().toISOString().split("T")[0];
+    // Current date/time
+    const now = new Date();
 
     const campaigns = await db
       .collection("campaigns")
@@ -17,16 +17,18 @@ export async function GET() {
         $and: [
           {
             $or: [
-              { startDate: { $lte: today } },
-              { startDate: "" },
               { startDate: { $exists: false } },
+              { startDate: null },
+              { startDate: "" },
+              { startDate: { $lte: now } },
             ],
           },
           {
             $or: [
-              { endDate: { $gte: today } },
-              { endDate: "" },
               { endDate: { $exists: false } },
+              { endDate: null },
+              { endDate: "" },
+              { endDate: { $gte: now } },
             ],
           },
         ],
@@ -36,16 +38,32 @@ export async function GET() {
       })
       .toArray();
 
-    // Public page ko sirf required fields bhejenge
+    // Public website ko required campaign data bhejenge
     const publicCampaigns = campaigns.map((campaign) => ({
       _id: campaign._id.toString(),
+
       title: campaign.title || "",
+
       description: campaign.description || "",
+
       image: campaign.image || "",
+
       buttonText: campaign.buttonText || "Book Now",
+
       buttonLink: campaign.buttonLink || "/book-cab",
-      startDate: campaign.startDate || "",
-      endDate: campaign.endDate || "",
+
+      // popup = website open hote hi
+      // banner = homepage ke andar
+      campaignType:
+  String(campaign.campaignType || "")
+    .trim()
+    .toLowerCase() === "popup"
+      ? "popup"
+      : "banner",
+
+      startDate: campaign.startDate || null,
+
+      endDate: campaign.endDate || null,
     }));
 
     return NextResponse.json({

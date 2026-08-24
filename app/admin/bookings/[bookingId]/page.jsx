@@ -340,6 +340,7 @@ export default function BookingDetailsPage() {
                   {drivers
                   .filter(
                   (d) =>
+                  d.status === "Active" ||
                   d.status === "Available" ||
                   d.driverId === driverId
                   )
@@ -629,8 +630,8 @@ export default function BookingDetailsPage() {
                 className="w-full bg-slate-50 border rounded-xl p-3 text-sm font-semibold outline-none bg-white"
               >
                 <option value="Pending">Pending Evaluation</option>
-                <option value="Confirmed">Confirmed / Vehicle Dispatched</option>
-                <option value="Running">En Route (Trip Active)</option>
+                <option value="Confirmed">Booking Confirm</option>
+                <option value="Running">Trip Start</option>
                 <option value="Completed">Completed Destination</option>
                 <option value="Cancelled">Cancelled Void</option>
               </select>

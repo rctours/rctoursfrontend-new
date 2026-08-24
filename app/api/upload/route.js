@@ -8,6 +8,7 @@ export async function POST(request) {
     const formData = await request.formData();
 
     const file = formData.get("file");
+    const campaignType = formData.get("campaignType");
 
     if (!file) {
       return NextResponse.json(
@@ -19,7 +20,10 @@ export async function POST(request) {
       );
     }
 
-    // Only image files allowed
+    // ========================================
+    // ONLY IMAGE FILES
+    // ========================================
+
     if (!file.type?.startsWith("image/")) {
       return NextResponse.json(
         {
@@ -30,7 +34,10 @@ export async function POST(request) {
       );
     }
 
-    // Maximum original upload size: 10 MB
+    // ========================================
+    // MAXIMUM ORIGINAL FILE SIZE: 10 MB
+    // ========================================
+
     if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json(
         {
@@ -44,7 +51,10 @@ export async function POST(request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Safe file name
+    // ========================================
+    // SAFE FILE NAME
+    // ========================================
+
     const originalName = file.name || "image";
 
     const baseName = path
@@ -53,12 +63,14 @@ export async function POST(request) {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
 
-    // Always save as WebP
     const fileName = `${Date.now()}-${
-      baseName || "image"
+      baseName || "campaign"
     }.webp`;
 
-    // Upload directory
+    // ========================================
+    // UPLOAD DIRECTORY
+    // ========================================
+
     const uploadDirectory = path.join(
       process.cwd(),
       "public",
@@ -75,17 +87,49 @@ export async function POST(request) {
       fileName
     );
 
-    // Resize + compress + convert to WebP
-    await sharp(buffer)
-      .rotate()
-      .resize({
-        width: 1600,
-        height: 900,
+    // ========================================
+    // CREATE SHARP INSTANCE
+    // ========================================
+
+    let imageProcessor = sharp(buffer).rotate();
+
+    // ========================================
+    // HOMEPAGE BANNER
+    // ANY SIZE → EXACTLY 1920 × 350
+    // NO WHITE SPACE
+    // SMART CENTER CROP
+    // ========================================
+
+    if (campaignType === "banner") {
+      imageProcessor = imageProcessor.resize({
+        width: 1920,
+        height: 350,
+        fit: "cover",
+        position: "centre",
+      });
+    }
+
+    // ========================================
+    // HOMEPAGE POPUP
+    // NORMAL OPTIMIZATION
+    // ========================================
+
+    else {
+      imageProcessor = imageProcessor.resize({
+        width: 1080,
+        height: 1350,
         fit: "inside",
         withoutEnlargement: true,
-      })
+      });
+    }
+
+    // ========================================
+    // CONVERT TO WEBP
+    // ========================================
+
+    await imageProcessor
       .webp({
-        quality: 82,
+        quality: 85,
         effort: 6,
       })
       .toFile(filePath);
@@ -94,8 +138,13 @@ export async function POST(request) {
 
     return NextResponse.json({
       success: true,
-      message: "Image optimized and uploaded successfully",
+      message:
+        campaignType === "banner"
+          ? "Banner automatically converted to 1920 × 350"
+          : "Image optimized and uploaded successfully",
       imageUrl,
+      width: campaignType === "banner" ? 1920 : null,
+      height: campaignType === "banner" ? 350 : null,
     });
   } catch (error) {
     console.error("Image Upload Error:", error);

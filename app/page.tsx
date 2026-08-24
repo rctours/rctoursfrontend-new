@@ -17,6 +17,10 @@ import {
   Fuel,
   HandCoins,
   LocateFixed,
+  Headphones,
+  BadgeIndianRupee,
+  UserRoundCheck,
+  Calculator,
 } from "lucide-react";
 
 export default function Home() {
@@ -1123,307 +1127,155 @@ useEffect(() => {
 </div>
 
 {/* ================= TRUST CARDS ================= */}
-<div className="grid grid-cols-4 gap-1.5 sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 mt-4">
+<div className="grid grid-cols-5 gap-1.5 sm:grid-cols-2 lg:grid-cols-5 sm:gap-4 mt-4">
 
   {[
     {
       title: "Trusted & Safe",
       desc: "100% Secure Journey",
-      icon: "🛡️",
+      icon: <ShieldCheck />,
     },
     {
       title: "24×7 Support",
       desc: "Always Available",
-      icon: "🎧",
+      icon: <Headphones />,
     },
     {
       title: "Best Price",
       desc: "No Hidden Charges",
-      icon: "🏷️",
+      icon: <BadgeIndianRupee />,
     },
     {
       title: "Professional Drivers",
       desc: "Verified & Trained",
-      icon: "👨‍✈️",
+      icon: <UserRoundCheck />,
     },
-  ].map((item, idx) => (
+    {
+      title: "Fare Calculator",
+      desc: "Calculate Fare",
+      icon: <Calculator />,
+      link: "/fare-calculator",
+    },
+  ].map((item, idx) => {
 
-    <div
-      key={idx}
-      className="
-        bg-white/5
-        border border-white/10
-        rounded-lg sm:rounded-2xl
-        p-1.5 sm:p-4
-        flex flex-col sm:flex-row
-        items-center
-        justify-center sm:justify-start
-        text-center sm:text-left
-        gap-1 sm:gap-3
-        backdrop-blur-md
-        min-w-0
-      "
-    >
-
-      {/* Icon */}
-      <div className="
-        w-7 h-7
-        sm:w-10 sm:h-10
-        rounded-md sm:rounded-xl
-        bg-cyan-500/20
-        flex items-center justify-center
-        text-xs sm:text-lg
-        shrink-0
-      ">
-        {item.icon}
-      </div>
-
-      {/* Text */}
-      <div className="min-w-0">
-
-        <h4 className="
-          text-white
-          font-bold
-          text-[8px] sm:text-sm
-          leading-tight
-          truncate
-        ">
-          {item.title}
-        </h4>
-
-        <p className="
-          text-blue-200/70
-          text-[7px] sm:text-xs
-          leading-tight
-          mt-0.5
-          truncate
-        ">
-          {item.desc}
-        </p>
-
-      </div>
-
-    </div>
-
-  ))}
-
-</div>
-
-</div>
-</section>
-
-{/* ================= OUTSTATION TRIP BANNER SECTION ================= */}
-<section className="relative overflow-hidden bg-white py-5 sm:py-6 md:py-8 border-b border-gray-100">
-
-  <div className="w-full max-w-[1450px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
-
-
-    {/* ========================================================= */}
-    {/* MOBILE VERSION (Fixed Height & Better Proportions) */}
-    {/* ========================================================= */}
-
-    <div className="block md:hidden">
-
-      {/* Mobile Banner Card Container */}
-      <div className="relative w-full rounded-2xl overflow-hidden bg-gradient-to-r from-[#030d29] via-[#081b4b] to-[#0d2a75] shadow-lg border border-blue-900/30">
-
-        {/* Banner Image with proper min-height so it doesn't look squished */}
-        <div className="relative w-full h-48 sm:h-56 overflow-hidden">
-          <img
-            src={banner.images[0]}
-            alt="RC Tours & Travels Outstation Trip"
-            loading="lazy"
-            className="w-full h-full object-cover"
-          />
-          {/* Gradient Overlay for better contrast */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#030d29] via-transparent to-transparent opacity-80" />
+    const cardContent = (
+      <>
+        {/* Icon */}
+        <div
+          className="
+            w-7 h-7
+            sm:w-10 sm:h-10
+            rounded-md sm:rounded-xl
+            bg-cyan-500/20
+            flex
+            items-center
+            justify-center
+            text-cyan-300
+            shrink-0
+          "
+        >
+          <div className="w-4 h-4 sm:w-5 sm:h-5">
+            {item.icon}
+          </div>
         </div>
 
-        {/* Mobile Content Overlay inside the card */}
-        <div className="p-4 relative z-10 -mt-10">
-          <div>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-red-500/20 border border-red-400/30 text-red-300 text-[10px] font-bold tracking-wider">
-              {banner.badge}
-            </span>
-          </div>
+        {/* Text */}
+        <div className="min-w-0">
 
-          <h3 className="mt-2 text-lg font-bold text-white leading-snug">
-            {banner.titleNormal}{" "}
-            <span className="text-red-500">
-              {banner.titleHighlight}
-            </span>
-          </h3>
+          <h4
+            className="
+              text-white
+              font-bold
+              text-[8px] sm:text-sm
+              leading-tight
+              truncate
+            "
+          >
+            {item.title}
+          </h4>
 
-          <p className="mt-1.5 text-xs text-gray-300 leading-relaxed line-clamp-2">
-            {banner.subtext}
+          <p
+            className="
+              text-blue-200/70
+              text-[7px] sm:text-xs
+              leading-tight
+              mt-0.5
+              truncate
+            "
+          >
+            {item.desc}
           </p>
 
-          {/* Book Button */}
-          <div className="mt-4 flex items-center justify-between">
-            <button
-              type="button"
-              onClick={() => {
-                setTripType(banner.tripType);
-                setTimeout(() => {
-                  document
-                    .getElementById("book-ride")
-                    ?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "center",
-                    });
-                }, 100);
-              }}
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md transition-all active:scale-95"
-            >
-              {banner.buttonText}
-              <span>→</span>
-            </button>
-          </div>
         </div>
+      </>
+    );
 
+    return item.link ? (
+
+      <Link
+        key={idx}
+        href={item.link}
+        aria-label="Open Fare Calculator"
+        className="
+          bg-cyan-500/20
+          border
+          border-cyan-400/40
+          rounded-lg sm:rounded-2xl
+          p-1.5 sm:p-4
+          flex
+          flex-col sm:flex-row
+          items-center
+          justify-center sm:justify-start
+          text-center sm:text-left
+          gap-1 sm:gap-3
+          backdrop-blur-md
+          min-w-0
+          cursor-pointer
+          transition-all
+          duration-300
+          hover:bg-cyan-500/30
+          hover:border-cyan-300
+          hover:scale-[1.03]
+          active:scale-95
+        "
+      >
+        {cardContent}
+      </Link>
+
+    ) : (
+
+      <div
+        key={idx}
+        className="
+          bg-white/5
+          border
+          border-white/10
+          rounded-lg sm:rounded-2xl
+          p-1.5 sm:p-4
+          flex
+          flex-col sm:flex-row
+          items-center
+          justify-center sm:justify-start
+          text-center sm:text-left
+          gap-1 sm:gap-3
+          backdrop-blur-md
+          min-w-0
+        "
+      >
+        {cardContent}
       </div>
 
-      {/* Mobile Text Content below card if needed, or keep it inside. (Ab ye card format mein zyada premium lagega) */}
+    );
 
-    </div>
+  })}
 
+</div>
 
-
-    {/* ========================================================= */}
-    {/* DESKTOP VERSION (Aapka current design unchanged) */}
-    {/* ========================================================= */}
-
-    <div className="hidden md:block">
-
-      <div className="relative w-full overflow-hidden rounded-3xl bg-gradient-to-r from-[#030d29] via-[#081b4b] to-[#0d2a75] shadow-xl border border-blue-900/30 transition-all duration-700 ease-in-out">
-
-        <div className="grid grid-cols-12 min-h-[280px]">
-
-          {/* LEFT CONTENT */}
-          <div className="col-span-6 relative z-10 p-7 flex flex-col justify-center">
-            <div>
-              <span className="inline-flex items-center px-3 py-1 rounded-full bg-red-500/15 border border-red-400/20 text-red-300 text-[10px] font-bold tracking-wider">
-                {banner.badge}
-              </span>
-            </div>
-
-            <h3 className="mt-3 text-2xl lg:text-3xl font-black text-white tracking-tight leading-tight">
-              {banner.titleNormal}
-              <br />
-              <span className="text-red-500">
-                {banner.titleHighlight}
-              </span>
-            </h3>
-
-            <p className="mt-2 text-sm text-gray-300 font-medium leading-relaxed max-w-md">
-              {banner.subtext}
-            </p>
-
-            {/* Features */}
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-4 pt-3 border-t border-white/10">
-              <div className="flex items-center gap-1.5">
-                <span className="text-cyan-400 text-xs">⏱️</span>
-                <span className="text-[10px] font-semibold text-gray-300">Flexible Booking</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-cyan-400 text-xs">👨‍✈️</span>
-                <span className="text-[10px] font-semibold text-gray-300">Verified Drivers</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-cyan-400 text-xs">🛡️</span>
-                <span className="text-[10px] font-semibold text-gray-300">Safe Journey</span>
-              </div>
-            </div>
-
-            {/* Button */}
-            <div className="mt-4">
-              <button
-                type="button"
-                onClick={() => {
-                  setTripType(banner.tripType);
-                  setTimeout(() => {
-                    document
-                      .getElementById("book-ride")
-                      ?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "center",
-                      });
-                  }, 100);
-                }}
-                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-lg shadow-red-600/30 transition-all hover:scale-105 active:scale-95"
-              >
-                {banner.buttonText}
-                <span className="text-base">→</span>
-              </button>
-            </div>
-          </div>
-
-          {/* RIGHT IMAGE COLLAGE */}
-          <div className="col-span-6 relative min-h-[280px] overflow-hidden">
-            <div className="absolute inset-0 flex w-full h-full">
-              {/* Image 1 */}
-              <div className="relative flex-1 h-full overflow-hidden skew-x-[-10deg] translate-x-3 border-r border-white/20">
-                <img
-                  src={banner.images[0]}
-                  alt="RC Tours travel destination"
-                  loading="lazy"
-                  className="absolute inset-0 w-[170%] h-full object-cover -translate-x-1/4 scale-110"
-                />
-              </div>
-              {/* Image 2 */}
-              <div className="relative flex-1 h-full overflow-hidden skew-x-[-10deg] translate-x-1 border-r border-white/20">
-                <img
-                  src={banner.images[1]}
-                  alt="RC Tours taxi service"
-                  loading="lazy"
-                  className="absolute inset-0 w-[170%] h-full object-cover -translate-x-1/4 scale-110"
-                />
-              </div>
-              {/* Image 3 */}
-              <div className="relative flex-[1.35] h-full overflow-hidden skew-x-[-10deg]">
-                <img
-                  src={banner.images[2]}
-                  alt="Nagpur tour package destination"
-                  loading="lazy"
-                  className="absolute inset-0 w-[170%] h-full object-cover -translate-x-1/4 scale-110"
-                />
-              </div>
-            </div>
-
-            {/* Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#030d29] via-[#030d29]/30 to-transparent pointer-events-none" />
-          </div>
-
-        </div>
-
-        {/* Bottom Red Line */}
-        <div className="h-1.5 w-full bg-red-600" />
-
-      </div>
-
-    </div>
-
-
-
-    {/* Navigation Dots */}
-    <div className="flex justify-center items-center gap-2 mt-3">
-      {banners.map((_, idx) => (
-        <button
-          key={idx}
-          type="button"
-          onClick={() => setCurrentIndex(idx)}
-          className={`h-2 rounded-full transition-all duration-300 ${
-            currentIndex === idx
-              ? "w-5 bg-red-600"
-              : "w-2 bg-gray-300"
-          }`}
-          aria-label={`Go to slide ${idx + 1}`}
-        />
-      ))}
-    </div>
-
-  </div>
+</div>
 </section>
+
+{/* ================= ADMIN CAMPAIGN BANNER SECTION ================= */}
+<CampaignPopup />
 
 
 {/* ================= POPULAR ROUTES SECTION ================= */}

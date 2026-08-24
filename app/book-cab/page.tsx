@@ -23,7 +23,9 @@ import {
   ReceiptText,
   Gauge,
   Clock,
-  } from "lucide-react";
+  CalendarDays,
+  Search,
+} from "lucide-react";
 
 function BookCabContent() {
   const searchParams = useSearchParams();
@@ -1182,9 +1184,11 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
 
   <div className="relative">
 
-  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl">
-    📍
-  </span>
+  <MapPin
+  size={20}
+  strokeWidth={2.5}
+  className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500"
+  />
 
   <input
     type="text"

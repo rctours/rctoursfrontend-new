@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, Gift, Star, Ticket } from "lucide-react";
+import {
+  X,
+  Gift,
+  Star,
+  Ticket,
+  Car,
+  Headphones,
+} from "lucide-react";
 import Link from "next/link";
 
 type Campaign = {
@@ -11,6 +18,7 @@ type Campaign = {
   image: string;
   buttonText: string;
   buttonLink: string;
+  campaignType?: string;
 };
 
 type Slide =
@@ -39,7 +47,7 @@ const defaultSlides: Slide[] = [
     title: "🎉 Welcome to RC Tours & Travels",
     description:
       "Book safe & comfortable taxi rides anywhere in India.",
-    icon: <Gift size={40} className="text-white drop-shadow-md" />,
+    icon: <Gift size={40} className="text-white" />,
     color: "from-blue-700 to-cyan-600",
   },
   {
@@ -48,28 +56,46 @@ const defaultSlides: Slide[] = [
     title: "⭐ Loyalty Rewards",
     description:
       "Earn 100 Loyalty Points on every Outstation Trip.",
-    icon: <Star size={40} className="text-white drop-shadow-md" />,
+    icon: <Star size={40} className="text-white" />,
     color: "from-amber-500 to-orange-600",
   },
   {
     type: "default",
-    id: "coupon",
-    title: "🎁 ₹300 Coupon Reward",
+    id: "special-fare",
+    title: "🎁 Special Fare Benefits",
     description:
-      "Collect 300 Points & Unlock ₹300 OFF Coupon Automatically.",
-    icon: <Ticket size={40} className="text-white drop-shadow-md" />,
+      "Enjoy Better Cab Fares & Extra Savings On Every Journey.",
+    icon: <Ticket size={40} className="text-white" />,
     color: "from-emerald-600 to-teal-700",
+  },
+  {
+    type: "default",
+    id: "easy-booking",
+    title: "🚕 Quick & Easy Booking",
+    description:
+      "Book your cab in just a few simple steps and travel worry-free.",
+    icon: <Car size={40} className="text-white" />,
+    color: "from-indigo-600 to-blue-700",
+  },
+  {
+    type: "default",
+    id: "support",
+    title: "📞 24×7 Travel Support",
+    description:
+      "Our team is always available to help you with your journey.",
+    icon: <Headphones size={40} className="text-white" />,
+    color: "from-rose-600 to-red-700",
   },
 ];
 
 export default function AnnouncementPopup() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
-  const [slides, setSlides] = useState<Slide[]>(defaultSlides);
+  const [slides, setSlides] = useState<Slide[]>([]);
   const [loading, setLoading] = useState(true);
 
   // ========================================
-  // LOAD ACTIVE CAMPAIGNS
+  // LOAD ACTIVE POPUP CAMPAIGNS
   // ========================================
 
   useEffect(() => {
@@ -86,28 +112,44 @@ export default function AnnouncementPopup() {
           data.success &&
           Array.isArray(data.campaigns)
         ) {
-          const campaignSlides: Slide[] = data.campaigns.map(
+          // ONLY POPUP CAMPAIGNS
+          const popupCampaigns = data.campaigns.filter(
+            (campaign: Campaign) =>
+              String(campaign.campaignType || "")
+                .trim()
+                .toLowerCase() === "popup"
+          );
+
+          const campaignSlides: Slide[] = popupCampaigns.map(
             (campaign: Campaign) => ({
               type: "campaign",
               id: campaign._id,
-              title: campaign.title,
-              description: campaign.description,
-              image: campaign.image,
-              buttonText: campaign.buttonText || "Book Now",
-              buttonLink: campaign.buttonLink || "/book-cab",
+              title: campaign.title || "",
+              description: campaign.description || "",
+              image: campaign.image || "",
+              buttonText:
+                campaign.buttonText || "Book Now",
+              buttonLink:
+                campaign.buttonLink || "/book-cab",
             })
           );
 
-          // Admin campaigns FIRST
-          setSlides([
-            ...campaignSlides,
-            ...defaultSlides,
-          ]);
+          // Popup campaigns available
+          if (campaignSlides.length > 0) {
+            setSlides(campaignSlides);
+          } else {
+            // No popup campaign → default slides
+            setSlides(defaultSlides);
+          }
+        } else {
+          setSlides(defaultSlides);
         }
       } catch (error) {
-        console.error("Campaign Popup Error:", error);
+        console.error(
+          "Campaign Popup Error:",
+          error
+        );
 
-        // API fail ho tab bhi default slides dikhenge
         setSlides(defaultSlides);
       } finally {
         setLoading(false);
@@ -122,22 +164,22 @@ export default function AnnouncementPopup() {
   // ========================================
 
   useEffect(() => {
-  if (loading) return;
+    if (loading || slides.length === 0) return;
 
-  const alreadySeen = sessionStorage.getItem(
-    "rc-announcement-popup-seen"
-  );
+    const alreadySeen = sessionStorage.getItem(
+      "rc-announcement-popup-seen"
+    );
 
-  if (alreadySeen) {
-    return;
-  }
+    if (alreadySeen) {
+      return;
+    }
 
-  const timer = setTimeout(() => {
-    setOpen(true);
-  }, 700);
+    const timer = setTimeout(() => {
+      setOpen(true);
+    }, 500);
 
-  return () => clearTimeout(timer);
-  }, [loading]);
+    return () => clearTimeout(timer);
+  }, [loading, slides.length]);
 
   // ========================================
   // AUTO SLIDE
@@ -156,94 +198,152 @@ export default function AnnouncementPopup() {
   }, [open, slides.length]);
 
   // ========================================
-  // CLOSE
+  // CLOSE POPUP
   // ========================================
 
   const closePopup = () => {
-  sessionStorage.setItem(
-    "rc-announcement-popup-seen",
-    "true"
-  );
+    sessionStorage.setItem(
+      "rc-announcement-popup-seen",
+      "true"
+    );
 
-  setOpen(false);
+    setOpen(false);
   };
 
-  if (!open || slides.length === 0) {
+  // ========================================
+  // NEXT SLIDE
+  // ========================================
+
+  const nextSlide = () => {
+    setActive((prev) =>
+      prev === slides.length - 1
+        ? 0
+        : prev + 1
+    );
+  };
+
+  // ========================================
+  // PREVIOUS SLIDE
+  // ========================================
+
+  const previousSlide = () => {
+    setActive((prev) =>
+      prev === 0
+        ? slides.length - 1
+        : prev - 1
+    );
+  };
+
+  if (
+    loading ||
+    !open ||
+    slides.length === 0
+  ) {
     return null;
   }
 
   const slide = slides[active];
 
   // ========================================
-  // ADMIN CAMPAIGN POSTER
+  // ADMIN CAMPAIGN POPUP
   // ========================================
 
   if (slide.type === "campaign") {
     return (
-      <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-fadeIn">
-        <div className="relative w-full max-w-sm sm:max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+        <div className="relative w-full max-w-[500px] overflow-hidden rounded-[24px] bg-white shadow-2xl">
 
-          {/* CLOSE */}
+          {/* CLOSE BUTTON */}
           <button
             onClick={closePopup}
-            className="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-all backdrop-blur-sm"
+            className="absolute right-3 top-3 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 text-white transition-all hover:bg-black/80"
             aria-label="Close campaign"
           >
-            <X size={18} />
+            <X size={20} />
           </button>
 
-          {/* POSTER */}
+          {/* CAMPAIGN IMAGE */}
           {slide.image && (
-            <div className="w-full bg-gray-50 relative flex-shrink-0">
+            <div className="flex w-full justify-center bg-gray-100">
               <img
                 src={slide.image}
                 alt={slide.title}
-                className="w-full h-64 sm:h-72 object-cover object-center"
+                className="max-h-[360px] w-full object-contain"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none"></div>
             </div>
           )}
 
           {/* CONTENT */}
-          <div className="p-6 flex flex-col justify-between flex-grow overflow-y-auto">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center leading-snug">
+          <div className="px-5 pb-5 pt-4">
+
+            {slide.title && (
+              <h2 className="text-xl font-bold text-slate-800">
                 {slide.title}
               </h2>
+            )}
 
-              {slide.description && (
-                <p className="mt-2.5 text-sm sm:text-base text-center text-gray-600 leading-relaxed">
-                  {slide.description}
-                </p>
+            {slide.description && (
+              <p className="mt-2 text-sm text-gray-600">
+                {slide.description}
+              </p>
+            )}
+
+            {/* ACTION BUTTONS */}
+            <div className="mt-5 flex items-center gap-3">
+
+              {slides.length > 1 && (
+                <button
+                  type="button"
+                  onClick={previousSlide}
+                  className="rounded-xl border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
+                >
+                  Previous
+                </button>
               )}
-            </div>
 
-            <div className="pt-6 mt-auto">
               <Link
                 href={slide.buttonLink}
                 onClick={closePopup}
-                className="flex items-center justify-center w-full rounded-xl bg-blue-600 hover:bg-blue-700 py-3 text-white font-semibold shadow-lg shadow-blue-600/25 transition-all hover:scale-[1.02] text-sm sm:text-base"
+                className="flex-1 rounded-xl bg-blue-600 py-3 text-center font-semibold text-white shadow-lg transition hover:bg-blue-700"
               >
                 {slide.buttonText}
               </Link>
 
-              {/* DOTS */}
-              <div className="mt-5 flex justify-center items-center gap-1.5">
-                {slides.map((item, index) => (
+              {slides.length > 1 ? (
+                active === slides.length - 1 ? (
                   <button
                     type="button"
-                    key={item.id}
-                    onClick={() => setActive(index)}
-                    aria-label={`Show announcement ${index + 1}`}
-                    className={`h-2 rounded-full transition-all ${
-                      active === index
-                        ? "w-6 bg-blue-600"
-                        : "w-2 bg-gray-300 hover:bg-gray-400"
-                    }`}
-                  />
-                ))}
-              </div>
+                    onClick={closePopup}
+                    className="rounded-xl border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
+                  >
+                    Close
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={nextSlide}
+                    className="rounded-xl border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
+                  >
+                    Next
+                  </button>
+                )
+              ) : (
+                <button
+                  type="button"
+                  onClick={closePopup}
+                  className="rounded-xl border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
+                >
+                  Close
+                </button>
+              )}
             </div>
+
+            {/* SLIDE COUNT */}
+            {slides.length > 1 && (
+              <div className="mt-4 text-center text-sm text-gray-400">
+                {active + 1} of {slides.length}
+              </div>
+            )}
 
           </div>
         </div>
@@ -252,59 +352,66 @@ export default function AnnouncementPopup() {
   }
 
   // ========================================
-  // DEFAULT LOYALTY SLIDES
+  // DEFAULT POPUP
   // ========================================
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-fadeIn">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
       <div
-        className={`relative w-full max-w-sm sm:max-w-md rounded-3xl bg-gradient-to-br ${slide.color} p-6 sm:p-8 shadow-2xl text-white overflow-hidden border border-white/10`}
+        className={`relative w-full max-w-[560px] rounded-[28px] bg-gradient-to-br ${slide.color} p-8 text-white shadow-2xl sm:p-10`}
       >
+        {/* CLOSE */}
         <button
           onClick={closePopup}
-          className="absolute top-4 right-4 rounded-full bg-white/20 p-2 hover:bg-white/30 transition-all backdrop-blur-sm"
+          className="absolute right-5 top-5 rounded-full bg-white/20 p-3 transition hover:bg-white/30"
           aria-label="Close announcement"
         >
-          <X size={18} />
+          <X size={22} />
         </button>
 
-        <div className="flex justify-center mb-4 mt-2">
-          <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center justify-center shadow-inner">
+        {/* ICON */}
+        <div className="mb-6 flex justify-center">
+          <div className="flex h-20 w-20 items-center justify-center rounded-3xl border border-white/20 bg-white/10">
             {slide.icon}
           </div>
         </div>
 
-        <h2 className="text-xl sm:text-2xl font-bold text-center tracking-tight">
+        {/* TITLE */}
+        <h2 className="text-center text-2xl font-bold sm:text-3xl">
           {slide.title}
         </h2>
 
-        <p className="mt-3 text-sm sm:text-base text-center leading-relaxed text-white/90">
+        {/* DESCRIPTION */}
+        <p className="mt-5 text-center text-base text-white/90 sm:text-lg">
           {slide.description}
         </p>
 
+        {/* CONTINUE */}
         <button
           onClick={closePopup}
-          className="mt-6 w-full rounded-xl bg-white py-3 font-bold text-slate-900 shadow-lg transition-all hover:bg-gray-100 hover:scale-[1.02] text-sm sm:text-base"
+          className="mt-8 w-full rounded-2xl bg-white py-4 text-lg font-bold text-slate-800 transition hover:bg-gray-100"
         >
           Continue
         </button>
 
-        <div className="mt-5 flex justify-center items-center gap-1.5">
-          {slides.map((item, index) => (
-            <button
-              type="button"
-              key={item.id}
-              onClick={() => setActive(index)}
-              aria-label={`Show announcement ${index + 1}`}
-              className={`h-2 rounded-full transition-all ${
-                active === index
-                  ? "w-6 bg-white"
-                  : "w-2 bg-white/40 hover:bg-white/60"
-              }`}
-            />
-          ))}
-        </div>
-
+        {/* DOTS */}
+        {slides.length > 1 && (
+          <div className="mt-6 flex justify-center gap-2">
+            {slides.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActive(index)}
+                className={`h-2.5 rounded-full transition-all ${
+                  active === index
+                    ? "w-8 bg-white"
+                    : "w-2.5 bg-white/40"
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
