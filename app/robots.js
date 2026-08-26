@@ -1,11 +1,20 @@
 export default function robots() {
   return {
-    rules: [
-      {
-        userAgent: "*",
-        allow: "/",
-      },
-    ],
+    rules: {
+      userAgent: "*",
+      allow: "/",
+      disallow: [
+        "/admin/",
+        "/api/",
+        "/booking-details",
+        "/booking-success",
+        "/payment",
+        "/invoice/",
+        "/driver/",
+        "/my-profile",
+        "/profile-login",
+      ],
+    },
 
     sitemap: "https://www.rctoursandtravels.in/sitemap.xml",
 

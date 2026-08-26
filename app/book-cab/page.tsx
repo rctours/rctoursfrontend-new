@@ -25,6 +25,8 @@ import {
   Clock,
   CalendarDays,
   Search,
+    Plane,
+  ArrowRight,
 } from "lucide-react";
 
 function BookCabContent() {
@@ -37,6 +39,47 @@ function BookCabContent() {
   const router = useRouter();
 
   const [showInfoPopup, setShowInfoPopup] = useState(false);
+
+  const [showAirportPopup, setShowAirportPopup] = useState(false);
+  const [showOutstationLocalPopup, setShowOutstationLocalPopup] = useState(false);
+
+  useEffect(() => {
+  const currentDistance = Number(
+    searchParams.get("distance")
+  );
+
+  const currentTripType =
+    searchParams.get("tripType")?.trim();
+
+  console.log("AIRPORT POPUP CHECK");
+  console.log("Trip Type:", currentTripType);
+  console.log("Distance:", currentDistance);
+
+  // AIRPORT POPUP
+  if (
+    currentTripType === "Airport Pick-Up & Drop" &&
+    currentDistance > 80
+  ) {
+    console.log(
+      "AIRPORT DISTANCE ABOVE 80 KM - OPENING POPUP"
+    );
+
+    setShowAirportPopup(true);
+    return;
+  }
+
+  // OUTSTATION → LOCAL RENTAL POPUP
+  if (
+    currentTripType === "Outstation Trip" &&
+    currentDistance >= 1 &&
+    currentDistance <= 120
+  ) {
+    setShowOutstationLocalPopup(true);
+  }
+
+}, [searchParams]);
+
+  const [showOutstationPopup, setShowOutstationPopup] = useState(false);
 
   const [loadingDistance, setLoadingDistance] = useState(false);
 
@@ -59,6 +102,16 @@ const [pickup, setPickup] = useState(
 );
 
 const [drop, setDrop] = useState(
+  searchParams.get("drop") || ""
+);
+
+// Last searched locations
+// Fleet/cards tabhi change honge jab Search button click hoga
+const [searchedPickup, setSearchedPickup] = useState(
+  searchParams.get("pickup") || ""
+);
+
+const [searchedDrop, setSearchedDrop] = useState(
   searchParams.get("drop") || ""
 );
 
@@ -85,6 +138,14 @@ const [distance, setDistance] = useState(
 const [fare, setFare] = useState(
   Number(searchParams.get("fare")) || 0
 );
+
+const [hasSearched, setHasSearched] = useState(() => {
+  const initialDistance = Number(searchParams.get("distance")) || 0;
+  const initialFare = Number(searchParams.get("fare")) || 0;
+
+  return initialDistance > 0 || initialFare > 0;
+});
+
 
 const [toll, setToll] = useState(
   Number(searchParams.get("toll")) || 0
@@ -442,62 +503,177 @@ const searchLocation = (
   }, 350);
 };
 
-const handleSearch = () => {
-
+const handleSearch = async () => {
   console.log("Search Button Clicked");
 
   if (!pickup.trim()) {
-  alert("Please enter Pickup Location");
-  return;
-}
+    alert("Please enter Pickup Location");
+    return;
+  }
 
-if (!drop.trim()) {
-  alert("Please enter Drop Location");
-  return;
-}
+  if (!drop.trim()) {
+    alert("Please enter Drop Location");
+    return;
+  }
 
-if (!pickupDate) {
-  alert("Please select Journey Date");
-  return;
-}
+  if (!pickupDate) {
+    alert("Please select Journey Date");
+    return;
+  }
+
+  if (
+    tripType === "Outstation Trip" &&
+    !returnDate
+  ) {
+    alert("Please select Return Date");
+    return;
+  }
+
+  if (
+    tripType !== "Outstation Trip" &&
+    !pickupTime
+  ) {
+    alert("Please select Pickup Time");
+    return;
+  }
+
+  setLoadingDistance(true);
+
+  try {
+    const res = await fetch("/api/distance", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        pickup,
+        drop,
+        pickupCoords,
+        dropCoords,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      alert(
+        data.message || "Unable to calculate distance"
+      );
+      return;
+    }
+
+    const oneWayDistance = Number(data.distance);
+
+    let finalDistance = oneWayDistance;
+
+    // =====================================
+    // AIRPORT PICK-UP & DROP
+    // =====================================
+
+    // Airport trip me agar distance 20 KM se zyada hai
+    // to popup dikhao aur fare/card update mat karo
+    if (
+      tripType === "Airport Pick-Up & Drop" &&
+      oneWayDistance > 80
+    ) {
+      setShowAirportPopup(true);
+      return;
+    }
+
+    // ONE WAY
+    if (
+      tripType === "One Way Trip" ||
+      tripType === "One Way"
+    ) {
+      // Actual road distance
+      finalDistance = oneWayDistance;
+    }
+
+    // OUTSTATION
+    else if (tripType === "Outstation Trip") {
+
+      // 1 KM se 120 KM tak → Local Rental suggest karo
+    if (oneWayDistance >= 1 && oneWayDistance <= 120) {
+    setShowOutstationLocalPopup(true);
+    return;
+    }
+
+      const start = new Date(pickupDate);
+      const end = new Date(returnDate);
+
+      const totalDays = returnDate
+        ? Math.floor(
+            (end.getTime() - start.getTime()) /
+              (1000 * 60 * 60 * 24)
+          ) + 1
+        : 1;
+
+      const actualRoundTripDistance =
+        oneWayDistance * 2;
+
+      const minimumBillableDistance =
+        totalDays * 300;
+
+      finalDistance = Math.max(
+        actualRoundTripDistance,
+        minimumBillableDistance
+      );
+    }
+
+    // Search confirm hone ke baad hi
+    // card/fleet ke locations update honge
+    setSearchedPickup(pickup);
+setSearchedDrop(drop);
+
+setDistance(finalDistance);
+
+let newFare = 0;
 
 if (
-  tripType === "Outstation Trip" &&
-  !returnDate
+  tripType === "One Way Trip" ||
+  tripType === "One Way" ||
+  tripType === "Airport Pick-Up & Drop"
 ) {
-  alert("Please select Return Date");
-  return;
-}
-
-if (
-  tripType !== "Outstation Trip" &&
-  !pickupTime
-) {
-  alert("Please select Pickup Time");
-  return;
-}
-
   const defaultRate = 13;
 
-  const fare = Math.round(distance * defaultRate * 2);
+  newFare = Math.round(
+    finalDistance * defaultRate * 2
+  );
+}
 
-  const params = new URLSearchParams({
-    tripType,
-    pickup,
-    drop,
-    pickupDate,
-    returnDate,
-    pickupTime,
-    distance: distance.toString(),
-    toll: "0",
-    fare: fare.toString(),
-  });
+else if (tripType === "Outstation Trip") {
+  const defaultRate = 13;
 
-  const url = `/fleet?${params.toString()}`;
+  newFare = Math.round(
+    finalDistance * defaultRate
+  );
+}
 
-  console.log("Navigating To:", url);
+setFare(newFare);
 
-  router.push(`/fleet?${params.toString()}`);
+// Search successful hua,
+// ab naya fare/card result officially update hoga
+setHasSearched(true);
+
+    setToll(Number(data.toll) || 0);
+
+console.log("SEARCH COMPLETED");
+
+console.log("NEW PICKUP:", pickup);
+console.log("NEW DROP:", drop);
+console.log("NEW DISTANCE:", finalDistance);
+console.log("NEW FARE:", newFare);
+
+  } catch (error) {
+    console.error("SEARCH ERROR:", error);
+
+    alert(
+      "Unable to calculate distance. Please try again."
+    );
+
+  } finally {
+    setLoadingDistance(false);
+  }
 };
 
 const handleModifySearch = async () => {
@@ -557,37 +733,97 @@ const handleModifySearch = async () => {
       return;
     }
 
-    const oneWayDistance = Number(data.distance);
+const oneWayDistance = Number(data.distance);
 
-    let finalDistance = oneWayDistance;
+let finalDistance = oneWayDistance;
 
-    if (tripType === "Outstation Trip") {
-      const start = new Date(pickupDate);
-      const end = new Date(returnDate);
 
-      const totalDays =
-        returnDate
-          ? Math.floor(
-              (end.getTime() - start.getTime()) /
-              (1000 * 60 * 60 * 24)
-            ) + 1
-          : 1;
+// =====================================
+// AIRPORT PICK-UP & DROP
+// =====================================
 
-      const actualRoundTripDistance =
-        oneWayDistance * 2;
+// Airport trip me agar distance 20 KM se zyada hai
+// to popup dikhao aur fare/card update mat karo
+if (
+  tripType === "Airport Pick-Up & Drop" &&
+  oneWayDistance > 80
+) {
+  setShowAirportPopup(true);
+  return;
+}
 
-      const minimumBillableDistance =
-        totalDays * 300;
+// =====================================
+// OUTSTATION → LOCAL RENTAL REDIRECT
+// =====================================
 
-      finalDistance = Math.max(
-        actualRoundTripDistance,
-        minimumBillableDistance
-      );
-    }
+if (
+  tripType === "Outstation Trip" &&
+  oneWayDistance <= 120
+) {
+  setShowOutstationLocalPopup(true);
+  return;
+}
 
-    setDistance(finalDistance);
 
-    setToll(Number(data.toll) || 0);
+// =====================================
+// ONE WAY TRIP
+// =====================================
+
+if (
+  tripType === "One Way Trip" ||
+  tripType === "One Way"
+) {
+  finalDistance = oneWayDistance;
+}
+
+
+// =====================================
+// OUTSTATION TRIP
+// =====================================
+
+else if (
+  tripType === "Outstation Trip" &&
+  oneWayDistance <= 100
+) {
+  finalDistance = oneWayDistance * 2;
+}
+
+else if (tripType === "Outstation Trip") {
+  const start = new Date(pickupDate);
+  const end = new Date(returnDate);
+
+  const totalDays = returnDate
+    ? Math.floor(
+        (end.getTime() - start.getTime()) /
+          (1000 * 60 * 60 * 24)
+      ) + 1
+    : 1;
+
+  const actualRoundTripDistance =
+    oneWayDistance * 2;
+
+  const minimumBillableDistance =
+    totalDays * 300;
+
+  finalDistance = Math.max(
+    actualRoundTripDistance,
+    minimumBillableDistance
+  );
+}
+
+
+// =====================================
+// SEARCH SUCCESSFUL
+// AB CARD / FARE UPDATE HOGA
+// =====================================
+
+setSearchedPickup(pickup);
+setSearchedDrop(drop);
+
+setDistance(finalDistance);
+
+setToll(Number(data.toll) || 0);
+
 
     const defaultRate = 13;
 
@@ -595,6 +831,8 @@ const handleModifySearch = async () => {
       Math.round(finalDistance * defaultRate * 2);
 
     setFare(newFare);
+
+    setHasSearched(true);
 
     setShowSearchModal(false);
 
@@ -636,6 +874,21 @@ router.replace(`/book-cab?${params.toString()}`);
 };
 
 useEffect(() => {
+
+  // =====================================
+  // AIRPORT POPUP ACTIVE HAI TO
+  // AUTO DISTANCE CALCULATION NAHI HOGA
+  // =====================================
+  if (showAirportPopup) {
+    return;
+  }
+
+    // User ne pickup/drop change kiya hai.
+  // Ab naya distance aur fare sirf Search button click ke baad calculate hoga.
+  if (!hasSearched) {
+    return;
+  }
+
   const getDistance = async () => {
 
     setLoadingDistance(true);
@@ -671,67 +924,55 @@ if (cachedDistance) {
 
 if (tripType === "Outstation Trip") {
 
-  const start = new Date(pickupDate);
-  const end = new Date(returnDate);
-
-  const totalDays =
-    returnDate
-      ? Math.floor(
-          (end.getTime() - start.getTime()) /
-          (1000 * 60 * 60 * 24)
-        ) + 1
-      : 1;
-
   // API se actual one-way road distance
-const oneWayDistance = Number(data.distance);
+  const oneWayDistance = Number(data.distance);
 
-// Actual round-trip distance
-const actualRoundTripDistance =
-  oneWayDistance * 2;
+  let finalDistance = oneWayDistance;
 
-// Minimum billing = 300 KM per day
-const minimumBillableDistance =
-  totalDays * 300;
+  // Short Outstation: 49 × 2 = 98 KM
+  if (oneWayDistance <= 100) {
 
-// Actual round trip ya minimum billing,
-// dono me jo zyada hai wahi final included KM
-const billableDistance = Math.max(
-  actualRoundTripDistance,
-  minimumBillableDistance
-);
+    finalDistance = oneWayDistance * 2;
 
-console.log(
-  "OUTSTATION ONE WAY DISTANCE:",
-  oneWayDistance
-);
+  } else {
 
-console.log(
-  "OUTSTATION ACTUAL ROUND TRIP:",
-  actualRoundTripDistance
-);
+    const start = new Date(pickupDate);
+    const end = new Date(returnDate);
 
-console.log(
-  "OUTSTATION MINIMUM DISTANCE:",
-  minimumBillableDistance
-);
+    const totalDays =
+      returnDate
+        ? Math.floor(
+            (end.getTime() - start.getTime()) /
+            (1000 * 60 * 60 * 24)
+          ) + 1
+        : 1;
 
-console.log(
-  "OUTSTATION FINAL BILLABLE DISTANCE:",
-  billableDistance
-);
+    const actualRoundTripDistance =
+      oneWayDistance * 2;
 
-setDistance(billableDistance);
+    const minimumBillableDistance =
+      totalDays * 300;
+
+    finalDistance = Math.max(
+      actualRoundTripDistance,
+      minimumBillableDistance
+    );
+  }
+
+  setDistance(finalDistance);
+
+  setToll(Number(data.toll) || 0);
 
   sessionStorage.setItem(
     cacheKey,
-    billableDistance.toString()
+    finalDistance.toString()
   );
 
   setLoadingDistance(false);
 
 } else {
 
-  setDistance(data.distance);
+  setDistance(Number(data.distance));
 
   setToll(Number(data.toll) || 0);
 
@@ -753,8 +994,8 @@ setDistance(billableDistance);
   };
 
   if (pickup && drop) {
-    getDistance();
-  }
+  getDistance();
+}
 }, [
   pickup,
   drop,
@@ -763,6 +1004,7 @@ setDistance(billableDistance);
   tripType,
   pickupCoords,
   dropCoords,
+  hasSearched,
 ]);
 
 useEffect(() => {
@@ -912,16 +1154,25 @@ const cabs = [
 
 const isNagpurAirportTransfer =
   tripType === "Airport Pick-Up & Drop" &&
-  distance <= 25;
+  distance > 0 &&
+  distance <= 80 &&
+  !showAirportPopup;
 
-const isAirportPackageFare =
+const isAirportBeyondFixedFare =
   tripType === "Airport Pick-Up & Drop" &&
-  distance > 25 &&
-  distance <= 60;
+  distance > 80;
 
-const isAirportOutstationFare =
+  const isAirportBeyond80KM =
   tripType === "Airport Pick-Up & Drop" &&
-  distance > 60;
+  distance > 80;
+
+  useEffect(() => {
+  if (isAirportBeyond80KM) {
+    setShowOutstationPopup(true);
+  } else {
+    setShowOutstationPopup(false);
+  }
+}, [isAirportBeyond80KM]);
 
 const sortedCabs = [...cabs].sort((a, b) => {
   if (a.name === selectedVehicle) return -1;
@@ -935,30 +1186,90 @@ const isFormComplete =
   pickupDate !== "";
 
   const getDiscountedRate = (cab: typeof cabs[number]) => {
-  if (cab.name === "Swift Dzire") return 10.99;
-  if (cab.name === "Ertiga") return 12.99;
-  if (cab.name === "Toyota Rumion") return 13.99;
-  if (cab.name === "Innova Crysta") return 17.99;
+  if (cab.name === "Swift Dzire") return 11;
+  if (cab.name === "Ertiga") return 13;
+  if (cab.name === "Toyota Rumion") return 14;
+  if (cab.name === "Innova Crysta") return 18;
 
   return cab.rate;
 };
 
+
   const getCabFare = (cab: typeof cabs[number]) => {
-  if (!isFormComplete) return 0;
+  if (!isFormComplete || !hasSearched) return 0;
 
-  if (isNagpurAirportTransfer) {
+  // =====================================
+// AIRPORT PICK-UP & DROP PACKAGE FARE
+// =====================================
+if (tripType === "Airport Pick-Up & Drop") {
+  // 1–10 KM
+  if (distance <= 10) {
+    if (cab.name === "Swift Dzire") return 1100;
+    if (cab.name === "Ertiga") return 1400;
+    if (cab.name === "Toyota Rumion") return 1500;
+    if (cab.name === "Innova Crysta") return 1900;
+  }
+
+  // 11–20 KM
+  if (distance <= 20) {
+    if (cab.name === "Swift Dzire") return 1200;
+    if (cab.name === "Ertiga") return 1500;
+    if (cab.name === "Toyota Rumion") return 1600;
+    if (cab.name === "Innova Crysta") return 2000;
+  }
+
+  // 21–30 KM
+  if (distance <= 30) {
     if (cab.name === "Swift Dzire") return 1500;
-    if (cab.name === "Ertiga" || cab.name === "Toyota Rumion") return 2000;
-    return 2500;
+    if (cab.name === "Ertiga") return 1800;
+    if (cab.name === "Toyota Rumion") return 1900;
+    if (cab.name === "Innova Crysta") return 2400;
   }
 
-  if (isAirportPackageFare) {
-    return Math.round(distance * cab.rate * 4);
+  // 31–40 KM
+  if (distance <= 40) {
+    if (cab.name === "Swift Dzire") return 1900;
+    if (cab.name === "Ertiga") return 2200;
+    if (cab.name === "Toyota Rumion") return 2300;
+    if (cab.name === "Innova Crysta") return 2900;
   }
 
-  if (isAirportOutstationFare) {
-    return Math.round(distance * cab.rate * 2);
+  // 41–50 KM
+  if (distance <= 50) {
+    if (cab.name === "Swift Dzire") return 2300;
+    if (cab.name === "Ertiga") return 2600;
+    if (cab.name === "Toyota Rumion") return 2700;
+    if (cab.name === "Innova Crysta") return 3400;
   }
+
+  // 51–60 KM
+  if (distance <= 60) {
+    if (cab.name === "Swift Dzire") return 2700;
+    if (cab.name === "Ertiga") return 3000;
+    if (cab.name === "Toyota Rumion") return 3100;
+    if (cab.name === "Innova Crysta") return 3900;
+  }
+
+  // 61–70 KM
+  if (distance <= 70) {
+    if (cab.name === "Swift Dzire") return 3100;
+    if (cab.name === "Ertiga") return 3400;
+    if (cab.name === "Toyota Rumion") return 3500;
+    if (cab.name === "Innova Crysta") return 4400;
+  }
+
+  // 71–80 KM
+  if (distance <= 80) {
+    if (cab.name === "Swift Dzire") return 3500;
+    if (cab.name === "Ertiga") return 3800;
+    if (cab.name === "Toyota Rumion") return 3900;
+    if (cab.name === "Innova Crysta") return 4900;
+  }
+
+  // 80 KM ke baad normal fallback
+  return Math.round(distance * cab.rate * 2);
+}
+
 
   if (tripType === "Local Rental") {
     return cab.packageFare[
@@ -966,18 +1277,54 @@ const isFormComplete =
     ];
   }
 
-  if (tripType === "One Way Trip" || tripType === "One Way") {
-  return Math.round(distance * cab.rate * 2);
+if (
+  tripType === "One Way Trip" ||
+  tripType === "One Way"
+) {
+  // =====================================
+  // ONE WAY FIXED / ORIGINAL BILLING FARE
+  // =====================================
+
+  // 1–10 KM → 20 KM billing
+  if (distance <= 10) {
+    return Math.round(20 * cab.rate * 2);
   }
 
-if (tripType === "Outstation Trip") {
+  // 11–20 KM → 40 KM billing
+  if (distance <= 20) {
+    return Math.round(40 * cab.rate * 2);
+  }
 
-  // "distance" me already final Included KM hai:
-  // short route  -> 300 KM/day minimum
-  // long route   -> actual round-trip distance
-  //
-  // Isliye fare bhi isi displayed distance
-  // ke according calculate hoga.
+  // 21–30 KM → 60 KM billing
+  if (distance <= 30) {
+    return Math.round(60 * cab.rate * 2);
+  }
+
+  // 31–40 KM → 80 KM billing
+  if (distance <= 40) {
+    return Math.round(80 * cab.rate * 2);
+  }
+
+  // 41–50 KM → 100 KM billing
+  if (distance <= 50) {
+    return Math.round(100 * cab.rate * 2);
+  }
+
+  // 51–99 KM → actual distance billing
+  if (distance < 100) {
+    return Math.round(distance * cab.rate * 2);
+  }
+
+  // 100–149 KM → 150 KM billing
+  if (distance < 150) {
+    return Math.round(150 * cab.rate * 2);
+  }
+
+  // 150 KM+ → actual distance
+  return Math.round(distance * cab.rate * 2);
+}
+
+if (tripType === "Outstation Trip") {
 
   return Math.round(distance * cab.rate);
 }
@@ -986,15 +1333,105 @@ if (tripType === "Outstation Trip") {
 };
 
 const getFinalCabFare = (cab: typeof cabs[number]) => {
+  if (!hasSearched) return 0;
+
+  // Local Rental - existing package fare
   if (tripType === "Local Rental") {
     return getCabFare(cab);
   }
 
+  // Airport Pick-Up & Drop
+
+// 25 KM tak fixed fare
+if (isNagpurAirportTransfer) {
+  return getCabFare(cab);
+}
+
+// 25 KM ke baad One Way Trip jaisa same final fare logic
+if (isAirportBeyondFixedFare) {
+  // Short trip package fare
+  if (distance <= 100) {
+    return getCabFare(cab);
+  }
+
+  // Long distance → One Way discounted rate
   return Math.round(
-    distance *
-      getDiscountedRate(cab) *
-      (tripType === "One Way Trip" || tripType === "One Way" ? 2 : 1)
+    distance * getDiscountedRate(cab) * 2
   );
+}
+
+// =====================================
+// ONE WAY FIXED DISCOUNTED FARE
+// =====================================
+if (
+  tripType === "One Way Trip" ||
+  tripType === "One Way"
+) {
+
+  // 1–10 KM
+  if (distance <= 10) {
+    if (cab.name === "Swift Dzire") return 1100;
+    if (cab.name === "Ertiga") return 1400;
+    if (cab.name === "Toyota Rumion") return 1500;
+    if (cab.name === "Innova Crysta") return 1900;
+  }
+
+  // 11–20 KM
+  if (distance <= 20) {
+    if (cab.name === "Swift Dzire") return 1200;
+    if (cab.name === "Ertiga") return 1500;
+    if (cab.name === "Toyota Rumion") return 1600;
+    if (cab.name === "Innova Crysta") return 2000;
+  }
+
+  // 21–30 KM
+  if (distance <= 30) {
+    if (cab.name === "Swift Dzire") return 1500;
+    if (cab.name === "Ertiga") return 1800;
+    if (cab.name === "Toyota Rumion") return 1900;
+    if (cab.name === "Innova Crysta") return 2400;
+  }
+
+  // 31–40 KM
+  if (distance <= 40) {
+    if (cab.name === "Swift Dzire") return 1900;
+    if (cab.name === "Ertiga") return 2200;
+    if (cab.name === "Toyota Rumion") return 2300;
+    if (cab.name === "Innova Crysta") return 2900;
+  }
+
+  // 41–50 KM
+  if (distance <= 50) {
+    if (cab.name === "Swift Dzire") return 2300;
+    if (cab.name === "Ertiga") return 2600;
+    if (cab.name === "Toyota Rumion") return 2700;
+    if (cab.name === "Innova Crysta") return 3400;
+  }
+
+  // 51–99 KM → existing discounted rate
+  if (distance < 100) {
+    return Math.round(
+      distance * getDiscountedRate(cab) * 2
+    );
+  }
+
+  // 100–149 KM → 150 KM billing
+  if (distance < 150) {
+    return Math.round(
+      150 * getDiscountedRate(cab) * 2
+    );
+  }
+
+  // 150 KM+ → actual distance
+  return Math.round(
+    distance * getDiscountedRate(cab) * 2
+  );
+}
+
+// OUTSTATION aur baaki trip types
+return Math.round(
+  distance * getDiscountedRate(cab)
+);
 };
 
 const getCabDiscount = (cab: typeof cabs[number]) => {
@@ -1067,9 +1504,11 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
         readOnly
         onClick={() => setShowSearchModal(true)}
         onChange={(e) => {
-        setPickup(e.target.value);
-        searchLocation(e.target.value, "pickup");
-        }}
+  setPickup(e.target.value);
+  setHasSearched(false);
+  setShowAirportPopup(false);
+  searchLocation(e.target.value, "pickup");
+}}
         className="flex-1 ml-3 h-10 border-b border-gray-200 outline-none bg-transparent text-[15px] font-medium text-gray-800 placeholder-gray-400"
         />
       </div>
@@ -1079,15 +1518,20 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
         <div className="w-3 text-gray-400 text-xs">●</div>
 
         <input
-        type="text"
-        value={drop}
-        placeholder="Drop Location"
-        readOnly
-        onClick={() => setShowSearchModal(true)}
-        onChange={(e) => {
-        setDrop(e.target.value);
-        searchLocation(e.target.value, "drop");
-        }}
+  type="text"
+  placeholder="Drop Location"
+  value={drop}
+  onChange={(e) => {
+    setDrop(e.target.value);
+    setHasSearched(false);
+// User destination change kar raha hai.
+// Naya fare/result sirf Search button ke baad update hoga.
+
+    // Drop edit/type karte waqt airport popup band rahega
+    setShowAirportPopup(false);
+
+    searchLocation(e.target.value, "drop");
+  }}
         className="flex-1 ml-3 h-10 border-b border-gray-200 outline-none bg-transparent text-[15px] font-medium text-gray-800 placeholder-gray-400"
         />
       </div>
@@ -1161,7 +1605,11 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
           >
               <select
                 value={tripType}
-                onChange={(e) => setTripType(e.target.value)}
+                onChange={(e) => {
+                setTripType(e.target.value);
+                setHasSearched(false);
+                setShowAirportPopup(false);
+                }}
                 className="h-[58px] md:h-[64px] w-full rounded-2xl border-2 border-gray-200 bg-white px-5 text-gray-800 placeholder:text-gray-400 shadow-sm transition-all duration-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 focus:outline-none hover:border-orange-300"
               >
                 <option>Airport Pick-Up & Drop</option>
@@ -1195,9 +1643,11 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
     placeholder="Pickup Location"
     value={pickup}
     onChange={(e) => {
-      setPickup(e.target.value);
-      searchLocation(e.target.value, "pickup");
-    }}
+  setPickup(e.target.value);
+  setHasSearched(false);
+  setShowAirportPopup(false);
+  searchLocation(e.target.value, "pickup");
+}}
     className="h-[58px] md:h-[64px] w-full rounded-2xl border-2 border-gray-200 bg-white pl-12 pr-5 text-gray-800 placeholder:text-gray-400 shadow-sm transition-all duration-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 focus:outline-none hover:border-orange-300"
   />
 
@@ -1264,8 +1714,34 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
       setPickupSuggestions([]);
     }}
   >
-    {item.display_name}
+    <div className="flex items-start gap-3">
+  {(
+  item?.type?.toLowerCase().includes("airport") ||
+  item?.name?.toLowerCase().includes("airport") ||
+  item?.display_name?.toLowerCase().includes("airport")
+) ? (
+  <Plane
+    size={20}
+    className="mt-0.5 shrink-0 text-orange-500"
+  />
+) : (
+  <MapPin
+    size={20}
+    className="mt-0.5 shrink-0 text-orange-500"
+  />
+)}
+
+  <div className="min-w-0">
+    <p className="font-semibold text-gray-900">
+      {item.name || item.display_name}
+    </p>
+
+    <p className="mt-0.5 text-sm text-gray-500">
+      {item.display_name}
+    </p>
   </div>
+</div>
+</div>
 ))}
 
   </div>
@@ -1283,9 +1759,13 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
     placeholder="Drop Location"
     value={drop}
     onChange={(e) => {
-      setDrop(e.target.value);
-      searchLocation(e.target.value, "drop");
-    }}
+  setDrop(e.target.value);
+    setHasSearched(false);
+  // Drop edit/type karte waqt airport popup band rahega
+  setShowAirportPopup(false);
+
+  searchLocation(e.target.value, "drop");
+}}
     className="h-[58px] md:h-[64px] w-full rounded-2xl border-2 border-gray-200 bg-white pl-12 pr-5 text-gray-800 placeholder:text-gray-400 shadow-sm transition-all duration-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 focus:outline-none hover:border-orange-300"
   />
 
@@ -1315,8 +1795,34 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
   setDropSuggestions([]);
   }}
   >
-    {item.display_name}
+    <div className="flex items-start gap-3">
+  {(
+  item?.type?.toLowerCase().includes("airport") ||
+  item?.name?.toLowerCase().includes("airport") ||
+  item?.display_name?.toLowerCase().includes("airport")
+) ? (
+  <Plane
+    size={20}
+    className="mt-0.5 shrink-0 text-orange-500"
+  />
+) : (
+  <MapPin
+    size={20}
+    className="mt-0.5 shrink-0 text-orange-500"
+  />
+)}
+
+  <div className="min-w-0">
+    <p className="font-semibold text-gray-900">
+      {item.name || item.display_name}
+    </p>
+
+    <p className="mt-0.5 text-sm text-gray-500">
+      {item.display_name}
+    </p>
   </div>
+</div>
+</div>
   ))}
 
     </div>
@@ -1500,9 +2006,11 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
     value={pickup}
     placeholder="Enter Pickup Location"
     onChange={(e) => {
-      setPickup(e.target.value);
-      searchLocation(e.target.value, "pickup");
-    }}
+  setPickup(e.target.value);
+  setHasSearched(false);
+  setShowAirportPopup(false);
+  searchLocation(e.target.value, "pickup");
+}}
     className="w-full outline-none font-semibold mt-1"
   />
 
@@ -1532,8 +2040,34 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
   }}
     className="px-4 py-3 cursor-pointer hover:bg-orange-50"
   >
-    {item.display_name}
+    <div className="flex items-start gap-3">
+  {(
+  item?.type?.toLowerCase().includes("airport") ||
+  item?.name?.toLowerCase().includes("airport") ||
+  item?.display_name?.toLowerCase().includes("airport")
+) ? (
+  <Plane
+    size={20}
+    className="mt-0.5 shrink-0 text-orange-500"
+  />
+) : (
+  <MapPin
+    size={20}
+    className="mt-0.5 shrink-0 text-orange-500"
+  />
+)}
+
+  <div className="min-w-0">
+    <p className="font-semibold text-gray-900">
+      {item.name || item.display_name}
+    </p>
+
+    <p className="mt-0.5 text-sm text-gray-500">
+      {item.display_name}
+    </p>
   </div>
+</div>
+</div>
   ))}
 
     </div>
@@ -1566,9 +2100,13 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
     value={drop}
     placeholder="Enter Drop Location"
     onChange={(e) => {
-      setDrop(e.target.value);
-      searchLocation(e.target.value, "drop");
-    }}
+  setDrop(e.target.value);
+    setHasSearched(false);
+  // Drop edit/type karte waqt airport popup band rahega
+  setShowAirportPopup(false);
+
+  searchLocation(e.target.value, "drop");
+}}
     className="w-full outline-none font-semibold mt-1"
   />
 
@@ -1598,8 +2136,34 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
       setDropSuggestions([]);
     }}
   >
-    {item.display_name}
+    <div className="flex items-start gap-3">
+  {(
+  item?.type?.toLowerCase().includes("airport") ||
+  item?.name?.toLowerCase().includes("airport") ||
+  item?.display_name?.toLowerCase().includes("airport")
+) ? (
+  <Plane
+    size={20}
+    className="mt-0.5 shrink-0 text-orange-500"
+  />
+) : (
+  <MapPin
+    size={20}
+    className="mt-0.5 shrink-0 text-orange-500"
+  />
+)}
+
+  <div className="min-w-0">
+    <p className="font-semibold text-gray-900">
+      {item.name || item.display_name}
+    </p>
+
+    <p className="mt-0.5 text-sm text-gray-500">
+      {item.display_name}
+    </p>
   </div>
+</div>
+</div>
 ))}
 
     </div>
@@ -2145,10 +2709,10 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
 
   <iframe
     src={`https://www.google.com/maps?saddr=${encodeURIComponent(
-      pickup || "Nagpur"
-    )}&daddr=${encodeURIComponent(
-      drop || "Amravati"
-    )}&output=embed`}
+  searchedPickup || "Nagpur"
+  )}&daddr=${encodeURIComponent(
+  searchedDrop || "Amravati"
+  )}&output=embed`}
     width="100%"
     className="h-[160px] md:h-[260px]"
     style={{ border: 0 }}
@@ -2172,7 +2736,7 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
           </p>
 
           <p className="font-bold text-gray-800 leading-6 mt-1">
-            {pickup || "Nagpur, Maharashtra, India"}
+            {searchedPickup || "Nagpur, Maharashtra, India"}
           </p>
         </div>
 
@@ -2182,7 +2746,7 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
           </p>
 
           <p className="font-bold text-gray-800 leading-6 mt-1">
-            {drop || "Destination"}
+            {searchedDrop || "Destination"}
           </p>
         </div>
 
@@ -2464,6 +3028,65 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
   </div>
 )}
 
+{showOutstationLocalPopup && (
+  <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 p-4">
+    <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+
+      <div className="flex justify-center mb-4">
+        <div className="rounded-full bg-orange-100 p-4 text-orange-600">
+          <Info size={32} />
+        </div>
+      </div>
+
+      <p className="mt-3 text-center text-xl font-semibold leading-relaxed text-gray-900">
+        Your destination is within 120 KM. Please select Local Rental for your trip.
+      </p>
+
+      <button
+        onClick={() => {
+          setTripType("Local Rental");
+          setShowOutstationLocalPopup(false);
+          setHasSearched(false);
+          setShowSearchModal(true);
+        }}
+        className="mt-6 h-12 w-full rounded-full bg-[#B80D08] hover:bg-[#9F0B07] text-white font-semibold"
+      >
+        Okay
+      </button>
+
+    </div>
+  </div>
+)}
+
+{showAirportPopup && (
+  <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 p-4">
+    <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+
+      <div className="flex justify-center mb-4">
+        <div className="rounded-full bg-orange-100 p-4 text-orange-600">
+          <Info size={32} />
+        </div>
+      </div>
+
+      <p className="mt-3 text-center text-xl font-semibold leading-relaxed text-gray-900">
+      You are being redirected to the Outstation Cabs page as your travel destination is outside the city.
+      </p>
+
+<button
+  onClick={() => {
+  setTripType("One Way Trip");
+  setShowAirportPopup(false);
+  setHasSearched(true);
+}}
+  className="mt-6 h-12 w-full rounded-full bg-[#B80D08] hover:bg-[#9F0B07] text-white font-semibold"
+>
+  Okay
+</button>
+
+    </div>
+  </div>
+)}
+
     </main>
   );
 }
@@ -2475,3 +3098,11 @@ export default function BookCabPage() {
     </Suspense>
   );
 }
+
+
+
+
+
+
+
+

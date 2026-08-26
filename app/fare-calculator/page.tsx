@@ -847,23 +847,108 @@ export default function FareCalculator() {
       // FARE CALCULATION
       // =======================================
 
-      const rate =
-        serviceType === "oneway"
-          ? oneWayRates[vehicle]
-          : roundTripRates[
-              vehicle
-            ];
+      let base = 0;
+let driver = 500;
 
-      const base =
-        calculatedDistance *
-        Number(rate || 0);
+if (serviceType === "airport") {
+  // Airport 1–10 KM special fare
+  const airportSpecialFare: Record<
+    string,
+    number
+  > = {
+    dzire: 1100,
+    ertiga: 1400,
+    rumion: 1500,
+    crysta: 1900,
+  };
 
-      const driver = 500;
+  // 20, 30, 40, 50 KM packages
+  const airportPackages: Record<
+    string,
+    {
+      km: number;
+      fare: number;
+    }[]
+  > = {
+    dzire: [
+      { km: 20, fare: 1200 },
+      { km: 30, fare: 1500 },
+      { km: 40, fare: 1900 },
+      { km: 50, fare: 2300 },
+    ],
 
-      const total =
-        base +
-        calculatedToll +
-        driver;
+    ertiga: [
+      { km: 20, fare: 1500 },
+      { km: 30, fare: 1800 },
+      { km: 40, fare: 2200 },
+      { km: 50, fare: 2600 },
+    ],
+
+    rumion: [
+      { km: 20, fare: 1600 },
+      { km: 30, fare: 1900 },
+      { km: 40, fare: 2300 },
+      { km: 50, fare: 2700 },
+    ],
+
+    crysta: [
+      { km: 20, fare: 2000 },
+      { km: 30, fare: 2400 },
+      { km: 40, fare: 2900 },
+      { km: 50, fare: 3400 },
+    ],
+  };
+
+  // 1–10 KM → Airport special fare
+  if (calculatedDistance <= 10) {
+    base =
+      airportSpecialFare[vehicle] || 0;
+
+    driver = 0;
+  }
+
+  // Above 10 KM to 50 KM → Package fare
+  else if (calculatedDistance <= 50) {
+    const packages =
+      airportPackages[vehicle] || [];
+
+    const selectedPackage =
+      packages.find(
+        (pkg) =>
+          calculatedDistance <= pkg.km
+      );
+
+    base =
+      selectedPackage?.fare || 0;
+
+    driver = 0;
+  }
+
+  // Above 50 KM → Per-KM calculation
+  else {
+    base =
+      calculatedDistance *
+      Number(
+        oneWayRates[vehicle] || 0
+      );
+  }
+} else {
+  const rate =
+    serviceType === "oneway"
+      ? oneWayRates[vehicle]
+      : roundTripRates[
+          vehicle
+        ];
+
+  base =
+    calculatedDistance *
+    Number(rate || 0);
+}
+
+const total =
+  base +
+  calculatedToll +
+  driver;
 
       setBaseFare(base);
 
@@ -1170,6 +1255,11 @@ Please share booking confirmation.`;
                 label: "One Way",
                 icon: Car,
               },
+              {
+              id: "airport",
+              label: "Airport",
+              icon: Navigation,
+              },
             ].map((tab) => {
               const IconComponent =
                 tab.icon;
@@ -1212,9 +1302,11 @@ Please share booking confirmation.`;
           {/* OUTSTATION */}
 
           {(serviceType ===
-            "round" ||
-            serviceType ===
-              "oneway") && (
+          "round" ||
+          serviceType ===
+          "oneway" ||
+          serviceType ===
+          "airport") && (
             <div className="space-y-5 rounded-3xl border border-slate-200 bg-slate-50/60 p-5 sm:p-6">
 
               <h2 className="flex items-center gap-2 text-lg font-bold text-blue-600">

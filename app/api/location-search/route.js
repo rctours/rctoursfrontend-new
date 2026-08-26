@@ -143,27 +143,57 @@ async function getPlaceDetails(placeId, apiKey) {
       );
     }
 
-    return {
-      place_id:
-        data?.id || placeId,
+    const placeName =
+  data?.displayName?.text ||
+  "";
 
-      display_name:
-        data?.formattedAddress ||
-        data?.displayName?.text ||
-        "",
+const city =
+  address.locality ||
+  address.administrative_area_level_2 ||
+  "";
 
-      lat: latitude,
+const state =
+  address.administrative_area_level_1 ||
+  "";
 
-      lon: longitude,
+const country =
+  address.country ||
+  "";
 
-      type:
-        data?.types?.[0] ||
-        "location",
+const formattedAddress =
+  [city, state, country]
+    .filter(Boolean)
+    .join(", ");
 
-      category: "location",
+return {
+  place_id:
+    data?.id || placeId,
 
-      address,
-    };
+  name:
+    placeName,
+
+  display_name:
+    formattedAddress ||
+    data?.formattedAddress ||
+    placeName,
+
+  full_address:
+    data?.formattedAddress ||
+    formattedAddress ||
+    placeName,
+
+  lat: latitude,
+
+  lon: longitude,
+
+  type:
+    data?.types?.[0] ||
+    "location",
+
+  category: "location",
+
+  address,
+};
   } catch (error) {
     console.error(
       "GOOGLE PLACE DETAILS EXCEPTION:",

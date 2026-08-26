@@ -21,6 +21,11 @@ import {
   BadgeIndianRupee,
   UserRoundCheck,
   Calculator,
+  MapPin,
+  Plane,
+  CalendarDays,
+  RotateCcw,
+  CarFront,
 } from "lucide-react";
 
 export default function Home() {
@@ -75,11 +80,15 @@ const [dropCoords, setDropCoords] = useState<{
 const [gettingLocation, setGettingLocation] = useState(false);
 
 type LocationSuggestion = {
-  display_name: string;
-  lat: string | number;
-  lon: string | number;
-  place_id?: string | number;
-};
+    name?: string;
+    display_name: string;
+    full_address?: string;
+    type?: string;
+    category?: string;
+    lat: string | number;
+    lon: string | number;
+    place_id?: string | number;
+  };
 
 const [pickupSuggestions, setPickupSuggestions] =
   useState<LocationSuggestion[]>([]);
@@ -106,6 +115,7 @@ const [cabType, setCabType] = useState("Sedan");
 const [distance, setDistance] = useState(0);
 const [fare, setFare] = useState(0);
 const [loading, setLoading] = useState(false);
+
 
 const getCurrentLocation = () => {
   if (!navigator.geolocation) {
@@ -699,10 +709,10 @@ useEffect(() => {
 
         {/* Main Heading */}
         <h1 className="font-extrabold tracking-tight text-2xl sm:text-5xl md:text-[55px] text-white leading-tight">
-          Book Your Cab{" "}
-          <span className="bg-gradient-to-r from-cyan-400 to-blue-300 bg-clip-text text-transparent">
-            from Nagpur
-          </span>
+          Taxi Service in{" "}
+        <span className="bg-gradient-to-r from-cyan-400 to-blue-300 bg-clip-text text-transparent">
+        Nagpur
+        </span>
         </h1>
 
         {/* SEO Supporting Text */}
@@ -853,7 +863,7 @@ useEffect(() => {
   className="relative z-[100] bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl shadow-black/20 p-3.5 sm:p-6 border border-white/20"
 >
   <div
-    className={`grid gap-3 sm:gap-4 items-end ${
+    className={`grid gap-3 sm:gap-4 items-start ${
       tripType === "Outstation Trip"
         ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-7"
         : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-6"
@@ -862,8 +872,9 @@ useEffect(() => {
 
     {/* Pickup */}
     <div className="relative">
-      <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide">
-        📍 Pickup
+      <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 flex items-center gap-1 tracking-wide">
+      <MapPin size={14} className="text-pink-500" />
+      Pickup
       </label>
 
       <div className="relative">
@@ -894,7 +905,7 @@ useEffect(() => {
       </div>
 
       {pickupSuggestions.length > 0 && (
-        <div className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-gray-100 rounded-xl shadow-2xl max-h-52 overflow-y-auto z-[9999] divide-y divide-gray-50">
+        <div className="absolute left-0 right-0 top-full mt-1.5 overflow-y-auto z-[9999] max-h-48 rounded-2xl border border-gray-200 bg-white shadow-xl divide-y divide-gray-100">
           {pickupSuggestions.map((item, index) => (
             <div
               key={index}
@@ -906,9 +917,37 @@ useEffect(() => {
                 });
                 setPickupSuggestions([]);
               }}
-              className="px-3.5 py-2.5 cursor-pointer hover:bg-cyan-50/70 text-xs sm:text-sm text-gray-800 transition-colors"
+              className="px-3 py-2 cursor-pointer hover:bg-cyan-50/70 text-xs sm:text-sm text-gray-800 transition-colors"
             >
-              📍 {item.display_name}
+              <div className="flex items-start gap-2.5">
+  {(
+    item?.type?.toLowerCase().includes("airport") ||
+    item?.name?.toLowerCase().includes("airport") ||
+    item?.display_name?.toLowerCase().includes("airport")
+  ) ? (
+    <Plane
+      size={18}
+      className="mt-0.5 shrink-0 text-cyan-600"
+    />
+  ) : (
+    <MapPin
+      size={18}
+      className="mt-0.5 shrink-0 text-cyan-600"
+    />
+  )}
+
+  <div className="min-w-0">
+    <p className="font-semibold text-gray-900">
+      {item.name || item.display_name}
+    </p>
+
+    {item.name && (
+      <p className="mt-0.5 text-[11px] sm:text-xs text-gray-500 truncate">
+        {item.display_name}
+      </p>
+    )}
+  </div>
+</div>
             </div>
           ))}
         </div>
@@ -917,9 +956,10 @@ useEffect(() => {
 
     {/* Drop */}
     <div className="relative">
-      <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide">
-        📍 Drop
-      </label>
+      <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 flex items-center gap-1 tracking-wide">
+  <MapPin size={14} className="text-pink-500" />
+  Drop
+</label>
 
       <input
         type="text"
@@ -933,7 +973,7 @@ useEffect(() => {
       />
 
       {dropSuggestions.length > 0 && (
-        <div className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-gray-100 rounded-xl shadow-2xl max-h-52 overflow-y-auto z-[9999] divide-y divide-gray-50">
+        <div className="absolute left-0 right-0 top-full mt-1.5 overflow-y-auto z-[9999] max-h-48 rounded-2xl border border-gray-200 bg-white shadow-xl divide-y divide-gray-100">
           {dropSuggestions.map((item, index) => (
             <div
               key={index}
@@ -945,9 +985,37 @@ useEffect(() => {
                 });
                 setDropSuggestions([]);
               }}
-              className="px-3.5 py-2.5 cursor-pointer hover:bg-cyan-50/70 text-xs sm:text-sm text-gray-800 transition-colors"
+              className="px-3 py-2 cursor-pointer hover:bg-cyan-50/70 text-xs sm:text-sm text-gray-800 transition-colors"
             >
-              📍 {item.display_name}
+              <div className="flex items-start gap-2.5">
+  {(
+    item?.type?.toLowerCase().includes("airport") ||
+    item?.name?.toLowerCase().includes("airport") ||
+    item?.display_name?.toLowerCase().includes("airport")
+  ) ? (
+    <Plane
+      size={18}
+      className="mt-0.5 shrink-0 text-cyan-600"
+    />
+  ) : (
+    <MapPin
+      size={18}
+      className="mt-0.5 shrink-0 text-cyan-600"
+    />
+  )}
+
+  <div className="min-w-0">
+    <p className="font-semibold text-gray-900">
+      {item.name || item.display_name}
+    </p>
+
+    {item.name && (
+      <p className="mt-0.5 text-[11px] sm:text-xs text-gray-500 truncate">
+        {item.display_name}
+      </p>
+    )}
+  </div>
+</div>
             </div>
           ))}
         </div>
@@ -957,11 +1025,12 @@ useEffect(() => {
 {/* Journey Date */}
 <div>
   <label
-    htmlFor="journey-date"
-    className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide"
-  >
-    📅 Date
-  </label>
+  htmlFor="journey-date"
+  className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 flex items-center gap-1 tracking-wide"
+>
+  <CalendarDays size={14} className="text-purple-500" />
+  Date
+</label>
 
   <input
     id="journey-date"
@@ -976,11 +1045,12 @@ useEffect(() => {
 {tripType === "Outstation Trip" && (
   <div>
     <label
-      htmlFor="return-date"
-      className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide"
-    >
-      🔁 Return
-    </label>
+  htmlFor="return-date"
+  className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 flex items-center gap-1 tracking-wide"
+>
+  <RotateCcw size={14} />
+  Return
+</label>
 
     <input
       id="return-date"
@@ -994,9 +1064,10 @@ useEffect(() => {
 
     {/* Pickup Time */}
     <div>
-      <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide">
-        🕒 Time
-      </label>
+      <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 flex items-center gap-1 tracking-wide">
+  <Clock3 size={14} className="text-orange-500" />
+  Time
+</label>
 
       <input
         type="time"
@@ -1008,9 +1079,10 @@ useEffect(() => {
 
     {/* Vehicle */}
     <div>
-      <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 block tracking-wide">
-        🚘 Vehicle
-      </label>
+      <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 flex items-center gap-1 tracking-wide">
+  <CarFront size={14} className="text-red-500" />
+  Vehicle
+</label>
 
       <select
         value={cabType}
@@ -2468,26 +2540,22 @@ useEffect(() => {
 
     {[
       {
-        q: "How can I book a taxi in Nagpur?",
-        a: "You can book a taxi by calling us, sending a WhatsApp message, or filling out the booking form on our website.",
+      q: "Which is the best taxi service in Nagpur for airport and outstation travel?",
+      a: "RC Tours & Travels provides reliable taxi services in Nagpur for airport transfers, local travel and outstation cab bookings at affordable prices.",
       },
       {
-        q: "Do you provide airport taxi service in Nagpur?",
-        a: "Yes, we provide 24/7 airport pickup and drop services to and from Dr. Babasaheb Ambedkar International Airport.",
+      q: "Do you provide 24x7 airport taxi service in Nagpur?",
+      a: "Yes, we provide 24x7 airport taxi service in Nagpur with convenient pickup and drop for airport travel.",
       },
       {
-        q: "Are your drivers verified and experienced?",
-        a: "Yes, all our drivers are verified, experienced and trained.",
+      q: "Can I book a one-way cab from Nagpur?",
+      a: "Yes, you can book a one-way cab from Nagpur to major cities and destinations based on your travel requirements.",
       },
       {
-        q: "Do you offer outstation taxi services?",
-        a: "Yes, we provide outstation cabs to Pune, Mumbai, Shirdi, Tadoba, Pench, Chikhaldara and more.",
+      q: "Do you offer outstation taxi service from Nagpur?",
+      a: "Yes, we offer outstation taxi service from Nagpur to destinations including Pune, Mumbai, Hyderabad, Shirdi, Nashik, Tadoba, Pench and more.",
       },
-      {
-        q: "Is your taxi service available 24/7?",
-        a: "Yes, our booking support is available round the clock.",
-      },
-    ].map((faq, index) => (
+      ].map((faq, index) => (
       <div
         key={index}
         className="bg-white border border-gray-200 mb-3 rounded-lg overflow-hidden"
@@ -3099,3 +3167,9 @@ useEffect(() => {
   </>
 );
 }
+
+
+
+
+
+

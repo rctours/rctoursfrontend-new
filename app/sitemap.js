@@ -95,6 +95,13 @@ export default async function sitemap() {
     },
 
     {
+      url: `${baseUrl}/car-rental-in-nagpur`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+
+    {
       url: `${baseUrl}/nagpur-to-tadoba-cab`,
       lastModified: now,
       changeFrequency: "weekly",
@@ -103,6 +110,13 @@ export default async function sitemap() {
 
     {
       url: `${baseUrl}/nagpur-to-pench-cab`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.95,
+    },
+
+    {
+      url: `${baseUrl}/nagpur-to-chhindwara-cab`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.95,

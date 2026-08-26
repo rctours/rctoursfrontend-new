@@ -240,7 +240,7 @@ const faqSchema = {
       name: "Which is the best taxi service in Nagpur for airport and outstation travel?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "RC Tours & Travels is one of the best taxi services in Nagpur offering airport, local and outstation cab services at affordable prices.",
+        text: "RC Tours & Travels provides reliable taxi services in Nagpur for airport transfers, local travel and outstation cab bookings at affordable prices.",
       },
     },
     {
@@ -248,15 +248,15 @@ const faqSchema = {
       name: "Do you provide 24x7 airport taxi service in Nagpur?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes, we provide 24x7 airport taxi service in Nagpur with doorstep pickup and drop.",
+        text: "Yes, we provide 24x7 airport taxi service in Nagpur with convenient pickup and drop for airport travel.",
       },
     },
     {
       "@type": "Question",
-      name: "Can I book one-way cab from Nagpur?",
+      name: "Can I book a one-way cab from Nagpur?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes, we provide one-way cab service from Nagpur to all major cities in India.",
+        text: "Yes, you can book a one-way cab from Nagpur to major cities and destinations based on your travel requirements.",
       },
     },
     {
@@ -264,7 +264,7 @@ const faqSchema = {
       name: "Do you offer outstation taxi service from Nagpur?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes, we offer outstation taxi service from Nagpur to Pune, Mumbai, Hyderabad, Shirdi, Nashik and more.",
+        text: "Yes, we offer outstation taxi service from Nagpur to destinations including Pune, Mumbai, Hyderabad, Shirdi, Nashik, Tadoba, Pench and more.",
       },
     },
   ],
