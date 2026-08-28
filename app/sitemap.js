@@ -6,7 +6,7 @@ const siteLastModified = new Date("2026-08-28");
 export default function sitemap() {
   return [
     // ==========================================
-    // MAIN WEBSITE PAGES
+    // 1. HOME PAGE
     // ==========================================
     {
       url: baseUrl,
@@ -14,36 +14,60 @@ export default function sitemap() {
       changeFrequency: "weekly",
       priority: 1,
     },
+
+    // ==========================================
+    // 2. ABOUT
+    // ==========================================
     {
       url: `${baseUrl}/about`,
       lastModified: siteLastModified,
       changeFrequency: "monthly",
       priority: 0.8,
     },
+
+    // ==========================================
+    // 3. SERVICES
+    // ==========================================
     {
       url: `${baseUrl}/services`,
       lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.9,
     },
-    {
-      url: `${baseUrl}/fleet`,
-      lastModified: siteLastModified,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
+
+    // ==========================================
+    // 4. CONTACT
+    // ==========================================
     {
       url: `${baseUrl}/contact`,
       lastModified: siteLastModified,
       changeFrequency: "monthly",
       priority: 0.8,
     },
+
+    // ==========================================
+    // 5. FLEET
+    // ==========================================
+    {
+      url: `${baseUrl}/fleet`,
+      lastModified: siteLastModified,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+
+    // ==========================================
+    // 6. TOUR PACKAGES
+    // ==========================================
     {
       url: `${baseUrl}/tour-packages`,
       lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.9,
     },
+
+    // ==========================================
+    // 7. BLOG
+    // ==========================================
     {
       url: `${baseUrl}/blog`,
       lastModified: siteLastModified,
@@ -52,63 +76,13 @@ export default function sitemap() {
     },
 
     // ==========================================
-    // PRIMARY SEO LANDING PAGE
+    // 8. PRIMARY SEO LANDING PAGE
     // ==========================================
     {
       url: `${baseUrl}/taxi-service-in-nagpur`,
       lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 1,
-    },
-
-    // ==========================================
-    // TAXI & CAB SERVICE PAGES
-    // ==========================================
-    {
-      url: `${baseUrl}/airport-taxi-nagpur`,
-      lastModified: siteLastModified,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/nagpur-airport-taxi`,
-      lastModified: siteLastModified,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/nagpur-local-taxi`,
-      lastModified: siteLastModified,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/car-rental-in-nagpur`,
-      lastModified: siteLastModified,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-
-    // ==========================================
-    // OUTSTATION ROUTE PAGES
-    // ==========================================
-    {
-      url: `${baseUrl}/nagpur-to-tadoba-cab`,
-      lastModified: siteLastModified,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/nagpur-to-pench-cab`,
-      lastModified: siteLastModified,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/nagpur-to-chhindwara-cab`,
-      lastModified: siteLastModified,
-      changeFrequency: "weekly",
-      priority: 0.9,
     },
   ];
 }
