@@ -1,22 +1,22 @@
 export const metadata = {
-  title: "Travel Blog | RC Tours & Travels Nagpur",
+  title:
+    "Nagpur Travel & Taxi Blog | Cab Booking, Routes & Travel Guides | RC Tours & Travels",
 
   description:
-    "Taxi service, airport transfer, outstation cab fare, tour packages and travel guides from RC Tours & Travels Nagpur.",
+    "Read useful travel guides, taxi booking tips, Nagpur cab routes, airport transfer information, outstation travel guides and tour ideas from RC Tours & Travels.",
 
   keywords: [
-    "Travel Blog Nagpur",
-    "Taxi Service Nagpur",
-    "Cab Service Nagpur",
-    "Airport Taxi Nagpur",
-    "Airport Transfer",
-    "Outstation Taxi",
-    "One Way Cab",
-    "Round Trip Cab",
+    "Nagpur Travel Blog",
+    "Taxi Blog Nagpur",
     "Cab Booking Guide",
-    "Travel Tips",
-    "Tour Packages Nagpur",
-    "RC Tours & Travels",
+    "Nagpur Taxi Guide",
+    "Airport Taxi Guide Nagpur",
+    "Outstation Cab Guide",
+    "Nagpur Travel Guide",
+    "Taxi Routes from Nagpur",
+    "Travel Tips Nagpur",
+    "Tour Guide Nagpur",
+    "RC Tours & Travels Blog",
   ],
 
   alternates: {
@@ -24,19 +24,27 @@ export const metadata = {
   },
 
   openGraph: {
-    title: "Travel Blog | RC Tours & Travels Nagpur",
+    title:
+      "Nagpur Travel & Taxi Blog | RC Tours & Travels",
+
     description:
-      "Taxi service, airport transfer, outstation cab fare, tour packages and travel guides from RC Tours & Travels Nagpur.",
+      "Travel guides, taxi booking tips, Nagpur cab routes and useful information for airport and outstation travel.",
+
     url: "https://www.rctoursandtravels.in/blog",
+
     siteName: "RC Tours & Travels",
+
     type: "website",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "Travel Blog | RC Tours & Travels Nagpur",
+
+    title:
+      "Nagpur Travel & Taxi Blog | RC Tours & Travels",
+
     description:
-      "Taxi service, airport transfer, outstation cab fare, tour packages and travel guides from RC Tours & Travels Nagpur.",
+      "Read taxi guides, travel tips and route information from Nagpur.",
   },
 
   robots: {

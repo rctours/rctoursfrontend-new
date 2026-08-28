@@ -4,6 +4,7 @@ export const metadata: Metadata = {
   title: "Book Cab Online | RC Tours & Travels Nagpur",
   description:
     "Book your taxi online with RC Tours & Travels. Reserve airport taxi, local cab, outstation taxi, one-way cab and round-trip taxi in Nagpur at affordable prices.",
+
   keywords: [
     "Book Cab Nagpur",
     "Online Taxi Booking Nagpur",
@@ -14,6 +15,11 @@ export const metadata: Metadata = {
     "Round Trip Taxi",
     "RC Tours & Travels",
   ],
+
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function BookCabLayout({
