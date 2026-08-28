@@ -2,9 +2,7 @@ import { NextResponse } from "next/server";
 
 // ===============================================
 // RC TOURS & TRAVELS
-// GOOGLE LOCATION SEARCH
-// AUTOCOMPLETE + PLACE DETAILS
-// + REVERSE GEOCODING
+// GOOGLE PLACES LOCATION SEARCH
 // ===============================================
 
 const cache = new Map();
@@ -12,24 +10,8 @@ const cache = new Map();
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
 const MAX_CACHE_SIZE = 5000;
 
-// Same request duplicate hone se bachane ke liye
-const activeRequests = new Map();
-
 // ===============================================
-// CACHE RESPONSE
-// ===============================================
-
-function cachedResponse(data) {
-  return NextResponse.json(data, {
-    headers: {
-      "Cache-Control":
-        "public, max-age=3600, stale-while-revalidate=86400",
-    },
-  });
-}
-
-// ===============================================
-// CLEAN CACHE
+// CACHE HELPERS
 // ===============================================
 
 function cleanCache() {
@@ -40,6 +22,15 @@ function cleanCache() {
   if (firstKey) {
     cache.delete(firstKey);
   }
+}
+
+function cachedResponse(data) {
+  return NextResponse.json(data, {
+    headers: {
+      "Cache-Control":
+        "public, max-age=3600, stale-while-revalidate=86400",
+    },
+  });
 }
 
 // ===============================================
@@ -61,8 +52,8 @@ function validCoordinates(lat, lon) {
 }
 
 // ===============================================
-// GET GOOGLE PLACE DETAILS
-// Returns exact latitude + longitude
+// GOOGLE PLACE DETAILS
+// Exact Place ID -> Exact coordinates
 // ===============================================
 
 async function getPlaceDetails(placeId, apiKey) {
@@ -79,8 +70,9 @@ async function getPlaceDetails(placeId, apiKey) {
         method: "GET",
         headers: {
           "X-Goog-Api-Key": apiKey,
+
           "X-Goog-FieldMask":
-            "id,displayName,formattedAddress,location,types,addressComponents",
+            "id,displayName,formattedAddress,shortFormattedAddress,location,types",
         },
         cache: "no-store",
       }
@@ -115,7 +107,7 @@ async function getPlaceDetails(placeId, apiKey) {
       )
     ) {
       console.error(
-        "GOOGLE PLACE INVALID COORDINATES:",
+        "INVALID PLACE COORDINATES:",
         placeId,
         data?.location
       );
@@ -123,77 +115,38 @@ async function getPlaceDetails(placeId, apiKey) {
       return null;
     }
 
-    const address = {};
+    const name =
+      data?.displayName?.text ||
+      "";
 
-    if (
-      Array.isArray(
-        data?.addressComponents
-      )
-    ) {
-      data.addressComponents.forEach(
-        (component) => {
-          const type =
-            component?.types?.[0];
+    const fullAddress =
+      data?.formattedAddress ||
+      data?.shortFormattedAddress ||
+      name;
 
-          if (type) {
-            address[type] =
-              component?.longText || "";
-          }
-        }
-      );
-    }
+    return {
+      place_id:
+        data?.id || placeId,
 
-    const placeName =
-  data?.displayName?.text ||
-  "";
+      name,
 
-const city =
-  address.locality ||
-  address.administrative_area_level_2 ||
-  "";
+      display_name:
+        fullAddress,
 
-const state =
-  address.administrative_area_level_1 ||
-  "";
+      full_address:
+        fullAddress,
 
-const country =
-  address.country ||
-  "";
+      lat: latitude,
 
-const formattedAddress =
-  [city, state, country]
-    .filter(Boolean)
-    .join(", ");
+      lon: longitude,
 
-return {
-  place_id:
-    data?.id || placeId,
+      type:
+        data?.types?.[0] ||
+        "location",
 
-  name:
-    placeName,
-
-  display_name:
-    formattedAddress ||
-    data?.formattedAddress ||
-    placeName,
-
-  full_address:
-    data?.formattedAddress ||
-    formattedAddress ||
-    placeName,
-
-  lat: latitude,
-
-  lon: longitude,
-
-  type:
-    data?.types?.[0] ||
-    "location",
-
-  category: "location",
-
-  address,
-};
+      category:
+        "location",
+    };
   } catch (error) {
     console.error(
       "GOOGLE PLACE DETAILS EXCEPTION:",
@@ -205,89 +158,15 @@ return {
 }
 
 // ===============================================
-// GOOGLE REVERSE GEOCODING
-// Current latitude + longitude se address
-// ===============================================
-
-async function getReverseGeocodedLocation(
-  lat,
-  lon,
-  apiKey
-) {
-  if (
-    !validCoordinates(lat, lon) ||
-    !apiKey
-  ) {
-    return null;
-  }
-
-  try {
-    const url =
-      "https://maps.googleapis.com/maps/api/geocode/json?" +
-      new URLSearchParams({
-        latlng: `${lat},${lon}`,
-        key: apiKey,
-      }).toString();
-
-    const response = await fetch(
-      url,
-      {
-        cache: "no-store",
-      }
-    );
-
-    if (!response.ok) {
-      console.error(
-        "GOOGLE REVERSE GEOCODING ERROR:",
-        response.status
-      );
-
-      return null;
-    }
-
-    const data =
-      await response.json();
-
-    const result =
-      data?.results?.[0];
-
-    if (
-      !result?.formatted_address
-    ) {
-      console.error(
-        "GOOGLE REVERSE GEOCODING NO RESULT:",
-        data?.status
-      );
-
-      return null;
-    }
-
-    return {
-      display_name:
-        result.formatted_address,
-
-      lat: Number(lat),
-
-      lon: Number(lon),
-
-      type:
-        result?.types?.[0] ||
-        "location",
-
-      category: "location",
-    };
-  } catch (error) {
-    console.error(
-      "GOOGLE REVERSE GEOCODING EXCEPTION:",
-      error
-    );
-
-    return null;
-  }
-}
-
-// ===============================================
 // GOOGLE PLACES AUTOCOMPLETE
+//
+// Example:
+//
+// name:
+// Butibori
+//
+// secondary_text:
+// Nagpur, Maharashtra, India
 // ===============================================
 
 async function searchGooglePlaces(
@@ -295,10 +174,6 @@ async function searchGooglePlaces(
   apiKey
 ) {
   if (!apiKey) {
-    console.error(
-      "GOOGLE_MAPS_SERVER_API_KEY is missing"
-    );
-
     return [];
   }
 
@@ -314,6 +189,13 @@ async function searchGooglePlaces(
 
           "X-Goog-Api-Key":
             apiKey,
+
+          "X-Goog-FieldMask":
+            "suggestions.placePrediction.placeId," +
+            "suggestions.placePrediction.text.text," +
+            "suggestions.placePrediction.structuredFormat.mainText.text," +
+            "suggestions.placePrediction.structuredFormat.secondaryText.text," +
+            "suggestions.placePrediction.types",
         },
 
         body: JSON.stringify({
@@ -342,7 +224,7 @@ async function searchGooglePlaces(
         await response.text();
 
       console.error(
-        "GOOGLE PLACES AUTOCOMPLETE ERROR:",
+        "GOOGLE AUTOCOMPLETE ERROR:",
         response.status,
         errorText
       );
@@ -360,51 +242,201 @@ async function searchGooglePlaces(
         ? data.suggestions
         : [];
 
-    const placePredictions =
-      suggestions
-        .filter(
-          (item) =>
-            item?.placePrediction?.placeId
-        )
-        .slice(0, 5);
+    const seenPlaceIds =
+      new Set();
+
+    const seenLabels =
+      new Set();
 
     const results =
-      await Promise.all(
-        placePredictions.map(
-          async (item) => {
-            const prediction =
-              item.placePrediction;
+      suggestions
+        .map((item) => {
+          const prediction =
+            item?.placePrediction;
 
-            const placeId =
-              prediction?.placeId;
+          const placeId =
+            prediction?.placeId;
 
-            if (!placeId) {
-              return null;
-            }
-
-            const details =
-              await getPlaceDetails(
-                placeId,
-                apiKey
-              );
-
-            if (!details) {
-              return null;
-            }
-
-            return details;
+          if (!placeId) {
+            return null;
           }
-        )
-      );
 
-    return results.filter(Boolean);
+          // Same place ID duplicate nahi hoga
+          if (
+            seenPlaceIds.has(
+              placeId
+            )
+          ) {
+            return null;
+          }
+
+          const mainText =
+            prediction
+              ?.structuredFormat
+              ?.mainText
+              ?.text ||
+            prediction
+              ?.text
+              ?.text ||
+            "";
+
+          const secondaryText =
+            prediction
+              ?.structuredFormat
+              ?.secondaryText
+              ?.text ||
+            "";
+
+          // Empty result ignore
+          if (!mainText) {
+            return null;
+          }
+
+          // Same visible suggestion duplicate nahi hoga
+          const duplicateKey =
+            `${mainText.trim().toLowerCase()}|` +
+            `${secondaryText.trim().toLowerCase()}`;
+
+          if (
+            seenLabels.has(
+              duplicateKey
+            )
+          ) {
+            return null;
+          }
+
+          seenPlaceIds.add(
+            placeId
+          );
+
+          seenLabels.add(
+            duplicateKey
+          );
+
+          const displayName =
+            [
+              mainText,
+              secondaryText,
+            ]
+              .filter(Boolean)
+              .join(", ");
+
+          return {
+            place_id:
+              placeId,
+
+            // TOP LINE
+            name:
+              mainText,
+
+            // SECOND LINE
+            secondary_text:
+              secondaryText,
+
+            // Selected hone ke baad
+            // input me ye show hoga
+            display_name:
+              displayName,
+
+            full_address:
+              prediction
+                ?.text
+                ?.text ||
+              displayName,
+
+            type:
+              prediction
+                ?.types
+                ?.[0] ||
+              "location",
+
+            category:
+              "location",
+          };
+        })
+        .filter(Boolean)
+        .slice(0, 6);
+
+    return results;
   } catch (error) {
     console.error(
-      "GOOGLE PLACES SEARCH ERROR:",
+      "GOOGLE AUTOCOMPLETE EXCEPTION:",
       error
     );
 
     return [];
+  }
+}
+
+// ===============================================
+// GOOGLE REVERSE GEOCODING
+// Current location
+// ===============================================
+
+async function reverseGeocode(
+  lat,
+  lon,
+  apiKey
+) {
+  try {
+    const url =
+      "https://maps.googleapis.com/maps/api/geocode/json?" +
+      new URLSearchParams({
+        latlng:
+          `${lat},${lon}`,
+
+        key:
+          apiKey,
+      }).toString();
+
+    const response =
+      await fetch(url, {
+        cache: "no-store",
+      });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data =
+      await response.json();
+
+    const result =
+      data?.results?.[0];
+
+    if (
+      !result?.formatted_address
+    ) {
+      return null;
+    }
+
+    return {
+      display_name:
+        result.formatted_address,
+
+      full_address:
+        result.formatted_address,
+
+      lat:
+        Number(lat),
+
+      lon:
+        Number(lon),
+
+      type:
+        result?.types?.[0] ||
+        "location",
+
+      category:
+        "location",
+    };
+  } catch (error) {
+    console.error(
+      "REVERSE GEOCODING ERROR:",
+      error
+    );
+
+    return null;
   }
 }
 
@@ -426,6 +458,7 @@ export async function GET(request) {
       return NextResponse.json(
         {
           success: false,
+
           message:
             "Google Maps API key missing",
         },
@@ -436,137 +469,27 @@ export async function GET(request) {
     }
 
     const { searchParams } =
-      new URL(request.url);
-
-    // ===========================================
-    // GOOGLE REVERSE GEOCODING
-    // Example:
-    // /api/location-search?lat=21.1458&lon=79.0882
-    // ===========================================
-
-    const lat =
-      searchParams.get("lat");
-
-    const lon =
-      searchParams.get("lon");
-
-    if (lat && lon) {
-      if (
-        !validCoordinates(
-          lat,
-          lon
-        )
-      ) {
-        return NextResponse.json(
-          {
-            success: false,
-            message:
-              "Invalid coordinates",
-          },
-          {
-            status: 400,
-          }
-        );
-      }
-
-      const cacheKey =
-        `reverse:${Number(lat).toFixed(6)},` +
-        `${Number(lon).toFixed(6)}`;
-
-      const cached =
-        cache.get(cacheKey);
-
-      if (
-        cached &&
-        Date.now() -
-          cached.timestamp <
-          CACHE_DURATION
-      ) {
-        return cachedResponse(
-          cached.data
-        );
-      }
-
-      if (
-        activeRequests.has(
-          cacheKey
-        )
-      ) {
-        const existingData =
-          await activeRequests.get(
-            cacheKey
-          );
-
-        return cachedResponse(
-          existingData
-        );
-      }
-
-      const reversePromise =
-        getReverseGeocodedLocation(
-          lat,
-          lon,
-          apiKey
-        );
-
-      activeRequests.set(
-        cacheKey,
-        reversePromise
+      new URL(
+        request.url
       );
 
-      try {
-        const result =
-          await reversePromise;
-
-        if (!result) {
-          return NextResponse.json(
-            {
-              success: false,
-              message:
-                "Unable to find address for current location",
-            },
-            {
-              status: 404,
-            }
-          );
-        }
-
-        cache.set(
-          cacheKey,
-          {
-            timestamp:
-              Date.now(),
-
-            data:
-              result,
-          }
-        );
-
-        cleanCache();
-
-        return cachedResponse(
-          result
-        );
-      } finally {
-        activeRequests.delete(
-          cacheKey
-        );
-      }
-    }
-
     // ===========================================
-    // PLACE DETAILS BY PLACE ID
+    // 1. PLACE DETAILS
     // ===========================================
 
     const placeId =
-      searchParams.get("place_id");
+      searchParams.get(
+        "place_id"
+      );
 
     if (placeId) {
       const cacheKey =
         `place:${placeId}`;
 
       const cached =
-        cache.get(cacheKey);
+        cache.get(
+          cacheKey
+        );
 
       if (
         cached &&
@@ -589,8 +512,9 @@ export async function GET(request) {
         return NextResponse.json(
           {
             success: false,
+
             message:
-              "Unable to get valid location coordinates",
+              "Place details not found",
           },
           {
             status: 404,
@@ -617,34 +541,123 @@ export async function GET(request) {
     }
 
     // ===========================================
-    // NORMAL LOCATION SEARCH
+    // 2. REVERSE GEOCODING
+    // ===========================================
+
+    const lat =
+      searchParams.get(
+        "lat"
+      );
+
+    const lon =
+      searchParams.get(
+        "lon"
+      );
+
+    if (lat && lon) {
+      if (
+        !validCoordinates(
+          lat,
+          lon
+        )
+      ) {
+        return NextResponse.json(
+          {
+            success: false,
+
+            message:
+              "Invalid coordinates",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+
+      const cacheKey =
+        `reverse:${Number(lat).toFixed(6)},` +
+        `${Number(lon).toFixed(6)}`;
+
+      const cached =
+        cache.get(
+          cacheKey
+        );
+
+      if (
+        cached &&
+        Date.now() -
+          cached.timestamp <
+          CACHE_DURATION
+      ) {
+        return cachedResponse(
+          cached.data
+        );
+      }
+
+      const result =
+        await reverseGeocode(
+          lat,
+          lon,
+          apiKey
+        );
+
+      if (!result) {
+        return NextResponse.json(
+          {
+            success: false,
+
+            message:
+              "Address not found",
+          },
+          {
+            status: 404,
+          }
+        );
+      }
+
+      cache.set(
+        cacheKey,
+        {
+          timestamp:
+            Date.now(),
+
+          data:
+            result,
+        }
+      );
+
+      cleanCache();
+
+      return cachedResponse(
+        result
+      );
+    }
+
+    // ===========================================
+    // 3. GOOGLE AUTOCOMPLETE SEARCH
     // ===========================================
 
     const rawQuery =
-      searchParams.get("q") || "";
+      searchParams.get(
+        "q"
+      ) || "";
 
     const query =
       rawQuery.trim();
 
-    // 1 character se location search start hoga
-  if (
-  query.length < 1
-  ) {
-  return NextResponse.json([]);
-  }
-
-    const normalizedQuery =
-      query.toLowerCase();
+    if (!query) {
+      return NextResponse.json(
+        []
+      );
+    }
 
     const cacheKey =
-      `search:${normalizedQuery}`;
-
-    // ===========================================
-    // CACHE CHECK
-    // ===========================================
+      `search:${query.toLowerCase()}`;
 
     const cached =
-      cache.get(cacheKey);
+      cache.get(
+        cacheKey
+      );
 
     if (
       cached &&
@@ -657,126 +670,38 @@ export async function GET(request) {
       );
     }
 
-    // ===========================================
-    // SAME REQUEST ALREADY RUNNING
-    // ===========================================
-
-    if (
-      activeRequests.has(
-        cacheKey
-      )
-    ) {
-      const existingData =
-        await activeRequests.get(
-          cacheKey
-        );
-
-      return cachedResponse(
-        existingData
-      );
-    }
-
-    // ===========================================
-    // GOOGLE PLACES SEARCH
-    // ===========================================
-
-    const searchPromise =
-      searchGooglePlaces(
+    const results =
+      await searchGooglePlaces(
         query,
         apiKey
       );
 
-    activeRequests.set(
+    cache.set(
       cacheKey,
-      searchPromise
+      {
+        timestamp:
+          Date.now(),
+
+        data:
+          results,
+      }
     );
 
-    try {
-      const results =
-        await searchPromise;
+    cleanCache();
 
-      // Sirf valid coordinates
-      // wale results cache honge
-      const validResults =
-  results
-    .filter(
-      (item) =>
-        validCoordinates(
-          item?.lat,
-          item?.lon
-        )
-    )
-    .sort((a, b) => {
-      const aName = (
-        a?.name ||
-        a?.display_name ||
-        ""
-      ).toLowerCase();
-
-      const bName = (
-        b?.name ||
-        b?.display_name ||
-        ""
-      ).toLowerCase();
-
-      const queryText =
-        normalizedQuery.toLowerCase();
-
-      // Exact city/location match sabse upar
-      const aExact =
-        aName === queryText;
-
-      const bExact =
-        bName === queryText;
-
-      if (aExact && !bExact) return -1;
-      if (!aExact && bExact) return 1;
-
-      // Jo result typed text se start hota hai
-      // usko priority
-      const aStarts =
-        aName.startsWith(queryText);
-
-      const bStarts =
-        bName.startsWith(queryText);
-
-      if (aStarts && !bStarts) return -1;
-      if (!aStarts && bStarts) return 1;
-
-      // Shorter / more relevant name ko priority
-      return aName.length - bName.length;
-    });
-
-      cache.set(
-        cacheKey,
-        {
-          timestamp:
-            Date.now(),
-
-          data:
-            validResults,
-        }
-      );
-
-      cleanCache();
-
-      return cachedResponse(
-        validResults
-      );
-    } finally {
-      activeRequests.delete(
-        cacheKey
-      );
-    }
+    return cachedResponse(
+      results
+    );
   } catch (error) {
     console.error(
-      "LOCATION SEARCH EXCEPTION:",
+      "LOCATION SEARCH ERROR:",
       error
     );
 
     return NextResponse.json(
       {
         success: false,
+
         message:
           "Location search failed",
       },

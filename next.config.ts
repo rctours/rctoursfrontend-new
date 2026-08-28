@@ -18,6 +18,21 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // ==========================================
+      // CANONICAL DOMAIN: non-www → www
+      // ==========================================
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "rctoursandtravels.in",
+          },
+        ],
+        destination: "https://www.rctoursandtravels.in/:path*",
+        permanent: true,
+      },
+
       // OLD WEBSITE - Available Cars
       {
         source: "/cars",

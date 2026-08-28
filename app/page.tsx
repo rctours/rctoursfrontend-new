@@ -80,15 +80,16 @@ const [dropCoords, setDropCoords] = useState<{
 const [gettingLocation, setGettingLocation] = useState(false);
 
 type LocationSuggestion = {
-    name?: string;
-    display_name: string;
-    full_address?: string;
-    type?: string;
-    category?: string;
-    lat: string | number;
-    lon: string | number;
-    place_id?: string | number;
-  };
+  place_id?: string;
+  name?: string;
+  secondary_text?: string;
+  display_name: string;
+  full_address?: string;
+  type?: string;
+  category?: string;
+  lat?: number;
+  lon?: number;
+};
 
 const [pickupSuggestions, setPickupSuggestions] =
   useState<LocationSuggestion[]>([]);
@@ -882,8 +883,15 @@ useEffect(() => {
           type="text"
           value={pickup}
           onChange={(e) => {
-            setPickup(e.target.value);
-            searchLocation(e.target.value, "pickup");
+          const value = e.target.value;
+
+          setPickup(value);
+
+          // User ne manually text change kiya
+          // Purane selected location ke coordinates remove
+          setPickupCoords(null);
+
+          searchLocation(value, "pickup");
           }}
           placeholder="Pickup Location"
           className="w-full h-11 sm:h-12 rounded-xl border border-gray-200 bg-gray-50/80 pl-3.5 pr-12 text-xs sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all"
@@ -909,14 +917,69 @@ useEffect(() => {
           {pickupSuggestions.map((item, index) => (
             <div
               key={index}
-              onClick={() => {
-                setPickup(item.display_name);
-                setPickupCoords({
-                  lat: Number(item.lat),
-                  lon: Number(item.lon),
-                });
-                setPickupSuggestions([]);
-              }}
+              onClick={async () => {
+  try {
+    setPickupSuggestions([]);
+
+    // Pehle Google suggestion ka clean address temporarily show
+    setPickup(
+      item.display_name ||
+      item.name ||
+      ""
+    );
+
+    // Exact Google Place Details
+    if (!item.place_id) {
+      return;
+    }
+
+    const res = await fetch(
+      `/api/location-search?place_id=${encodeURIComponent(
+        item.place_id
+      )}`
+    );
+
+    if (!res.ok) {
+      throw new Error(
+        "Unable to get place details"
+      );
+    }
+
+    const place = await res.json();
+
+    // Exact Google coordinates
+    setPickupCoords({
+      lat: Number(place.lat),
+      lon: Number(place.lon),
+    });
+
+    // Google ka clean formatted address
+    setPickup(
+      item.display_name ||
+      place.display_name ||
+      item.name ||
+      ""
+    );
+
+    console.log(
+      "PICKUP SELECTED:",
+      {
+        name: item.name,
+        address: item.display_name,
+        placeId: item.place_id,
+        lat: place.lat,
+        lon: place.lon,
+      }
+    );
+  } catch (error) {
+    console.error(
+      "Pickup place selection error:",
+      error
+    );
+
+    setPickupCoords(null);
+  }
+}}
               className="px-3 py-2 cursor-pointer hover:bg-cyan-50/70 text-xs sm:text-sm text-gray-800 transition-colors"
             >
               <div className="flex items-start gap-2.5">
@@ -937,16 +1000,16 @@ useEffect(() => {
   )}
 
   <div className="min-w-0">
-    <p className="font-semibold text-gray-900">
-      {item.name || item.display_name}
-    </p>
+  <p className="font-semibold text-gray-900 truncate">
+    {item.name || item.display_name}
+  </p>
 
-    {item.name && (
-      <p className="mt-0.5 text-[11px] sm:text-xs text-gray-500 truncate">
-        {item.display_name}
-      </p>
-    )}
-  </div>
+  {item.secondary_text && (
+    <p className="mt-0.5 text-[11px] sm:text-xs text-gray-500 truncate">
+      {item.secondary_text}
+    </p>
+  )}
+</div>
 </div>
             </div>
           ))}
@@ -965,8 +1028,14 @@ useEffect(() => {
         type="text"
         value={drop}
         onChange={(e) => {
-          setDrop(e.target.value);
-          searchLocation(e.target.value, "drop");
+        const value = e.target.value;
+
+        setDrop(value);
+
+        // Purane selected location ke coordinates remove
+        setDropCoords(null);
+
+        searchLocation(value, "drop");
         }}
         placeholder="Drop Location"
         className="w-full h-11 sm:h-12 rounded-xl border border-gray-200 bg-gray-50/80 px-3.5 text-xs sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all"
@@ -977,14 +1046,66 @@ useEffect(() => {
           {dropSuggestions.map((item, index) => (
             <div
               key={index}
-              onClick={() => {
-                setDrop(item.display_name);
-                setDropCoords({
-                  lat: Number(item.lat),
-                  lon: Number(item.lon),
-                });
-                setDropSuggestions([]);
-              }}
+              onClick={async () => {
+  try {
+    setDropSuggestions([]);
+
+    setDrop(
+      item.display_name ||
+      item.name ||
+      ""
+    );
+
+    if (!item.place_id) {
+      return;
+    }
+
+    const res = await fetch(
+      `/api/location-search?place_id=${encodeURIComponent(
+        item.place_id
+      )}`
+    );
+
+    if (!res.ok) {
+      throw new Error(
+        "Unable to get place details"
+      );
+    }
+
+    const place = await res.json();
+
+    // Exact selected Google location
+    setDropCoords({
+      lat: Number(place.lat),
+      lon: Number(place.lon),
+    });
+
+    setDrop(
+      item.display_name ||
+      place.display_name ||
+      item.name ||
+      ""
+    );
+
+    console.log(
+      "DROP SELECTED:",
+      {
+        name: item.name,
+        address: item.display_name,
+        placeId: item.place_id,
+        lat: place.lat,
+        lon: place.lon,
+      }
+    );
+  } catch (error) {
+    console.error(
+      "Drop place selection error:",
+      error
+    );
+
+    setDropCoords(null);
+  }
+}}
               className="px-3 py-2 cursor-pointer hover:bg-cyan-50/70 text-xs sm:text-sm text-gray-800 transition-colors"
             >
               <div className="flex items-start gap-2.5">
@@ -1005,16 +1126,16 @@ useEffect(() => {
   )}
 
   <div className="min-w-0">
-    <p className="font-semibold text-gray-900">
-      {item.name || item.display_name}
-    </p>
+  <p className="font-semibold text-gray-900 truncate">
+    {item.name || item.display_name}
+  </p>
 
-    {item.name && (
-      <p className="mt-0.5 text-[11px] sm:text-xs text-gray-500 truncate">
-        {item.display_name}
-      </p>
-    )}
-  </div>
+  {item.secondary_text && (
+    <p className="mt-0.5 text-[11px] sm:text-xs text-gray-500 truncate">
+      {item.secondary_text}
+    </p>
+  )}
+</div>
 </div>
             </div>
           ))}
