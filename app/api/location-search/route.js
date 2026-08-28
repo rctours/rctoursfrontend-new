@@ -626,12 +626,12 @@ export async function GET(request) {
     const query =
       rawQuery.trim();
 
-    // 3 characters se kam par search nahi
-    if (
-      query.length < 3
-    ) {
-      return NextResponse.json([]);
-    }
+    // 1 character se location search start hoga
+  if (
+  query.length < 1
+  ) {
+  return NextResponse.json([]);
+  }
 
     const normalizedQuery =
       query.toLowerCase();
@@ -698,13 +698,54 @@ export async function GET(request) {
       // Sirf valid coordinates
       // wale results cache honge
       const validResults =
-        results.filter(
-          (item) =>
-            validCoordinates(
-              item?.lat,
-              item?.lon
-            )
-        );
+  results
+    .filter(
+      (item) =>
+        validCoordinates(
+          item?.lat,
+          item?.lon
+        )
+    )
+    .sort((a, b) => {
+      const aName = (
+        a?.name ||
+        a?.display_name ||
+        ""
+      ).toLowerCase();
+
+      const bName = (
+        b?.name ||
+        b?.display_name ||
+        ""
+      ).toLowerCase();
+
+      const queryText =
+        normalizedQuery.toLowerCase();
+
+      // Exact city/location match sabse upar
+      const aExact =
+        aName === queryText;
+
+      const bExact =
+        bName === queryText;
+
+      if (aExact && !bExact) return -1;
+      if (!aExact && bExact) return 1;
+
+      // Jo result typed text se start hota hai
+      // usko priority
+      const aStarts =
+        aName.startsWith(queryText);
+
+      const bStarts =
+        bName.startsWith(queryText);
+
+      if (aStarts && !bStarts) return -1;
+      if (!aStarts && bStarts) return 1;
+
+      // Shorter / more relevant name ko priority
+      return aName.length - bName.length;
+    });
 
       cache.set(
         cacheKey,

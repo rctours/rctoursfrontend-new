@@ -1,9 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-gray-100 flex items-center justify-center">
+          <p className="text-gray-600">Loading...</p>
+        </main>
+      }
+    >
+      <ResetPasswordContent />
+    </Suspense>
+  );
+}
+
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -16,10 +30,10 @@ export default function ResetPasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
-const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("");
 
-const [success, setSuccess] = useState(false);
-const [countdown, setCountdown] = useState(3);
+  const [success, setSuccess] = useState(false);
+  const [countdown, setCountdown] = useState(3);
 
   // ===========================
   // Live Password Validation
@@ -71,19 +85,19 @@ const [countdown, setCountdown] = useState(3);
 
       setSuccess(true);
 
-     let seconds = 3;
+      let seconds = 3;
 
-    const timer = setInterval(() => {
-    seconds--;
+      const timer = setInterval(() => {
+        seconds--;
 
-    if (seconds <= 0) {
-    clearInterval(timer);
-    router.push("/admin/login");
-    return;
-    }
+        if (seconds <= 0) {
+          clearInterval(timer);
+          router.push("/admin/login");
+          return;
+        }
 
-    setCountdown(seconds);
-    }, 1000);
+        setCountdown(seconds);
+      }, 1000);
 
     } catch (error) {
       console.error(error);
@@ -94,40 +108,32 @@ const [countdown, setCountdown] = useState(3);
   };
 
   if (success) {
+    return (
+      <main className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="bg-white rounded-3xl shadow-xl p-10 w-full max-w-md text-center">
 
-  return (
+          <div className="mx-auto w-24 h-24 rounded-full bg-green-100 flex items-center justify-center">
+            <span className="text-5xl">
+              ✅
+            </span>
+          </div>
 
-    <main className="min-h-screen bg-gray-100 flex items-center justify-center">
+          <h1 className="text-3xl font-bold text-green-700 mt-5">
+            Password Changed Successfully
+          </h1>
 
-      <div className="bg-white rounded-3xl shadow-xl p-10 w-full max-w-md text-center">
+          <p className="text-gray-500 mt-3">
+            Redirecting to Login...
+          </p>
 
-        <div className="mx-auto w-24 h-24 rounded-full bg-green-100 flex items-center justify-center">
-
-        <span className="text-5xl">
-        ✅
-        </span>
+          <div className="text-5xl font-black text-blue-600 mt-8">
+            {countdown}
+          </div>
 
         </div>
-
-        <h1 className="text-3xl font-bold text-green-700 mt-5">
-          Password Changed Successfully
-        </h1>
-
-        <p className="text-gray-500 mt-3">
-          Redirecting to Login...
-        </p>
-
-        <div className="text-5xl font-black text-blue-600 mt-8">
-          {countdown}
-        </div>
-
-      </div>
-
-    </main>
-
-  );
-
-}
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-100 flex items-center justify-center p-4">

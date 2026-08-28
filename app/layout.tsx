@@ -2,10 +2,11 @@ import "./globals.css";
 import type { Metadata } from "next";
 import Navbar from "./components/Navbar";
 import GoogleAnalytics from "./components/GoogleAnalytics";
-import { headers } from "next/headers";
+
+const siteUrl = "https://www.rctoursandtravels.in";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.rctoursandtravels.in"),
+  metadataBase: new URL(siteUrl),
 
   title: {
     default:
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    "RC Tours & Travels offers taxi service in Nagpur including airport taxi, local cab rental, one way taxi, round trip cab, outstation taxi, tempo traveller rental, corporate travel and tour packages across Maharashtra, Madhya Pradesh, Chhattisgarh and all over India. Call +91 9172271464.",
+    "RC Tours & Travels offers reliable taxi service in Nagpur including airport taxi, local cab rental, one way taxi, round trip cab, outstation taxi, tempo traveller rental, corporate travel and tour packages across India. Call +91 9172271464.",
 
   keywords: [
     "Taxi Service Nagpur",
@@ -39,7 +40,6 @@ export const metadata: Metadata = {
     "Nagpur to Pench Taxi",
     "Nagpur Tour Package",
     "Taxi Booking Nagpur",
-    "Best Taxi Service Nagpur",
     "RC Tours & Travels",
   ],
 
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   authors: [
     {
       name: "RC Tours & Travels",
-      url: "https://www.rctoursandtravels.in",
+      url: siteUrl,
     },
   ],
 
@@ -62,6 +62,7 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+
     googleBot: {
       index: true,
       follow: true,
@@ -74,28 +75,34 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://www.rctoursandtravels.in",
+    url: siteUrl,
     siteName: "RC Tours & Travels",
+
     title:
       "Taxi Service in Nagpur | Airport, Local & Outstation Cabs | RC Tours & Travels",
+
     description:
       "Book reliable airport, local and outstation taxi services in Nagpur. 24x7 cab booking, one-way cabs, round trips, tempo travellers and tour packages.",
+
     images: [
       {
         url: "/og-image.webp",
         width: 1200,
         height: 630,
-        alt: "RC Tours & Travels",
+        alt: "RC Tours & Travels Taxi Service in Nagpur",
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
+
     title:
       "Taxi Service in Nagpur | Airport, Local & Outstation Cabs | RC Tours & Travels",
+
     description:
       "Reliable taxi service in Nagpur for airport transfers, local rides, outstation trips and tour packages.",
+
     images: ["/og-image.webp"],
   },
 
@@ -114,13 +121,43 @@ export const metadata: Metadata = {
   },
 };
 
-// ✅ Local Business Schema
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${siteUrl}/#organization`,
+
+  name: "RC Tours & Travels",
+  url: siteUrl,
+
+  logo: `${siteUrl}/logo.webp`,
+  image: `${siteUrl}/logo.webp`,
+
+  telephone: "+919172271464",
+  email: "info@rctoursandtravels.in",
+
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "New Narsala Rd, Beldar Nagar, Dighori",
+    addressLocality: "Nagpur",
+    addressRegion: "Maharashtra",
+    postalCode: "440034",
+    addressCountry: "IN",
+  },
+};
+
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "TaxiService",
+  "@id": `${siteUrl}/#taxi-service`,
+
   name: "RC Tours & Travels",
-  url: "https://www.rctoursandtravels.in",
+  url: siteUrl,
+
+  image: `${siteUrl}/logo.webp`,
+  logo: `${siteUrl}/logo.webp`,
+
   telephone: "+919172271464",
+
   priceRange: "₹₹",
 
   address: {
@@ -132,7 +169,22 @@ const localBusinessSchema = {
     addressCountry: "IN",
   },
 
-  openingHours: "Mo-Su 00:00-23:59",
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ],
+      opens: "00:00",
+      closes: "23:59",
+    },
+  ],
 
   areaServed: [
     {
@@ -142,14 +194,6 @@ const localBusinessSchema = {
     {
       "@type": "State",
       name: "Maharashtra",
-    },
-    {
-      "@type": "State",
-      name: "Madhya Pradesh",
-    },
-    {
-      "@type": "State",
-      name: "Chhattisgarh",
     },
     {
       "@type": "Country",
@@ -180,14 +224,14 @@ const localBusinessSchema = {
 
   hasOfferCatalog: {
     "@type": "OfferCatalog",
-    name: "Taxi Services",
+    name: "Taxi and Travel Services",
 
     itemListElement: [
       {
         "@type": "Offer",
         itemOffered: {
           "@type": "Service",
-          name: "Airport Taxi",
+          name: "Airport Taxi Service",
         },
       },
       {
@@ -201,21 +245,21 @@ const localBusinessSchema = {
         "@type": "Offer",
         itemOffered: {
           "@type": "Service",
-          name: "Outstation Cab",
+          name: "Outstation Cab Service",
         },
       },
       {
         "@type": "Offer",
         itemOffered: {
           "@type": "Service",
-          name: "One Way Taxi",
+          name: "One Way Cab Service",
         },
       },
       {
         "@type": "Offer",
         itemOffered: {
           "@type": "Service",
-          name: "Round Trip Taxi",
+          name: "Round Trip Cab Service",
         },
       },
       {
@@ -227,119 +271,36 @@ const localBusinessSchema = {
       },
     ],
   },
-};
 
-// ✅ FAQ Schema
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "Which is the best taxi service in Nagpur for airport and outstation travel?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "RC Tours & Travels provides reliable taxi services in Nagpur for airport transfers, local travel and outstation cab bookings at affordable prices.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Do you provide 24x7 airport taxi service in Nagpur?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes, we provide 24x7 airport taxi service in Nagpur with convenient pickup and drop for airport travel.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Can I book a one-way cab from Nagpur?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes, you can book a one-way cab from Nagpur to major cities and destinations based on your travel requirements.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Do you offer outstation taxi service from Nagpur?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes, we offer outstation taxi service from Nagpur to destinations including Pune, Mumbai, Hyderabad, Shirdi, Nashik, Tadoba, Pench and more.",
-      },
-    },
-  ],
-};
-
-// ✅ Organization Schema
-const organizationSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "RC Tours & Travels",
-  url: "https://www.rctoursandtravels.in",
-  logo: "https://www.rctoursandtravels.in/logo.png",
-  image: "https://www.rctoursandtravels.in/logo.png",
-  telephone: "+919172271464",
-  email: "info@rctoursandtravels.in",
-
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "New Narsala Rd, Beldar Nagar, Dighori",
-    addressLocality: "Nagpur",
-    addressRegion: "Maharashtra",
-    postalCode: "440034",
-    addressCountry: "IN",
+  parentOrganization: {
+    "@id": `${siteUrl}/#organization`,
   },
 };
 
-// ✅ Website Schema
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "@id": `${siteUrl}/#website`,
+
   name: "RC Tours & Travels",
-  url: "https://www.rctoursandtravels.in",
+  url: siteUrl,
 
   publisher: {
-    "@type": "Organization",
-    name: "RC Tours & Travels",
+    "@id": `${siteUrl}/#organization`,
   },
+
+  inLanguage: "en-IN",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
-  const headersList = await headers();
-
-  const pathname =
-    headersList.get("x-pathname") ||
-    headersList.get("next-url") ||
-    "";
-
-  const isAdminPage = pathname.startsWith("/admin");
-
+}>) {
   return (
-    <html lang="en">
+    <html lang="en-IN">
       <body>
-
-        {/* ✅ Google Analytics */}
         <GoogleAnalytics />
-
-        {/* ✅ SEO SCHEMA START */}
-
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(localBusinessSchema),
-          }}
-        />
-
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(faqSchema),
-          }}
-        />
 
         <script
           type="application/ld+json"
@@ -351,16 +312,20 @@ export default async function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
+            __html: JSON.stringify(localBusinessSchema),
+          }}
+        />
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
             __html: JSON.stringify(websiteSchema),
           }}
         />
 
-        {/* ✅ SEO SCHEMA END */}
-
-        {!isAdminPage && <Navbar />}
+        <Navbar />
 
         <main>{children}</main>
-
       </body>
     </html>
   );

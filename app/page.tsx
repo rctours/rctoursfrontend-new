@@ -731,7 +731,7 @@ useEffect(() => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-cyan-400/20 rounded-full blur-2xl pointer-events-none" />
           <img
             src="/car-hero.webp"
-            alt="RC Tours & Travels Cab"
+            alt="RC Tours & Travels taxi service cab in Nagpur"
             className="relative z-10 w-full object-contain drop-shadow-2xl"
           />
         </div>
@@ -1661,6 +1661,17 @@ useEffect(() => {
         4 Hr / 40 KM
         </button>
 
+        <button
+  onClick={() => setSelectedPackage("6hr")}
+  className={`px-6 py-3 rounded-full font-bold transition ${
+    selectedPackage === "6hr"
+      ? "bg-cyan-500 text-white"
+      : "border border-gray-300"
+  }`}
+>
+  6 Hr / 60 KM
+</button>
+
       <button
         onClick={() => setSelectedPackage("8hr")}
         className={`px-6 py-3 rounded-full font-bold transition ${
@@ -1719,6 +1730,8 @@ useEffect(() => {
             <p className="font-semibold">
             {selectedPackage === "4hr"
             ? "4 Hr | 40 KM"
+            : selectedPackage === "6hr"
+            ? "6 Hr | 60 KM"
             : selectedPackage === "8hr"
             ? "8 Hr | 80 KM"
             : "12 Hr | 120 KM"}
@@ -1757,22 +1770,27 @@ useEffect(() => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-5">
 
         <div>
-          <p className="text-3xl font-bold">
-          {selectedPackage === "4hr"
-          ? "₹1200"
-          : selectedPackage === "8hr"
-          ? "₹2200"
-          : "₹2800"}
-          </p>
-          <p className="text-xs text-gray-500">
-            + Taxes & Charges
-          </p>
-        </div>
+        <p className="text-3xl font-bold">
+        {selectedPackage === "4hr"
+        ? "₹1400"
+        : selectedPackage === "6hr"
+        ? "₹1800"
+        : selectedPackage === "8hr"
+        ? "₹2200"
+        : "₹2800"}
+        </p>
+
+        <p className="text-xs text-gray-500">
+        + Taxes & Charges
+        </p>
+      </div>
 
         <Link
-        href={`/booking-details?tripType=Local Rental&cabType=Swift%20Dzire&package=${selectedPackage}&fare=${
+        href={`/book-cab?tripType=Local%20Rental&cabType=Swift%20Dzire&package=${selectedPackage}&fare=${
         selectedPackage === "4hr"
-        ? 1200
+        ? 1400
+        : selectedPackage === "6hr"
+        ? 1800
         : selectedPackage === "8hr"
         ? 2200
         : 2800
@@ -1790,6 +1808,8 @@ useEffect(() => {
     After{" "}
     {selectedPackage === "4hr"
     ? "40 KM"
+     : selectedPackage === "6hr"
+    ? "60 KM"
     : selectedPackage === "8hr"
     ? "80 KM"
     : "120 KM"}{" "}
@@ -1861,33 +1881,38 @@ useEffect(() => {
 
       <div className="flex items-center justify-between mt-5">
 
-        <div>
-          <p className="text-3xl font-bold">
-          {selectedPackage === "4hr"
-          ? "₹2000"
-          : selectedPackage === "8hr"
-          ? "₹2700"
-          : "₹3200"}
-          </p>
-          <p className="text-xs text-gray-500">
-            + Taxes & Charges
-          </p>
-        </div>
+  <div>
+    <p className="text-3xl font-bold">
+      {selectedPackage === "4hr"
+        ? "₹2000"
+        : selectedPackage === "6hr"
+        ? "₹2200"
+        : selectedPackage === "8hr"
+        ? "₹2700"
+        : "₹3200"}
+    </p>
 
-        <Link
-        href={`/booking-details?tripType=Local Rental&cabType=Ertiga&package=${selectedPackage}&fare=${
-        selectedPackage === "4hr"
+    <p className="text-xs text-gray-500">
+      + Taxes & Charges
+    </p>
+  </div>
+
+  <Link
+    href={`/book-cab?tripType=Local%20Rental&cabType=Ertiga&package=${selectedPackage}&fare=${
+      selectedPackage === "4hr"
         ? 2000
+        : selectedPackage === "6hr"
+        ? 2200
         : selectedPackage === "8hr"
         ? 2700
         : 3200
-        }&driverCharge=0`}
-        className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-semibold"
-        >
-        Book Now
-        </Link>
+    }&driverCharge=0`}
+    className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-semibold"
+  >
+    Book Now
+  </Link>
 
-      </div>
+</div>
 
     </div>
 
@@ -1895,6 +1920,8 @@ useEffect(() => {
     After{" "}
     {selectedPackage === "4hr"
     ? "40 KM"
+     : selectedPackage === "6hr"
+    ? "60 KM"
     : selectedPackage === "8hr"
     ? "80 KM"
     : "120 KM"}{" "}
@@ -1964,35 +1991,40 @@ useEffect(() => {
 
       </div>
 
-      <div className="flex items-center justify-between mt-5">
+<div className="flex items-center justify-between mt-5">
 
-        <div>
-          <p className="text-3xl font-bold">
-          {selectedPackage === "4hr"
-          ? "₹3500"
-          : selectedPackage === "8hr"
-          ? "₹4200"
-          : "₹5000"}
-          </p>
-          <p className="text-xs text-gray-500">
-            + Taxes & Charges
-          </p>
-        </div>
-
-        <Link
-        href={`/booking-details?tripType=Local Rental&cabType=Innova Crysta&package=${selectedPackage}&fare=${
-        selectedPackage === "4hr"
-        ? 3500
+  <div>
+    <p className="text-3xl font-bold">
+      {selectedPackage === "4hr"
+        ? "₹2300"
+        : selectedPackage === "6hr"
+        ? "₹3000"
         : selectedPackage === "8hr"
-        ? 4200
-        : 5000
-        }&driverCharge=0`}
-        className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-semibold"
-        >
-        Book Now
-        </Link>
+        ? "₹3800"
+        : "₹4200"}
+    </p>
 
-      </div>
+    <p className="text-xs text-gray-500">
+      + Taxes & Charges
+    </p>
+  </div>
+
+  <Link
+    href={`/book-cab?tripType=Local%20Rental&cabType=Innova%20Crysta&package=${selectedPackage}&fare=${
+      selectedPackage === "4hr"
+        ? 2300
+        : selectedPackage === "6hr"
+        ? 3000
+        : selectedPackage === "8hr"
+        ? 3800
+        : 4200
+    }&driverCharge=0`}
+    className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-semibold"
+  >
+    Book Now
+  </Link>
+
+</div>
 
     </div>
 
@@ -2000,6 +2032,8 @@ useEffect(() => {
     After{" "}
     {selectedPackage === "4hr"
     ? "40 KM"
+     : selectedPackage === "6hr"
+    ? "60 KM"
     : selectedPackage === "8hr"
     ? "80 KM"
     : "120 KM"}{" "}
@@ -2042,7 +2076,7 @@ useEffect(() => {
 
         <Image
           src="/fleet1.webp"
-          alt="Wide Fleet"
+          alt="Wide range of taxi vehicles available for cab service in Nagpur"
           width={400}
           height={250}
           className="w-full h-40 md:h-52 object-cover"
@@ -2068,7 +2102,7 @@ useEffect(() => {
 
         <Image
           src="/driver.webp"
-          alt="Professional Drivers"
+          alt="Professional taxi driver providing safe cab service in Nagpur"
           width={400}
           height={250}
           className="w-full h-52 object-cover"
@@ -2094,7 +2128,7 @@ useEffect(() => {
 
         <Image
           src="/service.webp"
-          alt="24x7 Service"
+          alt="24 hour taxi service available in Nagpur for airport and outstation travel"
           width={400}
           height={250}
           className="w-full h-52 object-cover"
@@ -2120,7 +2154,7 @@ useEffect(() => {
 
         <Image
           src="/pricing.webp"
-          alt="Transparent Pricing"
+          alt="Affordable and transparent taxi pricing for Nagpur cab service"
           width={400}
           height={250}
           className="w-full h-52 object-cover"
@@ -2189,28 +2223,34 @@ useEffect(() => {
 
 <div className="md:hidden flex justify-center items-center gap-4 mb-5">
 
+  {/* Previous Review */}
   <button
-  onClick={() =>
-    setReviewIndex((prev) =>
-      prev === reviews.length - 1 ? 0 : prev + 1
-    )
-  }
-  aria-label="Next review"
-  className="w-10 h-10 rounded-full bg-cyan-500 text-white shadow-lg active:scale-95 transition"
+    type="button"
+    onClick={() =>
+      setReviewIndex((prev) =>
+        prev === 0 ? reviews.length - 1 : prev - 1
+      )
+    }
+    aria-label="Previous review"
+    className="w-10 h-10 rounded-full bg-cyan-500 text-white shadow-lg active:scale-95 transition"
   >
-  <ChevronRight className="mx-auto" size={18} />
+    <ChevronLeft className="mx-auto" size={18} />
   </button>
 
+  {/* Review Counter */}
   <span className="text-sm font-semibold text-gray-600">
     {reviewIndex + 1} / {reviews.length}
   </span>
 
+  {/* Next Review */}
   <button
+    type="button"
     onClick={() =>
       setReviewIndex((prev) =>
         prev === reviews.length - 1 ? 0 : prev + 1
       )
     }
+    aria-label="Next review"
     className="w-10 h-10 rounded-full bg-cyan-500 text-white shadow-lg active:scale-95 transition"
   >
     <ChevronRight className="mx-auto" size={18} />
@@ -2591,18 +2631,20 @@ useEffect(() => {
     <div className="text-center mb-8 md:mb-8">
 
       <p className="text-cyan-700 uppercase tracking-[5px] mb-3">
-        Taxi Service In Nagpur
+      Taxi Services from Nagpur
       </p>
 
-      <h2 className="text-3xl md:text-5xl font-black text-black mb-3">
-        Trusted Taxi Service In Nagpur
-      </h2>
+    <h2 className="text-3xl md:text-5xl font-black text-black mb-3">
+    Airport Taxi, Local Cab & Outstation Taxi Service in Nagpur
+    </h2>
 
-      <p className="text-gray-600 max-w-3xl mx-auto leading-7 text-sm md:text-base">
-        RC Tours & Travels provides airport transfers, local rental
-        and outstation taxi services across Nagpur with professional
-        drivers, clean vehicles and transparent pricing.
-      </p>
+    <p className="text-gray-600 max-w-3xl mx-auto leading-7 text-sm md:text-base">
+    RC Tours & Travels offers reliable airport taxi service, flexible local cab
+    rental and comfortable outstation taxi service in Nagpur. Whether you need
+    an airport pickup or drop, a cab for local travel, or an outstation journey
+    from Nagpur, choose from well-maintained vehicles, professional drivers and
+    transparent pricing for a safe and comfortable travel experience.
+    </p>
 
     </div>
 
@@ -2906,32 +2948,32 @@ useEffect(() => {
         </p>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-5">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-5">
 
-          <div className="border border-gray-200 rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md transition">
-            <h3 className="text-4xl font-black text-cyan-600">
-              7+
-            </h3>
-            <p className="text-gray-600 mt-2 font-medium">
-              Years Experience
+          <div className="border border-gray-200 rounded-xl p-2.5 sm:p-4 md:p-6 shadow-sm hover:shadow-md transition text-center">
+            <p className="text-2xl sm:text-4xl md:text-5xl font-black text-cyan-600">
+            7+
+            </p>
+            <p className="text-[11px] sm:text-sm md:text-base text-gray-600 mt-1 sm:mt-2 font-medium">
+            Years Experience
             </p>
           </div>
 
-          <div className="border border-gray-200 rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md transition">
-            <h3 className="text-4xl font-black text-cyan-600">
-              24×7
-            </h3>
-            <p className="text-gray-600 mt-2 font-medium">
-              Booking Support
+          <div className="border border-gray-200 rounded-xl p-2.5 sm:p-4 md:p-6 shadow-sm hover:shadow-md transition text-center">
+            <p className="text-2xl sm:text-4xl md:text-5xl font-black text-cyan-600">
+            24×7
+            </p>
+            <p className="text-[11px] sm:text-sm md:text-base text-gray-600 mt-1 sm:mt-2 font-medium">
+            Booking Support
             </p>
           </div>
 
-          <div className="border border-gray-200 rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md transition">
-            <h3 className="text-4xl font-black text-cyan-600">
-              100%
-            </h3>
-            <p className="text-gray-600 mt-2 font-medium">
-              Transparent Pricing
+          <div className="border border-gray-200 rounded-xl p-2.5 sm:p-4 md:p-6 shadow-sm hover:shadow-md transition text-center">
+            <p className="text-2xl sm:text-4xl md:text-5xl font-black text-cyan-600">
+            100%
+            </p>
+            <p className="text-[11px] sm:text-sm md:text-base text-gray-600 mt-1 sm:mt-2 font-medium">
+            Transparent Pricing
             </p>
           </div>
 

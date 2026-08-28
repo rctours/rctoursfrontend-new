@@ -2,9 +2,11 @@ import clientPromise from "@/lib/mongodb";
 
 const baseUrl = "https://www.rctoursandtravels.in";
 
-export default async function sitemap() {
-  const now = new Date();
+// Website launch / major SEO update date.
+// Future me kisi page ko actually update karne par us page ki date change kar sakte hain.
+const siteLastModified = new Date("2026-08-27");
 
+export default async function sitemap() {
   /*
    * ================================
    * MAIN WEBSITE PAGES
@@ -12,50 +14,44 @@ export default async function sitemap() {
    */
   const staticPages = [
     {
-      url: `${baseUrl}`,
-      lastModified: now,
-      changeFrequency: "daily",
+      url: baseUrl,
+      lastModified: siteLastModified,
+      changeFrequency: "weekly",
       priority: 1,
     },
-
     {
       url: `${baseUrl}/about`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "monthly",
       priority: 0.8,
     },
-
     {
       url: `${baseUrl}/services`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.9,
     },
-
     {
       url: `${baseUrl}/fleet`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.9,
     },
-
     {
       url: `${baseUrl}/tour-packages`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.9,
     },
-
     {
       url: `${baseUrl}/contact`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "monthly",
       priority: 0.8,
     },
-
     {
       url: `${baseUrl}/blog`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.8,
     },
@@ -65,79 +61,69 @@ export default async function sitemap() {
      * HIGH-INTENT SEO PAGES
      * ================================
      */
-
     {
       url: `${baseUrl}/taxi-service-in-nagpur`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 1,
     },
-
     {
       url: `${baseUrl}/airport-taxi-nagpur`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.95,
     },
-
     {
       url: `${baseUrl}/nagpur-airport-taxi`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.95,
     },
-
     {
       url: `${baseUrl}/nagpur-local-taxi`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.9,
     },
-
     {
       url: `${baseUrl}/car-rental-in-nagpur`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.9,
     },
-
     {
       url: `${baseUrl}/nagpur-to-tadoba-cab`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.95,
     },
-
     {
       url: `${baseUrl}/nagpur-to-pench-cab`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.95,
     },
-
     {
       url: `${baseUrl}/nagpur-to-chhindwara-cab`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.95,
     },
 
     /*
      * ================================
-     * BOOKING / FARE PAGE
+     * BOOKING / FARE PAGES
      * ================================
      */
-
     {
       url: `${baseUrl}/book-cab`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.9,
     },
-
     {
       url: `${baseUrl}/fare-calculator`,
-      lastModified: now,
+      lastModified: siteLastModified,
       changeFrequency: "weekly",
       priority: 0.85,
     },
@@ -171,7 +157,9 @@ export default async function sitemap() {
       .map((blog) => ({
         url: `${baseUrl}/blog/${blog.slug}`,
         lastModified:
-          blog.updatedAt || blog.createdAt || now,
+          blog.updatedAt ||
+          blog.createdAt ||
+          siteLastModified,
         changeFrequency: "weekly",
         priority: 0.7,
       }));
@@ -194,7 +182,9 @@ export default async function sitemap() {
       .map((tour) => ({
         url: `${baseUrl}/tour-packages/${tour.slug}`,
         lastModified:
-          tour.updatedAt || tour.createdAt || now,
+          tour.updatedAt ||
+          tour.createdAt ||
+          siteLastModified,
         changeFrequency: "weekly",
         priority: 0.8,
       }));
@@ -213,10 +203,7 @@ export default async function sitemap() {
   } catch (error) {
     console.error("Sitemap Error:", error);
 
-    /*
-     * Website sitemap should still work
-     * even if MongoDB is temporarily unavailable.
-     */
+    // Sitemap should still work if MongoDB is temporarily unavailable.
     return staticPages;
   }
 }

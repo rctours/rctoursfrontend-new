@@ -13,6 +13,7 @@ export default function robots() {
         "/driver/",
         "/my-profile",
         "/profile-login",
+        "/track-booking",
       ],
     },
 

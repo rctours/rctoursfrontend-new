@@ -132,6 +132,20 @@ const distance = Number(
 
 const displayDistance = distance;
 
+const isLocalRental = tripType === "Local Rental";
+
+const localPackageType =
+  searchParams.get("packageType")?.trim() || "";
+
+const localPackage =
+  localPackageType === "8hr"
+    ? "8 Hours / 80 KM"
+    : localPackageType === "10hr"
+    ? "10 Hours / 100 KM"
+    : localPackageType === "12hr"
+    ? "12 Hours / 120 KM"
+    : "Local Rental Package";
+
 const toll = Number(
   searchParams.get("toll")?.trim() || 0
 );
@@ -1504,9 +1518,14 @@ if (Object.keys(newErrors).length > 0) {
     <div className="mt-4 space-y-3">
 
       <div className="flex justify-between">
-        <span>Distance</span>
-        <span>{displayDistance} KM</span>
-      </div>
+      <span>{isLocalRental ? "Package" : "Distance"}</span>
+
+      <span>
+      {isLocalRental
+      ? localPackage || "Local Rental Package"
+      : `${displayDistance} KM`}
+      </span>
+    </div>
 
       <div className="flex justify-between">
         <span>Base Fare</span>
@@ -2292,8 +2311,13 @@ setPaymentType("full")
     <div className="space-y-2 text-[15px] text-white">
 
       <div className="flex justify-between">
-        <span>Distance</span>
-        <span>{displayDistance} KM</span>
+      <span>{isLocalRental ? "Package" : "Distance"}</span>
+
+      <span>
+        {isLocalRental
+        ? localPackage || "Local Rental Package"
+        : `${displayDistance} KM`}
+        </span>
       </div>
 
       <div className="flex justify-between">

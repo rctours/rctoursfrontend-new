@@ -435,16 +435,16 @@ const searchLocation = (
     setDropCoords(null);
   }
 
-  // 3 characters se kam par API call nahi
-  if (value.length < 3) {
-    if (type === "pickup") {
-      setPickupSuggestions([]);
-    } else {
-      setDropSuggestions([]);
-    }
-
-    return;
+  // 1 character se location search start hoga
+  if (value.length < 1) {
+  if (type === "pickup") {
+    setPickupSuggestions([]);
+  } else {
+    setDropSuggestions([]);
   }
+
+  return;
+}
 
   // Debounce
   searchTimers[type] = setTimeout(async () => {
@@ -1094,9 +1094,10 @@ const cabs = [
     image: "/cars/dzire.webp",
 
     packageFare: {
-      "40 KM / 4 Hrs": 1200,
+      "40 KM / 4 Hrs": 1400,
+      "60 KM / 6 Hrs": 1800,
       "80 KM / 8 Hrs": 2200,
-      "120 KM / 12 Hrs": 3000,
+      "120 KM / 12 Hrs": 2800,
     },
   },
 
@@ -1111,9 +1112,10 @@ const cabs = [
     image: "/ertiga.webp",
 
     packageFare: {
-      "40 KM / 4 Hrs": 1500,
-      "80 KM / 8 Hrs": 2500,
-      "120 KM / 12 Hrs": 3100,
+      "40 KM / 4 Hrs": 2000,
+      "60 KM / 6 Hrs": 2400,
+      "80 KM / 8 Hrs": 2700,
+      "120 KM / 12 Hrs": 3200,
     },
   },
 
@@ -1128,9 +1130,10 @@ const cabs = [
     image: "/cars/rumion.webp",
 
     packageFare: {
-      "40 KM / 4 Hrs": 1600,
-      "80 KM / 8 Hrs": 2600,
-      "120 KM / 12 Hrs": 3200,
+      "40 KM / 4 Hrs": 2100,
+      "60 KM / 6 Hrs": 2300,
+      "80 KM / 8 Hrs": 2800,
+      "120 KM / 12 Hrs": 3300,
     },
   },
 
@@ -1145,9 +1148,10 @@ const cabs = [
     image: "/cars/crysta.webp",
 
     packageFare: {
-      "40 KM / 4 Hrs": 3500,
-      "80 KM / 8 Hrs": 4200,
-      "120 KM / 12 Hrs": 5000,
+      "40 KM / 4 Hrs": 2300,
+      "60 KM / 6 Hrs": 3000,
+      "80 KM / 8 Hrs": 3800,
+      "120 KM / 12 Hrs": 4200,
     },
   },
 ];
@@ -1699,20 +1703,7 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
   <div
     key={item.place_id || index}
     className="p-3 cursor-pointer hover:bg-gray-100"
-    onClick={() => {
-      setPickup(item.display_name);
-
-      const coords = getValidCoordinates(item);
-
-  if (coords) {
-  setPickupCoords(coords);
-} else {
-  setPickupCoords(null);
-  console.warn("INVALID PICKUP COORDINATES:", item);
-}
-
-      setPickupSuggestions([]);
-    }}
+    onClick={() => selectLocation(item, "pickup")}
   >
     <div className="flex items-start gap-3">
   {(
@@ -1776,24 +1767,7 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
       <div
     key={item.place_id || index}
     className="cursor-pointer px-4 py-3 hover:bg-orange-50 transition"
-    onClick={() => {
-    setDrop(item.display_name);
-
-    const coords = getValidCoordinates(item);
-
-    if (coords) {
-    setDropCoords(coords);
-    } else {
-    setDropCoords(null);
-
-    console.warn(
-      "INVALID DROP COORDINATES:",
-      item
-    );
-  }
-
-  setDropSuggestions([]);
-  }}
+    onClick={() => selectLocation(item, "drop")}
   >
     <div className="flex items-start gap-3">
   {(
@@ -2020,24 +1994,7 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
       {pickupSuggestions.map((item, index) => (
   <div
     key={item.place_id || index}
-    onClick={() => {
-    setPickup(item.display_name);
-
-    const coords = getValidCoordinates(item);
-
-    if (coords) {
-    setPickupCoords(coords);
-    } else {
-    setPickupCoords(null);
-
-    console.warn(
-      "INVALID PICKUP COORDINATES:",
-      item
-    );
-  }
-
-  setPickupSuggestions([]);
-  }}
+    onClick={() => selectLocation(item, "pickup")}
     className="px-4 py-3 cursor-pointer hover:bg-orange-50"
   >
     <div className="flex items-start gap-3">
@@ -2079,9 +2036,20 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
         <button
           type="button"
           onClick={() => {
-            const temp = pickup;
+            const tempPickup = pickup;
+            const tempPickupCoords = pickupCoords;
+
             setPickup(drop);
-            setDrop(temp);
+            setPickupCoords(dropCoords);
+
+            setDrop(tempPickup);
+            setDropCoords(tempPickupCoords);
+
+            setPickupSuggestions([]);
+            setDropSuggestions([]);
+
+            setHasSearched(false);
+            setShowAirportPopup(false);
           }}
           className="absolute right-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-white border shadow-md rounded-full flex items-center justify-center hover:bg-gray-50 z-10"
         >
@@ -2117,24 +2085,7 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
   <div
     key={item.place_id || index}
     className="cursor-pointer px-4 py-3 hover:bg-orange-50 transition"
-    onClick={() => {
-      setDrop(item.display_name);
-
-      const coords = getValidCoordinates(item);
-
-      if (coords) {
-        setDropCoords(coords);
-      } else {
-        setDropCoords(null);
-
-        console.warn(
-          "INVALID DROP COORDINATES:",
-          item
-        );
-      }
-
-      setDropSuggestions([]);
-    }}
+    onClick={() => selectLocation(item, "drop")}
   >
     <div className="flex items-start gap-3">
   {(
@@ -2349,32 +2300,16 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
 
   </div>
 
-  <p className="text-gray-500 mt-2">
-
-{tripType === "Local Rental" && (
-  <>
-    {rentalPackage} Included
-  </>
-)}
-
-{tripType === "Outstation Trip" && (
-  <>
-    {distance} KM Included
-  </>
-)}
-
-{tripType === "One Way Trip" && (
-  <>
-    {distance} KM Included
-  </>
-)}
-
-{tripType === "Airport Pick-Up & Drop" && (
-  <>
-    {distance} KM Included
-  </>
-)}
-
+<p className="text-gray-500 mt-2">
+  {tripType === "Local Rental" ? (
+    <>
+      {rentalPackage} Included
+    </>
+  ) : (
+    <>
+      {distance} KM Included
+    </>
+  )}
 </p>
 
 {tripType === "Local Rental" && (
