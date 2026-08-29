@@ -2812,19 +2812,6 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
 
 </section>
 
-{!footerVisible && (
-  <div
-    className="md:hidden fixed left-0 right-0 bottom-0 z-[99999] bg-white border-t p-3 shadow-2xl"
-  >
-    <button
-      onClick={handleSearch}
-      className="w-full h-14 rounded-xl bg-blue-600 text-white font-bold text-lg"
-    >
-      🔍 Search Cabs
-    </button>
-  </div>
-)}
-
 <div ref={footerRef}>
   <Footer />
 </div>
