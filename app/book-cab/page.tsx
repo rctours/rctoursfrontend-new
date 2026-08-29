@@ -2818,7 +2818,7 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
 
 {/* Floating Call Button */}
 <div
-  className={`fixed bottom-24 md:bottom-6 right-2 md:right-4 z-50 flex flex-col items-center gap-1`}
+  className={`fixed bottom-5 md:bottom-6 right-2 md:right-4 z-50 flex flex-col items-center gap-1`}
   >
 
   {/* Call */}
