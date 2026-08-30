@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Book Cab Online | RC Tours & Travels Nagpur",
+  title: "Taxi Booking | RC Tours & Travels Nagpur",
+
   description:
-    "Book your taxi online with RC Tours & Travels. Reserve airport taxi, local cab, outstation taxi, one-way cab and round-trip taxi in Nagpur at affordable prices.",
+    "Book your taxi with RC Tours & Travels for airport, local, outstation and one-way travel in Nagpur.",
 
   keywords: [
-    "Book Cab Nagpur",
-    "Online Taxi Booking Nagpur",
-    "Airport Taxi Booking",
-    "Local Cab Booking",
-    "Outstation Cab Booking",
+    "Taxi Booking Nagpur",
+    "Taxi Service Nagpur",
+    "Airport Taxi Nagpur",
+    "Local Cab Nagpur",
+    "Outstation Cab Nagpur",
     "One Way Cab Nagpur",
-    "Round Trip Taxi",
     "RC Tours & Travels",
   ],
 

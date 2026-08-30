@@ -2096,29 +2096,31 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
 
 </div>
 
-        {/* Swap Button */}
-        <button
-          type="button"
-          onClick={() => {
-            const tempPickup = pickup;
-            const tempPickupCoords = pickupCoords;
+{/* Swap Button - Hidden for Local Rental */}
+{tripType !== "Local Rental" && (
+  <button
+    type="button"
+    onClick={() => {
+      const tempPickup = pickup;
+      const tempPickupCoords = pickupCoords;
 
-            setPickup(drop);
-            setPickupCoords(dropCoords);
+      setPickup(drop);
+      setPickupCoords(dropCoords);
 
-            setDrop(tempPickup);
-            setDropCoords(tempPickupCoords);
+      setDrop(tempPickup);
+      setDropCoords(tempPickupCoords);
 
-            setPickupSuggestions([]);
-            setDropSuggestions([]);
+      setPickupSuggestions([]);
+      setDropSuggestions([]);
 
-            setHasSearched(false);
-            setShowAirportPopup(false);
-          }}
-          className="absolute right-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-white border shadow-md rounded-full flex items-center justify-center hover:bg-gray-50 z-10"
-        >
-          ⇄
-        </button>
+      setHasSearched(false);
+      setShowAirportPopup(false);
+    }}
+    className="absolute right-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-white border shadow-md rounded-full flex items-center justify-center hover:bg-gray-50 z-10"
+  >
+    ⇄
+  </button>
+)}
 
         {/* To */}
         {tripType !== "Local Rental" && (
@@ -2188,6 +2190,36 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
 </div>
 )}
 </div>    
+
+{/* Local Rental Package - Mobile Only */}
+{tripType === "Local Rental" && (
+  <div className="relative mt-4">
+    <select
+      value={rentalPackage}
+      onChange={(e) => {
+        setRentalPackage(e.target.value);
+        setHasSearched(false);
+      }}
+      className="h-[58px] w-full rounded-xl border-2 border-gray-200 bg-white px-4 text-gray-800 font-semibold shadow-sm focus:border-orange-500 focus:outline-none"
+    >
+      <option value="40 KM / 4 Hrs">
+        40 KM / 4 Hrs
+      </option>
+
+      <option value="60 KM / 6 Hrs">
+        60 KM / 6 Hrs
+      </option>
+
+      <option value="80 KM / 8 Hrs">
+        80 KM / 8 Hrs
+      </option>
+
+      <option value="120 KM / 12 Hrs">
+        120 KM / 12 Hrs
+      </option>
+    </select>
+  </div>
+)}
 
       {/* Date Time */}
       <div className="grid grid-cols-2 gap-3 mt-4">
