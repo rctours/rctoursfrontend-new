@@ -155,7 +155,26 @@ console.log("BOOK DISTANCE :", searchParams.get("distance"));
 
 console.log("BOOK FARE :", searchParams.get("fare"));
 
-const [rentalPackage, setRentalPackage] = useState("40 KM / 4 Hrs");
+const [rentalPackage, setRentalPackage] = useState(() => {
+  const packageParam = searchParams.get("package")?.trim();
+
+  switch (packageParam) {
+    case "4hr":
+      return "40 KM / 4 Hrs";
+
+    case "6hr":
+      return "60 KM / 6 Hrs";
+
+    case "8hr":
+      return "80 KM / 8 Hrs";
+
+    case "12hr":
+      return "120 KM / 12 Hrs";
+
+    default:
+      return "40 KM / 4 Hrs";
+  }
+});
 
 const [pickupSuggestions, setPickupSuggestions] = useState<any[]>([]);
 const [dropSuggestions, setDropSuggestions] = useState<any[]>([]);
