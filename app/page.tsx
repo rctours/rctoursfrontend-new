@@ -402,6 +402,33 @@ const [routeIndex, setRouteIndex] = useState(0);
 
 const [selectedPackage, setSelectedPackage] = useState("4hr");
 
+const hourlyPackages = [
+  {
+    value: "4hr",
+    label: "4 Hours",
+    distance: "40 KM",
+    fare: 1400,
+  },
+  {
+    value: "6hr",
+    label: "6 Hours",
+    distance: "60 KM",
+    fare: 1800,
+  },
+  {
+    value: "8hr",
+    label: "8 Hours",
+    distance: "80 KM",
+    fare: 2200,
+  },
+  {
+    value: "12hr",
+    label: "12 Hours",
+    distance: "120 KM",
+    fare: 2800,
+  },
+];
+
 const [reviewIndex, setReviewIndex] = useState(0);
 
 const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -631,22 +658,32 @@ const banner = banners[currentIndex];
 let bookCabUrl = "";
 
 if (tripType === "Local Rental") {
-  bookCabUrl = "#local-rental";
-} else {
+  const selectedHourlyPackage =
+    hourlyPackages.find(
+      (item) => item.value === selectedPackage
+    ) || hourlyPackages[0];
+
   bookCabUrl =
-    `/book-cab?vehicle=${encodeURIComponent(selectedVehicle)}` +
-    `&tripType=${encodeURIComponent(tripType)}` +
-    `&pickup=${encodeURIComponent(pickup)}` +
-    `&drop=${encodeURIComponent(drop)}` +
+    `/book-cab?tripType=${encodeURIComponent(
+      "Local Rental"
+    )}` +
+    `&cabType=${encodeURIComponent(
+      selectedVehicle || "Swift Dzire"
+    )}` +
+    `&package=${encodeURIComponent(
+      selectedHourlyPackage.value
+    )}` +
+    `&packageLabel=${encodeURIComponent(
+      selectedHourlyPackage.label
+    )}` +
+    `&packageDistance=${encodeURIComponent(
+      selectedHourlyPackage.distance
+    )}` +
+    `&fare=${selectedHourlyPackage.fare}` +
+    `&driverCharge=0` +
     `&journeyDate=${journeyDate}` +
     `&pickupTime=${pickupTime}` +
-    `&returnDate=${returnDate}` +
-    `&distance=${distance}` +
-    `&fare=${fare}` +
-    `&pickupLat=${pickupCoords?.lat ?? ""}` +
-    `&pickupLon=${pickupCoords?.lon ?? ""}` +
-    `&dropLat=${dropCoords?.lat ?? ""}` +
-    `&dropLon=${dropCoords?.lon ?? ""}`;
+    `&pickup=${encodeURIComponent(pickup)}`;
 }
 
 console.log("bookCabUrl:", bookCabUrl);
@@ -1017,12 +1054,13 @@ useEffect(() => {
       )}
     </div>
 
-    {/* Drop */}
-    <div className="relative">
+        {/* Drop */}
+      {tripType !== "Local Rental" && (
+      <div className="relative">
       <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 flex items-center gap-1 tracking-wide">
-  <MapPin size={14} className="text-pink-500" />
-  Drop
-</label>
+      <MapPin size={14} className="text-pink-500" />
+       Drop
+      </label>
 
       <input
         type="text"
@@ -1140,8 +1178,9 @@ useEffect(() => {
             </div>
           ))}
         </div>
-      )}
+        )}
     </div>
+    )}
 
 {/* Journey Date */}
 <div>
@@ -1182,6 +1221,28 @@ useEffect(() => {
     />
   </div>
 )}
+
+    {/* Duration - Hourly Rental Only */}
+    {tripType === "Local Rental" && (
+      <div>
+        <label className="text-[11px] sm:text-xs font-bold text-gray-700 mb-1 flex items-center gap-1 tracking-wide">
+          <Clock3 size={14} className="text-purple-500" />
+          Duration
+        </label>
+
+        <select
+          value={selectedPackage}
+          onChange={(e) => setSelectedPackage(e.target.value)}
+          className="w-full h-11 sm:h-12 rounded-xl border border-gray-200 bg-gray-50/80 px-3.5 text-xs sm:text-sm text-gray-900 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all"
+        >
+          {hourlyPackages.map((item) => (
+            <option key={item.value} value={item.value}>
+            {item.label} — {item.distance}
+            </option>
+          ))}
+        </select>
+      </div>
+    )}
 
     {/* Pickup Time */}
     <div>
@@ -1282,10 +1343,48 @@ useEffect(() => {
         onClick={async (e) => {
           e.preventDefault();
 
-          if (!pickup || !drop || !journeyDate) {
+                    if (!pickup || !journeyDate) {
             alert(
-              "Please enter Pickup, Drop and Journey Date"
+              "Please enter Pickup and Journey Date"
             );
+            return;
+          }
+
+          if (tripType !== "Local Rental" && !drop) {
+            alert(
+              "Please enter Drop Location"
+            );
+            return;
+          }
+
+          if (tripType === "Local Rental") {
+            const selectedHourlyPackage =
+              hourlyPackages.find(
+                (item) => item.value === selectedPackage
+              ) || hourlyPackages[0];
+
+            window.location.href =
+              `/book-cab?tripType=${encodeURIComponent(
+                "Local Rental"
+              )}` +
+              `&cabType=${encodeURIComponent(
+                selectedVehicle || "Swift Dzire"
+              )}` +
+              `&package=${encodeURIComponent(
+                selectedHourlyPackage.value
+              )}` +
+              `&packageLabel=${encodeURIComponent(
+                selectedHourlyPackage.label
+              )}` +
+              `&packageDistance=${encodeURIComponent(
+                selectedHourlyPackage.distance
+              )}` +
+              `&fare=${selectedHourlyPackage.fare}` +
+              `&driverCharge=0` +
+              `&journeyDate=${journeyDate}` +
+              `&pickupTime=${pickupTime}` +
+              `&pickup=${encodeURIComponent(pickup)}`;
+
             return;
           }
 
@@ -3330,9 +3429,3 @@ useEffect(() => {
   </>
 );
 }
-
-
-
-
-
-

@@ -511,10 +511,10 @@ const handleSearch = async () => {
     return;
   }
 
-  if (!drop.trim()) {
-    alert("Please enter Drop Location");
-    return;
-  }
+  if (tripType !== "Local Rental" && !drop.trim()) {
+  alert("Please enter Drop Location");
+  return;
+}
 
   if (!pickupDate) {
     alert("Please select Journey Date");
@@ -530,14 +530,35 @@ const handleSearch = async () => {
   }
 
   if (
-    tripType !== "Outstation Trip" &&
-    !pickupTime
-  ) {
-    alert("Please select Pickup Time");
-    return;
-  }
+  tripType !== "Outstation Trip" &&
+  !pickupTime
+) {
+  alert("Please select Pickup Time");
+  return;
+}
 
-  setLoadingDistance(true);
+// =====================================
+// LOCAL RENTAL
+// Drop / Distance API ki zarurat nahi
+// =====================================
+if (tripType === "Local Rental") {
+  setSearchedPickup(pickup);
+  setSearchedDrop("");
+  setDistance(0);
+  setToll(0);
+  setHasSearched(true);
+
+  setShowSearchModal(false);
+  setLoadingDistance(false);
+
+  console.log("LOCAL RENTAL MODIFY SUCCESS");
+  console.log("Pickup:", pickup);
+  console.log("Package:", rentalPackage);
+
+  return;
+}
+
+setLoadingDistance(true);
 
   try {
     const res = await fetch("/api/distance", {
@@ -684,10 +705,10 @@ const handleModifySearch = async () => {
     return;
   }
 
-  if (!drop.trim()) {
-    alert("Please enter Drop Location");
-    return;
-  }
+  if (tripType !== "Local Rental" && !drop.trim()) {
+  alert("Please enter Drop Location");
+  return;
+}
 
   if (!pickupDate) {
     alert("Please select Journey Date");
@@ -702,15 +723,36 @@ const handleModifySearch = async () => {
     return;
   }
 
-  if (
-    tripType !== "Outstation Trip" &&
-    !pickupTime
-  ) {
-    alert("Please select Pickup Time");
-    return;
-  }
+if (
+  tripType !== "Outstation Trip" &&
+  !pickupTime
+) {
+  alert("Please select Pickup Time");
+  return;
+}
 
-  setLoadingDistance(true);
+// =====================================
+// LOCAL RENTAL
+// Drop / Distance API ki zarurat nahi
+// =====================================
+if (tripType === "Local Rental") {
+  setSearchedPickup(pickup);
+  setSearchedDrop("");
+  setDistance(0);
+  setToll(0);
+  setHasSearched(true);
+
+  setShowSearchModal(false);
+  setLoadingDistance(false);
+
+  console.log("LOCAL RENTAL MODIFY SUCCESS");
+  console.log("Pickup:", pickup);
+  console.log("Package:", rentalPackage);
+
+  return;
+}
+
+setLoadingDistance(true);
 
   try {
     const res = await fetch("/api/distance", {
@@ -883,7 +925,16 @@ useEffect(() => {
     return;
   }
 
-    // User ne pickup/drop change kiya hai.
+  // =====================================
+  // LOCAL RENTAL
+  // Distance API ki zarurat nahi
+  // Package fare already selected hai
+  // =====================================
+  if (tripType === "Local Rental") {
+    return;
+  }
+
+  // User ne pickup/drop change kiya hai.
   // Ab naya distance aur fare sirf Search button click ke baad calculate hoga.
   if (!hasSearched) {
     return;
@@ -1200,7 +1251,12 @@ const isFormComplete =
 
 
   const getCabFare = (cab: typeof cabs[number]) => {
-  if (!isFormComplete || !hasSearched) return 0;
+  if (
+  (!isFormComplete && tripType !== "Local Rental") ||
+  !hasSearched
+) {
+  return 0;
+}
 
   // =====================================
 // AIRPORT PICK-UP & DROP PACKAGE FARE
@@ -1518,29 +1574,32 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
       </div>
 
       {/* Drop */}
+      {tripType !== "Local Rental" && (
       <div className="flex items-center">
         <div className="w-3 text-gray-400 text-xs">●</div>
 
         <input
-  type="text"
-  placeholder="Drop Location"
-  value={drop}
-  onChange={(e) => {
-    setDrop(e.target.value);
-    setHasSearched(false);
-// User destination change kar raha hai.
-// Naya fare/result sirf Search button ke baad update hoga.
+        type="text"
+        placeholder="Drop Location"
+        value={drop}
+        onChange={(e) => {
+        setDrop(e.target.value);
+        setHasSearched(false);
+        // User destination change kar raha hai.
+        // Naya fare/result sirf Search button ke baad update hoga.
 
-    // Drop edit/type karte waqt airport popup band rahega
-    setShowAirportPopup(false);
+        // Drop edit/type karte waqt airport popup band rahega
+        setShowAirportPopup(false);
 
-    searchLocation(e.target.value, "drop");
-  }}
+        searchLocation(e.target.value, "drop");
+        }}
         className="flex-1 ml-3 h-10 border-b border-gray-200 outline-none bg-transparent text-[15px] font-medium text-gray-800 placeholder-gray-400"
         />
       </div>
+      )}
     </div>
-
+    
+    
     {/* Pencil */}
     <div
       onClick={() => setShowSearchModal(true)}
@@ -1601,10 +1660,10 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
 
 
           <div
-          className={`hidden md:grid md:grid-cols-[1fr_1fr_50px_1fr_1fr_1fr_180px] gap-3 items-center ${
+          className={`hidden md:grid gap-3 items-center ${
           tripType === "Local Rental"
-          ? "lg:grid-cols-7 xl:grid-cols-7"
-          : "lg:grid-cols-6 xl:grid-cols-6"
+          ? "md:grid-cols-[1fr_1fr_1fr_1fr_1fr_180px]"
+          : "md:grid-cols-[1fr_1fr_50px_1fr_1fr_1fr_180px] lg:grid-cols-6 xl:grid-cols-6"
           }`}
           >
               <select
@@ -1623,40 +1682,41 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
               </select>
 
               {tripType === "Local Rental" && (
-    <select
-    value={rentalPackage}
-    onChange={(e) => setRentalPackage(e.target.value)}
-    className="h-[58px] md:h-[64px] w-full rounded-2xl border-2 border-gray-200 bg-white px-5 text-gray-800 placeholder:text-gray-400 shadow-sm transition-all duration-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 focus:outline-none hover:border-orange-300"
-    >
-    <option>40 KM / 4 Hrs</option>
-    <option>80 KM / 8 Hrs</option>
-    <option>120 KM / 12 Hrs</option>
-  </select>
-  )}
+              <select
+              value={rentalPackage}
+              onChange={(e) => setRentalPackage(e.target.value)}
+              className="h-[58px] md:h-[64px] w-full rounded-2xl border-2 border-gray-200 bg-white px-5 text-gray-800 placeholder:text-gray-400 shadow-sm transition-all duration-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 focus:outline-none hover:border-orange-300"
+              >
+              <option>40 KM / 4 Hrs</option>
+              <option>60 KM / 6 Hrs</option>
+              <option>80 KM / 8 Hrs</option>
+              <option>120 KM / 12 Hrs</option>
+              </select>
+              )}
 
-  <div className="relative">
+            <div className="relative">
 
-  <MapPin
-  size={20}
-  strokeWidth={2.5}
-  className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500"
-  />
+            <MapPin
+            size={20}
+            strokeWidth={2.5}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500"
+            />
 
-  <input
-    type="text"
-    placeholder="Pickup Location"
-    value={pickup}
-    onChange={(e) => {
-  setPickup(e.target.value);
-  setHasSearched(false);
-  setShowAirportPopup(false);
-  searchLocation(e.target.value, "pickup");
-}}
-    className="h-[58px] md:h-[64px] w-full rounded-2xl border-2 border-gray-200 bg-white pl-12 pr-5 text-gray-800 placeholder:text-gray-400 shadow-sm transition-all duration-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 focus:outline-none hover:border-orange-300"
-  />
+            <input
+            type="text"
+            placeholder="Pickup Location"
+            value={pickup}
+            onChange={(e) => {
+            setPickup(e.target.value);
+            setHasSearched(false);
+            setShowAirportPopup(false);
+            searchLocation(e.target.value, "pickup");
+            }}
+          className="h-[58px] md:h-[64px] w-full rounded-2xl border-2 border-gray-200 bg-white pl-12 pr-5 text-gray-800 placeholder:text-gray-400 shadow-sm transition-all duration-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 focus:outline-none hover:border-orange-300"
+          />
 
-  {(pickupSuggestions.length > 0 || pickup.trim() === "") && (
-  <div className="absolute z-50 bg-white border border-gray-300 rounded-xl w-full max-h-60 overflow-y-auto shadow-lg">
+          {(pickupSuggestions.length > 0 || pickup.trim() === "") && (
+          <div className="absolute z-50 bg-white border border-gray-300 rounded-xl w-full max-h-60 overflow-y-auto shadow-lg">
 
 {/* Use Current Location */}
 {pickup.trim() === "" && (
@@ -1739,70 +1799,74 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
 )}
 </div>
 
+{/* Drop Location - Local Rental me hidden */}
+{tripType !== "Local Rental" && (
   <div className="relative">
 
-  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl">
-    🏁
-  </span>
+    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl">
+      🏁
+    </span>
 
-  <input
-    type="text"
-    placeholder="Drop Location"
-    value={drop}
-    onChange={(e) => {
-  setDrop(e.target.value);
-    setHasSearched(false);
-  // Drop edit/type karte waqt airport popup band rahega
-  setShowAirportPopup(false);
+    <input
+      type="text"
+      placeholder="Drop Location"
+      value={drop}
+      onChange={(e) => {
+        setDrop(e.target.value);
+        setHasSearched(false);
+        setShowAirportPopup(false);
 
-  searchLocation(e.target.value, "drop");
-}}
-    className="h-[58px] md:h-[64px] w-full rounded-2xl border-2 border-gray-200 bg-white pl-12 pr-5 text-gray-800 placeholder:text-gray-400 shadow-sm transition-all duration-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 focus:outline-none hover:border-orange-300"
-  />
+        searchLocation(e.target.value, "drop");
+      }}
+      className="h-[58px] md:h-[64px] w-full rounded-2xl border-2 border-gray-200 bg-white pl-12 pr-5 text-gray-800 placeholder:text-gray-400 shadow-sm transition-all duration-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 focus:outline-none hover:border-orange-300"
+    />
 
-  {dropSuggestions.length > 0 && (
-    <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl max-h-60 overflow-y-auto">
+    {dropSuggestions.length > 0 && (
+      <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl max-h-60 overflow-y-auto">
 
-      {dropSuggestions.map((item, index) => (
-      <div
-    key={item.place_id || index}
-    className="cursor-pointer px-4 py-3 hover:bg-orange-50 transition"
-    onClick={() => selectLocation(item, "drop")}
-  >
-    <div className="flex items-start gap-3">
-  {(
-  item?.type?.toLowerCase().includes("airport") ||
-  item?.name?.toLowerCase().includes("airport") ||
-  item?.display_name?.toLowerCase().includes("airport")
-) ? (
-  <Plane
-    size={20}
-    className="mt-0.5 shrink-0 text-orange-500"
-  />
-) : (
-  <MapPin
-    size={20}
-    className="mt-0.5 shrink-0 text-orange-500"
-  />
-)}
+        {dropSuggestions.map((item, index) => (
+          <div
+            key={item.place_id || index}
+            className="cursor-pointer px-4 py-3 hover:bg-orange-50 transition"
+            onClick={() => selectLocation(item, "drop")}
+          >
+            <div className="flex items-start gap-3">
 
-  <div className="min-w-0">
-    <p className="font-semibold text-gray-900">
-      {item.name || item.display_name}
-    </p>
+              {(
+                item?.type?.toLowerCase().includes("airport") ||
+                item?.name?.toLowerCase().includes("airport") ||
+                item?.display_name?.toLowerCase().includes("airport")
+              ) ? (
+                <Plane
+                  size={20}
+                  className="mt-0.5 shrink-0 text-orange-500"
+                />
+              ) : (
+                <MapPin
+                  size={20}
+                  className="mt-0.5 shrink-0 text-orange-500"
+                />
+              )}
 
-    <p className="mt-0.5 text-sm text-gray-500">
-      {item.display_name}
-    </p>
+              <div className="min-w-0">
+                <p className="font-semibold text-gray-900">
+                  {item.name || item.display_name}
+                </p>
+
+                <p className="mt-0.5 text-sm text-gray-500">
+                  {item.display_name}
+                </p>
+              </div>
+
+            </div>
+          </div>
+        ))}
+
+      </div>
+    )}
+
   </div>
-</div>
-</div>
-  ))}
-
-    </div>
-  )}
-
-</div>
+)}
 
   <div className="relative">
 
@@ -2057,6 +2121,7 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
         </button>
 
         {/* To */}
+        {tripType !== "Local Rental" && (
         <div className="relative mt-4 border rounded-xl p-3">
 
   <p className="text-gray-500 text-sm">
@@ -2121,8 +2186,8 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
   )}
 
 </div>
-
-      </div>
+)}
+</div>    
 
       {/* Date Time */}
       <div className="grid grid-cols-2 gap-3 mt-4">
