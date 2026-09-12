@@ -438,18 +438,18 @@ const [openService, setOpenService] = useState(0);
 const [showAllAreas, setShowAllAreas] = useState(false);
 
 const routes = [
-  ["Wardha","₹1824"],
-  ["Amravati","₹3803"],
-  ["Chandrapur","₹4088"],
-  ["Bhandara","₹1802"],
-  ["Gondia","₹3495"],
-  ["Tadoba","₹2528"],
-  ["Pench","₹3165"],
-  ["Chikhaldara","₹5451"],
-  ["Shegaon","₹7056"],
-  ["Shirdi","₹12155"],
-  ["Pune","₹14968"],
-  ["Hyderabad","₹10924"],
+  ["Wardha","₹2800"],
+  ["Amravati","₹3388"],
+  ["Chandrapur","₹3366"],
+  ["Bhandara","₹2700"],
+  ["Gondia","₹3542"],
+  ["Tadoba","₹3388"],
+  ["Pench","₹2700"],
+  ["Chikhaldara","₹4884"],
+  ["Shegaon","₹6952"],
+  ["Shirdi","₹12166"],
+  ["Pune","₹16742"],
+  ["Hyderabad","₹10956"],
 ];
 
 const reviews = [
@@ -717,6 +717,19 @@ useEffect(() => {
   return () => clearInterval(timer);
 }, []);
 
+const [isScrolled, setIsScrolled] = useState(false);
+
+useEffect(() => {
+  const handleScroll = () => {
+    setIsScrolled(window.scrollY > 80);
+  };
+
+  window.addEventListener("scroll", handleScroll);
+
+  return () => {
+    window.removeEventListener("scroll", handleScroll);
+  };
+}, []);
 
   return (
   <>
@@ -1700,14 +1713,18 @@ useEffect(() => {
                   </div>
 
                   <Link
-                    href={`/book-cab?tripType=${encodeURIComponent(
-                    "One Way Trip"
-                    )}&pickup=${encodeURIComponent(
-                    "Nagpur"
-                    )}&drop=${encodeURIComponent(route[0])}`}
-                    className="h-9 px-3.5 rounded-xl flex items-center justify-center text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/30 transition-all hover:scale-105 shrink-0"
+                  href={`/book-cab?tripType=${encodeURIComponent(
+                  "One Way Trip"
+                  )}&pickup=${encodeURIComponent(
+                  "Nagpur"
+                  )}&drop=${encodeURIComponent(
+                  route[0] === "Tadoba"
+                  ? "Tadoba Andhari Tiger Reserve, Moharli, Maharashtra"
+                  : route[0]
+                  )}`}
+                  className="h-9 px-3.5 rounded-xl flex items-center justify-center text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/30 transition-all hover:scale-105 shrink-0"
                   >
-                    Book Now →
+                  Book Now →
                   </Link>
                 </div>
               </div>
@@ -1781,14 +1798,18 @@ useEffect(() => {
                   </div>
 
                   <Link
-                    href={`/book-cab?tripType=${encodeURIComponent(
-                    "One Way Trip"
-                    )}&pickup=${encodeURIComponent(
-                    "Nagpur"
-                    )}&drop=${encodeURIComponent(route?.[0] || "")}`}
-                    className="h-9 px-3.5 rounded-xl flex items-center justify-center text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/30 shrink-0"
+                  href={`/book-cab?tripType=${encodeURIComponent(
+                  "One Way Trip"
+                  )}&pickup=${encodeURIComponent(
+                  "Nagpur"
+                  )}&drop=${encodeURIComponent(
+                  route?.[0] === "Tadoba"
+                  ? "Tadoba Andhari Tiger Reserve, Moharli, Maharashtra"
+                  : route?.[0] || ""
+                  )}`}
+                  className="h-9 px-3.5 rounded-xl flex items-center justify-center text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/30 shrink-0"
                   >
-                    Book Now →
+                  Book Now →
                   </Link>
                 </div>
               </div>
@@ -3390,33 +3411,94 @@ useEffect(() => {
 <Footer />
 
 {/* Floating Call Button */}
-<div className="fixed bottom-4 sm:bottom-5 md:bottom-6 right-3 md:right-4 z-50 flex flex-col items-center gap-1">
+<div className="fixed bottom-4 sm:bottom-5 md:bottom-6 right-3 md:right-4 z-50 flex flex-col items-center gap-2">
 
-  {/* Call */}
-  <a
-    href="tel:+919172271464"
-    className="bg-cyan-500 hover:bg-cyan-600 text-white w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center text-lg md:text-2xl"
-  >
-    📞
-  </a>
+  {/* Mobile Large Buttons - Top Position */}
+  {!isScrolled && (
+    <div className="flex flex-col gap-2 md:hidden">
 
-  {/* WhatsApp */}
-<a
-  href="https://wa.me/919172271464"
-  target="_blank"
-  rel="noopener noreferrer"
-  aria-label="Chat on WhatsApp"
-  className="bg-green-500 hover:bg-green-600 text-white w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl md:text-4xl"
->
-  <FaWhatsapp />
-</a>
+      {/* WhatsApp Large Button */}
+      <a
+        href="https://wa.me/919172271464"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat with us on WhatsApp"
+        className="bg-green-500 hover:bg-green-600 text-white w-36 h-12 rounded-full shadow-2xl flex items-center justify-center gap-2 font-bold text-sm transition-all duration-300"
+      >
+        <FaWhatsapp className="text-2xl" />
+        <span>Chat with us</span>
+      </a>
 
-{/* Discount Badge */}
-<div className="bg-green-500 text-white px-2 py-1 rounded-xl shadow-xl animate-pulse">
-  <p className="text-[9px] md:text-[11px] font-bold text-center whitespace-nowrap">
-    🎁 Get Discount
-  </p>
-</div>
+      {/* Call Large Button */}
+      <a
+        href="tel:+919172271464"
+        aria-label="Call us now"
+        className="bg-cyan-500 hover:bg-cyan-600 text-white w-36 h-12 rounded-full shadow-2xl flex items-center justify-center gap-2 font-bold text-sm transition-all duration-300"
+      >
+        <span className="text-xl">📞</span>
+        <span>Call us now</span>
+      </a>
+
+    </div>
+  )}
+
+  {/* Mobile Small Buttons - After Scroll */}
+  {isScrolled && (
+    <div className="flex flex-col items-center gap-2 md:hidden">
+
+      {/* Small Call */}
+      <a
+        href="tel:+919172271464"
+        aria-label="Call us"
+        className="bg-cyan-500 hover:bg-cyan-600 text-white w-12 h-12 rounded-full shadow-2xl flex items-center justify-center text-xl transition-all duration-300"
+      >
+        📞
+      </a>
+
+      {/* Small WhatsApp */}
+      <a
+        href="https://wa.me/919172271464"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat on WhatsApp"
+        className="bg-green-500 hover:bg-green-600 text-white w-12 h-12 rounded-full shadow-2xl flex items-center justify-center text-2xl transition-all duration-300"
+      >
+        <FaWhatsapp />
+      </a>
+
+    </div>
+  )}
+
+  {/* Desktop Existing Buttons - No Change */}
+  <div className="hidden md:flex flex-col items-center gap-1">
+
+    {/* Call */}
+    <a
+      href="tel:+919172271464"
+      className="bg-cyan-500 hover:bg-cyan-600 text-white w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center text-lg md:text-2xl"
+    >
+      📞
+    </a>
+
+    {/* WhatsApp */}
+    <a
+      href="https://wa.me/919172271464"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Chat on WhatsApp"
+      className="bg-green-500 hover:bg-green-600 text-white w-12 h-12 md:w-16 md:h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl md:text-4xl"
+    >
+      <FaWhatsapp />
+    </a>
+
+    {/* Discount Badge */}
+    <div className="bg-green-500 text-white px-2 py-1 rounded-xl shadow-xl animate-pulse">
+      <p className="text-[9px] md:text-[11px] font-bold text-center whitespace-nowrap">
+        🎁 Get Discount
+      </p>
+    </div>
+
+  </div>
 
 </div>
 

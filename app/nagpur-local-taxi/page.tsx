@@ -1,206 +1,178 @@
+
+
 "use client";
 
 import Image from "next/image";
-import Script from "next/script";
+import Link from "next/link";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import LocalCabPackages from "@/components/LocalCabPackages";
+import Footer from "@/components/Footer";
+import {
+  ArrowRight,
+  CalendarCheck,
+  CalendarDays,
+  Car,
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  Headphones,
+  MapPin,
+  Navigation,
+  Phone,
+  Plane,
+  ShieldCheck,
+  WalletCards,
+  UserRoundCheck,
+} from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "Do you provide local taxi service in Nagpur?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes. RC Tours & Travels provides local taxi service in Nagpur for city travel, meetings, shopping, family trips, events, railway station transfers and other local journeys.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "What local taxi packages are available in Nagpur?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "RC Tours & Travels offers local rental packages such as 4 hours / 40 km, 8 hours / 80 km and 12 hours / 120 km, subject to vehicle availability and booking requirements.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Which cars are available for local taxi booking?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Depending on availability and passenger requirements, customers can book Swift Dzire, Ertiga, Toyota Rumion and Innova Crysta for local travel in Nagpur.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Can I book a local taxi in Nagpur on WhatsApp?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes. Customers can contact RC Tours & Travels through WhatsApp or phone to check availability and book a local taxi in Nagpur.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Can I book a taxi for several hours in Nagpur?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes. Hourly local rental packages are available for customers who need a taxi for meetings, shopping, events, family travel, city visits or multiple stops.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Do you provide local taxi service near Dighori and other parts of Nagpur?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes. RC Tours & Travels serves customers across Nagpur and can arrange local taxi services for major areas depending on availability.",
-      },
-    },
-  ],
+/* =========================================================
+   TYPES
+========================================================= */
+
+type TripType = "airport" | "oneway" | "roundtrip" | "hourly";
+
+type LocationType = "pickup" | "drop";
+
+type LocationResult = {
+  name?: string;
+  display_name?: string;
+  full_address?: string;
+  lat?: number | string;
+  lon?: number | string;
 };
 
-const localBusinessSchema = {
-  "@context": "https://schema.org",
-  "@type": "TaxiService",
-  name: "RC Tours & Travels",
-  image: "https://www.rctoursandtravels.in/logo.png",
-  url: "https://www.rctoursandtravels.in/nagpur-local-taxi",
-  telephone: "+919172271464",
+/* =========================================================
+   BUSINESS CONSTANTS
+========================================================= */
 
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "New Narsala Rd, Beldar Nagar, Dighori",
-    addressLocality: "Nagpur",
-    addressRegion: "Maharashtra",
-    postalCode: "440034",
-    addressCountry: "IN",
+const PHONE = "+919172271464";
+
+const WHATSAPP_URL = "https://wa.me/919172271464";
+
+const WEBSITE_URL = "https://www.rctoursandtravels.in";
+
+const PAGE_URL = `${WEBSITE_URL}/nagpur-local-taxi`;
+
+/* =========================================================
+   VEHICLE RATES
+   Keep aligned with existing fare flow.
+========================================================= */
+
+const vehicleRates: Record<string, number> = {
+  "Sedan (Dzire / Etios)": 11,
+  "SUV (Ertiga)": 13,
+  "Toyota Rumion": 13,
+  "Innova Crysta": 17,
+  "Tempo Traveller": 25,
+  "Force Urbania": 40,
+};
+
+const vehicles = Object.keys(vehicleRates);
+
+/* =========================================================
+   HOURLY PACKAGES
+========================================================= */
+
+const hourlyPackages = [
+  {
+    id: "4hr-40km",
+    label: "4 Hr / 40 KM",
+    hours: 4,
+    km: 40,
   },
-
-  areaServed: {
-    "@type": "City",
-    name: "Nagpur",
+  {
+    id: "6hr-60km",
+    label: "6 Hr / 60 KM",
+    hours: 6,
+    km: 60,
   },
+  {
+    id: "8hr-80km",
+    label: "8 Hr / 80 KM",
+    hours: 8,
+    km: 80,
+  },
+  {
+    id: "12hr-120km",
+    label: "12 Hr / 120 KM",
+    hours: 12,
+    km: 120,
+  },
+];
 
-  serviceType: [
-    "Local Taxi Service",
-    "Local Cab Service",
-    "Hourly Taxi Rental",
-    "City Taxi Service",
-  ],
-
-  priceRange: "₹₹",
-  openingHours: "Mo-Su 00:00-23:59",
-};
-
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Home",
-      item: "https://www.rctoursandtravels.in/",
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "Nagpur Local Taxi",
-      item: "https://www.rctoursandtravels.in/nagpur-local-taxi",
-    },
-  ],
-};
+/* =========================================================
+   SERVICES
+========================================================= */
 
 const services = [
-  {
-    icon: "🏙️",
-    title: "City Taxi Service",
-    description:
-      "Comfortable local cab service for travelling across Nagpur for personal, family and business requirements.",
-  },
-  {
-    icon: "⏱️",
-    title: "Hourly Taxi Rental",
-    description:
-      "Book a taxi for multiple stops, meetings, shopping, appointments, events and city travel.",
-  },
-  {
-    icon: "🚉",
-    title: "Railway Station Transfer",
-    description:
-      "Convenient pickup and drop service for Nagpur railway station and local city travel.",
-  },
-  {
-    icon: "✈️",
-    title: "Airport Transfer",
-    description:
-      "Local taxi support for Nagpur Airport pickup and drop requirements.",
-  },
-  {
-    icon: "💼",
-    title: "Business Travel",
-    description:
-      "Reliable local transportation for meetings, office visits, client travel and business requirements.",
-  },
-  {
-    icon: "👨‍👩‍👧‍👦",
-    title: "Family & Event Travel",
-    description:
-      "Comfortable cars for family outings, functions, shopping, weddings and special events.",
-  },
+  [
+    "🏙️",
+    "City Taxi Service",
+    "Reliable local cab service for shopping, meetings, appointments, family travel and everyday city movement.",
+  ],
+  [
+    "⏱️",
+    "Hourly Taxi Rental",
+    "Keep the same cab for multiple stops, meetings, shopping, events and local city requirements.",
+  ],
+  [
+    "✈️",
+    "Airport Transfer",
+    "Convenient pickup and drop support for Nagpur Airport and local airport travel.",
+  ],
+  [
+    "🚉",
+    "Railway Station Transfer",
+    "Pickup and drop support for Nagpur Railway Station and nearby city locations.",
+  ],
+  [
+    "💼",
+    "Business Travel",
+    "Comfortable transportation for office visits, client meetings and business schedules.",
+  ],
+  [
+    "👨‍👩‍👧‍👦",
+    "Family & Event Travel",
+    "Practical car options for family outings, functions, weddings and special events.",
+  ],
 ];
 
-const packages = [
-  {
-    title: "4 Hr / 40 KM",
-    subtitle: "Short Local Rental",
-    description:
-      "Suitable for quick city travel, appointments, meetings and limited local usage.",
-  },
-  {
-    title: "8 Hr / 80 KM",
-    subtitle: "Popular Local Package",
-    description:
-      "A practical option for a full working day, shopping, meetings and multiple local stops.",
-    popular: true,
-  },
-  {
-    title: "12 Hr / 120 KM",
-    subtitle: "Full Day Local Rental",
-    description:
-      "Suitable for extended city travel, family requirements, events and multiple destinations.",
-  },
-];
+/* =========================================================
+   FLEET
+========================================================= */
 
 const fleet = [
   {
     name: "Swift Dzire",
     image: "/cars/dzire.webp",
-    package: "Ideal for small families",
-    description:
-      "Comfortable sedan for everyday local taxi requirements in Nagpur.",
+    vehicleValue: "Sedan (Dzire / Etios)",
+    text: "Comfortable sedan for local and everyday travel.",
   },
   {
     name: "Ertiga",
     image: "/ertiga.webp",
-    package: "Ideal for families",
-    description:
-      "Spacious MPV suitable for family and group local travel.",
+    vehicleValue: "SUV (Ertiga)",
+    text: "Spacious family MPV for comfortable city journeys.",
   },
   {
     name: "Toyota Rumion",
     image: "/cars/rumion.webp",
-    package: "Comfortable family option",
-    description:
-      "A practical vehicle for longer local trips and family travel.",
+    vehicleValue: "Toyota Rumion",
+    text: "Practical family vehicle for longer local requirements.",
   },
   {
     name: "Innova Crysta",
     image: "/cars/crysta.webp",
-    package: "Premium comfort",
-    description:
-      "Premium option for business travel, families and comfortable city journeys.",
+    vehicleValue: "Innova Crysta",
+    text: "Premium comfort for business and family travel.",
   },
 ];
+
+/* =========================================================
+   NAGPUR SERVICE AREAS
+========================================================= */
 
 const areas = [
   "Dighori",
@@ -214,575 +186,2540 @@ const areas = [
   "Civil Lines",
   "Trimurti Nagar",
   "Besa",
-  "Mihan",
+  "MIHAN",
 ];
 
-const relatedLinks = [
-  {
-    title: "Taxi Service in Nagpur",
-    description:
-      "Explore complete taxi and cab services available from Nagpur.",
-    href: "/taxi-service-in-nagpur",
-  },
-  {
-    title: "Nagpur Airport Taxi",
-    description:
-      "Book airport pickup and drop service in Nagpur.",
-    href: "/nagpur-airport-taxi",
-  },
-  {
-    title: "Airport Taxi Nagpur",
-    description:
-      "Explore airport-focused taxi booking options.",
-    href: "/airport-taxi-nagpur",
-  },
-  {
-    title: "Complete Fleet",
-    description:
-      "View available cars, SUVs and traveller options.",
-    href: "/fleet",
-  },
-];
+/* =========================================================
+   FAQ
+========================================================= */
 
 const faqs = [
-  {
-    question: "Do you provide local taxi service in Nagpur?",
-    answer:
-      "Yes. RC Tours & Travels provides local taxi service across Nagpur for city travel, meetings, shopping, family trips, events and other local requirements.",
-  },
-  {
-    question: "What local taxi packages are available?",
-    answer:
-      "Local rental options include 4 Hr / 40 KM, 8 Hr / 80 KM and 12 Hr / 120 KM packages, depending on the vehicle and booking requirement.",
-  },
-  {
-    question: "Which cars can I book for local travel?",
-    answer:
-      "Swift Dzire, Ertiga, Toyota Rumion and Innova Crysta are among the available options, subject to availability.",
-  },
-  {
-    question: "Can I book a local taxi through WhatsApp?",
-    answer:
-      "Yes. You can contact RC Tours & Travels on WhatsApp or by phone to check availability and confirm your booking.",
-  },
-  {
-    question: "Can I keep the taxi for several hours?",
-    answer:
-      "Yes. Hourly rental packages are useful when you need the same taxi for multiple stops, meetings, shopping, appointments or events.",
-  },
-  {
-    question: "Do you provide local taxi service near Dighori?",
-    answer:
-      "Yes. RC Tours & Travels is based in the Dighori area of Nagpur and serves customers across Nagpur, subject to availability.",
-  },
+  [
+    "Do you provide local taxi service in Nagpur?",
+    "Yes. RC Tours & Travels provides local taxi and cab services across Nagpur for city travel, meetings, shopping, family trips, events and multiple-stop journeys.",
+  ],
+  [
+    "Which local rental packages are available?",
+    "Local rental options include 4 Hr / 40 KM, 6 Hr / 60 KM, 8 Hr / 80 KM and 12 Hr / 120 KM packages, subject to vehicle availability and applicable booking terms.",
+  ],
+  [
+    "Can I choose the vehicle myself?",
+    "Yes. Customers can select from sedan, MPV, premium and larger vehicle options according to passenger count and travel requirements.",
+  ],
+  [
+    "Can I book airport, one-way and round-trip travel from this page?",
+    "Yes. The booking panel supports Airport, Outstation One-Way, Outstation Round-Trip and Hourly Rental modes.",
+  ],
+  [
+    "Can I book an hourly taxi for multiple stops?",
+    "Yes. Hourly rental is suitable for multiple local stops, meetings, shopping, appointments, events and extended city travel.",
+  ],
+  [
+    "Can I book through WhatsApp or phone?",
+    "Yes. Customers can use the WhatsApp or phone buttons to check availability and confirm booking details.",
+  ],
 ];
 
+/* =========================================================
+   TODAY
+========================================================= */
+
+const getTodayString = () => {
+  const date = new Date();
+
+  const localDate = new Date(
+    date.getTime() - date.getTimezoneOffset() * 60000
+  );
+
+  return localDate.toISOString().split("T")[0];
+};
+
+/* =========================================================
+   MAIN PAGE
+========================================================= */
+
 export default function NagpurLocalTaxiPage() {
+  const [tripType, setTripType] = useState<TripType>("hourly");
+
+  const [pickup, setPickup] = useState("");
+
+  const [drop, setDrop] = useState("");
+
+  const [journeyDate, setJourneyDate] = useState(getTodayString());
+
+  const [journeyTime, setJourneyTime] = useState("");
+
+  const [returnDate, setReturnDate] = useState("");
+
+  const [vehicle, setVehicle] = useState("Sedan (Dzire / Etios)");
+
+  const [selectedPackage, setSelectedPackage] =
+    useState("4hr-40km");
+
+  const [loading, setLoading] = useState(false);
+
+  const [pickupResults, setPickupResults] = useState<
+    LocationResult[]
+  >([]);
+
+  const [dropResults, setDropResults] = useState<
+    LocationResult[]
+  >([]);
+
+  const [activeSearch, setActiveSearch] =
+    useState<LocationType | null>(null);
+
+  const pickupCoords = useRef<{
+    lat: number;
+    lon: number;
+  } | null>(null);
+
+  const dropCoords = useRef<{
+    lat: number;
+    lon: number;
+  } | null>(null);
+
+  const searchTimer = useRef<
+    ReturnType<typeof setTimeout> | null
+  >(null);
+
+  const controller = useRef<AbortController | null>(null);
+
+  /* =======================================================
+     SELECTED HOURLY PACKAGE
+  ======================================================= */
+
+  const selectedHourlyPackage = useMemo(
+    () =>
+      hourlyPackages.find(
+        (pkg) => pkg.id === selectedPackage
+      ) ?? hourlyPackages[0],
+    [selectedPackage]
+  );
+
+  /* =======================================================
+     ROUND TRIP RETURN DATE
+  ======================================================= */
+
+  useEffect(() => {
+    if (
+      tripType === "roundtrip" &&
+      journeyDate &&
+      (!returnDate || returnDate < journeyDate)
+    ) {
+      setReturnDate(journeyDate);
+    }
+
+    if (tripType !== "roundtrip") {
+      setReturnDate("");
+    }
+  }, [tripType, journeyDate, returnDate]);
+
+  /* =======================================================
+     LOCATION SEARCH
+  ======================================================= */
+
+  const searchLocation = (
+    value: string,
+    type: LocationType
+  ) => {
+    if (type === "pickup") {
+      setPickup(value);
+      pickupCoords.current = null;
+      setPickupResults([]);
+    } else {
+      setDrop(value);
+      dropCoords.current = null;
+      setDropResults([]);
+    }
+
+    setActiveSearch(type);
+
+    if (searchTimer.current) {
+      clearTimeout(searchTimer.current);
+    }
+
+    if (controller.current) {
+      controller.current.abort();
+    }
+
+    const query = value.trim();
+
+    if (!query) {
+      setActiveSearch(null);
+      return;
+    }
+
+    searchTimer.current = setTimeout(async () => {
+      controller.current = new AbortController();
+
+      try {
+        const response = await fetch(
+          `/api/location-search?q=${encodeURIComponent(
+            query
+          )}`,
+          {
+            signal: controller.current.signal,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Location search failed");
+        }
+
+        const data = await response.json();
+
+        const results = Array.isArray(data)
+          ? data.slice(0, 6)
+          : [];
+
+        if (type === "pickup") {
+          setPickupResults(results);
+        } else {
+          setDropResults(results);
+        }
+
+        setActiveSearch(
+          results.length > 0 ? type : null
+        );
+      } catch (error: unknown) {
+        if (
+          error instanceof DOMException &&
+          error.name === "AbortError"
+        ) {
+          return;
+        }
+
+        console.error(
+          "Location search error:",
+          error
+        );
+
+        setActiveSearch(null);
+      }
+    }, 350);
+  };
+
+  /* =======================================================
+     CHOOSE LOCATION
+  ======================================================= */
+
+  const chooseLocation = (
+    type: LocationType,
+    location: LocationResult
+  ) => {
+    const value =
+      location.display_name ||
+      location.full_address ||
+      location.name ||
+      "";
+
+    const lat = Number(location.lat);
+
+    const lon = Number(location.lon);
+
+    const coords =
+      Number.isFinite(lat) && Number.isFinite(lon)
+        ? {
+            lat,
+            lon,
+          }
+        : null;
+
+    if (type === "pickup") {
+      setPickup(value);
+      pickupCoords.current = coords;
+      setPickupResults([]);
+    } else {
+      setDrop(value);
+      dropCoords.current = coords;
+      setDropResults([]);
+    }
+
+    setActiveSearch(null);
+  };
+
+  /* =======================================================
+     CALCULATE DISTANCE + FARE
+  ======================================================= */
+
+  const calculateDistanceFare = async () => {
+    if (!pickup.trim()) {
+      throw new Error(
+        "Please enter Pickup location."
+      );
+    }
+
+    if (!drop.trim()) {
+      throw new Error(
+        "Please enter Drop location."
+      );
+    }
+
+    const response = await fetch("/api/distance", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        pickup: pickup.trim(),
+        drop: drop.trim(),
+        pickupCoords: pickupCoords.current,
+        dropCoords: dropCoords.current,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        "Distance service failed."
+      );
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(
+        "Unable to calculate distance. Please select valid locations."
+      );
+    }
+
+    const distanceKm = Number(
+      data.distance || 0
+    );
+
+    if (
+      !Number.isFinite(distanceKm) ||
+      distanceKm <= 0
+    ) {
+      throw new Error(
+        "Unable to calculate valid route distance."
+      );
+    }
+
+    const rate =
+      vehicleRates[vehicle] ?? 11;
+
+    let totalDistance = distanceKm;
+
+    let totalFare = 0;
+
+    let finalTripType = "One Way Trip";
+
+    /* =====================================================
+       ROUND TRIP
+    ===================================================== */
+
+    if (tripType === "roundtrip") {
+      finalTripType = "Outstation Trip";
+
+      const start = new Date(
+        `${journeyDate}T00:00:00`
+      );
+
+      const end = new Date(
+        `${returnDate}T00:00:00`
+      );
+
+      let totalDays = 1;
+
+      if (
+        !Number.isNaN(start.getTime()) &&
+        !Number.isNaN(end.getTime()) &&
+        end >= start
+      ) {
+        totalDays =
+          Math.floor(
+            (end.getTime() -
+              start.getTime()) /
+              (1000 * 60 * 60 * 24)
+          ) + 1;
+      }
+
+      /*
+       * Existing business rule:
+       * Minimum 300 KM per day for round trip.
+       */
+
+      if (totalDays > 1) {
+        totalDistance =
+          totalDays * 300;
+
+        totalFare =
+          totalDistance * rate;
+      } else {
+        totalDistance =
+          distanceKm * 2;
+
+        totalFare =
+          totalDistance * rate;
+      }
+    }
+
+    /* =====================================================
+       ONE WAY
+    ===================================================== */
+
+    else if (tripType === "oneway") {
+      finalTripType = "One Way Trip";
+
+      /*
+       * Existing one-way logic:
+       * Distance × Rate × 2
+       */
+
+      totalFare =
+        distanceKm * rate * 2;
+    }
+
+    /* =====================================================
+       AIRPORT
+    ===================================================== */
+
+    else if (tripType === "airport") {
+      finalTripType =
+        "Airport Pick-Up & Drop";
+
+      totalFare =
+        distanceKm * rate;
+    }
+
+    return {
+      distance: Math.round(
+        totalDistance
+      ),
+      fare: Math.round(
+        totalFare
+      ),
+      tripType:
+        finalTripType,
+    };
+  };
+
+  /* =======================================================
+     SUBMIT BOOKING
+  ======================================================= */
+
+  const submitBooking = async () => {
+    /* -----------------------------------------------------
+       PICKUP
+    ----------------------------------------------------- */
+
+    if (!pickup.trim()) {
+      alert(
+        tripType === "hourly"
+          ? "Please enter pickup / starting location."
+          : "Please enter Pickup location."
+      );
+
+      return;
+    }
+
+    /* -----------------------------------------------------
+       DATE
+    ----------------------------------------------------- */
+
+    if (!journeyDate) {
+      alert(
+        "Please select journey date."
+      );
+
+      return;
+    }
+
+    /* -----------------------------------------------------
+       TIME
+    ----------------------------------------------------- */
+
+    if (!journeyTime) {
+      alert(
+        "Please select pickup time."
+      );
+
+      return;
+    }
+
+    /* -----------------------------------------------------
+       DROP FOR DISTANCE BASED TRIPS
+    ----------------------------------------------------- */
+
+    if (
+      tripType !== "hourly" &&
+      !drop.trim()
+    ) {
+      alert(
+        "Please enter Drop location."
+      );
+
+      return;
+    }
+
+    /* -----------------------------------------------------
+       ROUND TRIP RETURN DATE
+    ----------------------------------------------------- */
+
+    if (
+      tripType === "roundtrip" &&
+      !returnDate
+    ) {
+      alert(
+        "Please select return date."
+      );
+
+      return;
+    }
+
+    if (
+      tripType === "roundtrip" &&
+      returnDate < journeyDate
+    ) {
+      alert(
+        "Return date cannot be before journey date."
+      );
+
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const params =
+        new URLSearchParams();
+
+      /* ---------------------------------------------------
+         COMMON PARAMETERS
+      --------------------------------------------------- */
+
+      params.set(
+        "vehicle",
+        vehicle
+      );
+
+      params.set(
+        "pickup",
+        pickup.trim()
+      );
+
+      params.set(
+        "drop",
+        drop.trim()
+      );
+
+      params.set(
+        "journeyDate",
+        journeyDate
+      );
+
+      params.set(
+        "pickupTime",
+        journeyTime
+      );
+
+      params.set(
+        "returnDate",
+        returnDate
+      );
+
+      /* ---------------------------------------------------
+         HOURLY RENTAL
+         
+         No /api/distance call.
+         Package is the booking unit.
+      --------------------------------------------------- */
+
+      if (tripType === "hourly") {
+        params.set(
+          "tripType",
+          "Local Rental"
+        );
+
+        // Send the exact package code expected by /book-cab
+      const packageCode =
+      selectedHourlyPackage.id.split("-")[0];
+
+      params.set(
+        "package",
+      packageCode
+      );
+
+        params.set(
+          "durationHours",
+          String(
+            selectedHourlyPackage.hours
+          )
+        );
+
+        params.set(
+          "includedKm",
+          String(
+            selectedHourlyPackage.km
+          )
+        );
+
+        params.set(
+          "distance",
+          String(
+            selectedHourlyPackage.km
+          )
+        );
+
+        /*
+         * Fare remains 0 here intentionally.
+         *
+         * Existing /book-cab flow should apply
+         * its local rental package pricing.
+         */
+
+        params.set(
+          "fare",
+          "0"
+        );
+
+        params.set(
+          "pickupLat",
+          pickupCoords.current
+            ? String(
+                pickupCoords.current.lat
+              )
+            : ""
+        );
+
+        params.set(
+          "pickupLon",
+          pickupCoords.current
+            ? String(
+                pickupCoords.current.lon
+              )
+            : ""
+        );
+
+        params.set(
+          "dropLat",
+          ""
+        );
+
+        params.set(
+          "dropLon",
+          ""
+        );
+      }
+
+      /* ---------------------------------------------------
+         AIRPORT / ONE WAY / ROUND TRIP
+      --------------------------------------------------- */
+
+      else {
+        const result =
+          await calculateDistanceFare();
+
+        params.set(
+          "tripType",
+          result.tripType
+        );
+
+        params.set(
+          "distance",
+          String(
+            result.distance
+          )
+        );
+
+        params.set(
+          "fare",
+          String(
+            result.fare
+          )
+        );
+
+        params.set(
+          "pickupLat",
+          pickupCoords.current
+            ? String(
+                pickupCoords.current.lat
+              )
+            : ""
+        );
+
+        params.set(
+          "pickupLon",
+          pickupCoords.current
+            ? String(
+                pickupCoords.current.lon
+              )
+            : ""
+        );
+
+        params.set(
+          "dropLat",
+          dropCoords.current
+            ? String(
+                dropCoords.current.lat
+              )
+            : ""
+        );
+
+        params.set(
+          "dropLon",
+          dropCoords.current
+            ? String(
+                dropCoords.current.lon
+              )
+            : ""
+        );
+      }
+
+      /* ---------------------------------------------------
+         OPEN EXISTING BOOKING FLOW
+      --------------------------------------------------- */
+
+      window.location.href =
+        `/book-cab?${params.toString()}`;
+    } catch (error: unknown) {
+      console.error(
+        "Booking calculation error:",
+        error
+      );
+
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Unable to calculate fare. Please try again.";
+
+      alert(message);
+
+      setLoading(false);
+    }
+  };
+
+  /* =======================================================
+     INPUT STYLE
+  ======================================================= */
+
+  const inputClass =
+  "h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-2.5 text-[12px] font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white sm:h-11 sm:text-sm";
+
+  /* =======================================================
+     RENDER
+  ======================================================= */
+
   return (
-    <div className="min-h-screen bg-slate-950 pb-16 pt-24 text-white">
-      {/* ================= SEO SCHEMAS ================= */}
+  <>
+    <main className="min-h-screen bg-white text-slate-900">
 
-      <Script
-        id="nagpur-local-taxi-faq-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(faqSchema),
-        }}
-      />
+      {/* =====================================================
+          HERO
+      ===================================================== */}
 
-      <Script
-        id="nagpur-local-taxi-business-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(localBusinessSchema),
-        }}
-      />
+      <section className="relative overflow-visible bg-[#071a3a] pb-16 pt-8 text-white sm:pb-20 sm:pt-12 lg:pt-14">
 
-      <Script
-        id="nagpur-local-taxi-breadcrumb-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbSchema),
-        }}
-      />
+        {/* Breadcrumb */}
+<div className="relative z-20 mx-auto max-w-[1440px] px-4 pt-6 pb-2 sm:px-6 sm:pt-4 sm:pb-3 lg:px-10">
+  <nav
+    aria-label="Breadcrumb"
+    className="flex items-center gap-2 text-sm"
+  >
+    <Link
+      href="/"
+      className="text-blue-200 transition hover:text-white"
+    >
+      Home
+    </Link>
 
-      {/* ================= HERO ================= */}
+    <span className="text-blue-300">›</span>
 
-      <section className="mx-auto max-w-7xl px-5">
-        <div className="overflow-hidden rounded-3xl border border-cyan-500/20 bg-gradient-to-br from-slate-900 via-slate-950 to-cyan-950/30 px-6 py-10 shadow-2xl md:px-10 md:py-14">
-          <div className="mx-auto max-w-5xl text-center">
-            <div className="inline-flex items-center rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-xs font-black tracking-wide text-cyan-300">
-              🚕 NAGPUR LOCAL TAXI & CAB SERVICE
-            </div>
+    <span className="font-semibold text-white">
+      Local Taxi Service in Nagpur
+    </span>
+  </nav>
+</div>
 
-            <h1 className="mt-5 text-4xl font-black leading-tight tracking-tight md:text-6xl">
-              Local Taxi Service in Nagpur
-            </h1>
+        {/* Background Glow */}
 
-            <p className="mx-auto mt-6 max-w-4xl text-base leading-8 text-gray-300 md:text-lg">
-              Book a reliable local taxi in Nagpur for city travel, meetings,
-              shopping, family trips, railway station transfers, events and
-              multiple-stop journeys. RC Tours & Travels provides comfortable
-              cars, experienced drivers and convenient local rental packages.
-            </p>
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
 
-            {/* PRIMARY CTA */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#07152f] via-[#0a2048] to-[#06152f]" />
 
-            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <a
-                href="/book-cab"
-                className="rounded-xl bg-yellow-500 px-7 py-3.5 text-sm font-black text-black shadow-lg transition hover:bg-yellow-400 active:scale-95"
-              >
-                🚕 Book Local Taxi
-              </a>
+          <div className="absolute left-[62%] top-[18%] h-[340px] w-[560px] -translate-x-1/2 rounded-full bg-blue-600/20 blur-[120px]" />
 
-              <a
-                href="https://wa.me/919172271464"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-xl bg-green-600 px-7 py-3.5 text-sm font-black text-white shadow-lg transition hover:bg-green-500 active:scale-95"
-              >
-                💬 WhatsApp Booking
-              </a>
+          <div className="absolute right-[-100px] top-[20%] h-[320px] w-[320px] rounded-full bg-blue-500/10 blur-[110px]" />
 
-              <a
-                href="tel:+919172271464"
-                className="rounded-xl border border-white/20 bg-white/10 px-7 py-3.5 text-sm font-black text-white transition hover:bg-white/15 active:scale-95"
-              >
-                📞 Call Now
-              </a>
-            </div>
+          <div className="absolute bottom-[-160px] left-[60%] h-[280px] w-[650px] -translate-x-1/2 rounded-full bg-blue-700/15 blur-[120px]" />
 
-            {/* TRUST POINTS */}
-
-            <div className="mx-auto mt-8 grid max-w-4xl grid-cols-1 gap-3 text-left sm:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-sm font-black">⏱️ Hourly Packages</p>
-                <p className="mt-1 text-xs leading-5 text-gray-400">
-                  4 Hr, 8 Hr and 12 Hr local rental options.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-sm font-black">🚘 Multiple Vehicles</p>
-                <p className="mt-1 text-xs leading-5 text-gray-400">
-                  Sedan, MPV and premium car options.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-sm font-black">📞 Easy Booking</p>
-                <p className="mt-1 text-xs leading-5 text-gray-400">
-                  Book through online booking, WhatsApp or phone.
-                </p>
-              </div>
-            </div>
+          <div className="absolute left-[7%] top-[14%] hidden h-32 w-32 opacity-25 lg:block">
+            <div
+              className="h-full w-full"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle, #3b82f6 1.5px, transparent 1.5px)",
+                backgroundSize:
+                  "14px 14px",
+              }}
+            />
           </div>
-        </div>
-      </section>
 
-      {/* ================= LOCAL SERVICES ================= */}
-
-      <section className="mx-auto mt-16 max-w-7xl px-5">
-        <div className="mx-auto max-w-3xl text-center">
-          <span className="text-xs font-black uppercase tracking-widest text-cyan-400">
-            LOCAL CAB SERVICES
-          </span>
-
-          <h2 className="mt-2 text-3xl font-black md:text-4xl">
-            Local Taxi Services in Nagpur
-          </h2>
-
-          <p className="mt-4 text-sm leading-7 text-gray-400 md:text-base">
-            Choose a local cab service according to your travel requirement,
-            number of stops and duration.
-          </p>
-        </div>
-
-        <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {services.map((service) => (
+          <div className="absolute right-[3%] top-[24%] hidden h-44 w-36 opacity-25 lg:block">
             <div
-              key={service.title}
-              className="rounded-2xl border border-slate-800 bg-slate-900 p-6 transition hover:-translate-y-1 hover:border-cyan-500/40"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-2xl">
-                {service.icon}
+              className="h-full w-full"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle, #2563eb 1.5px, transparent 1.5px)",
+                backgroundSize:
+                  "14px 14px",
+              }}
+            />
+          </div>
+
+        </div>
+
+        <div className="relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-10">
+
+          {/* Breadcrumb */}
+<div className="mb-3 flex items-center gap-2 text-xs text-blue-100/80 sm:mb-4">
+  <Link
+    href="/"
+    className="inline-flex items-center gap-1 transition hover:text-white"
+  >
+    <ChevronRight className="h-3.5 w-3.5 rotate-180" />
+    Home
+  </Link>
+
+  <ChevronRight className="h-3.5 w-3.5 text-blue-300/50" />
+
+  <span className="font-medium text-white/90">
+    Local Taxi Service in Nagpur
+  </span>
+</div>
+
+          {/* =================================================
+              HERO MAIN
+          ================================================= */}
+
+          <div className="grid items-center gap-2 lg:grid-cols-[0.95fr_1.05fr] lg:gap-3">
+
+            {/* LEFT */}
+
+            <div className="relative z-10 pt-2 lg:pb-4">
+
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1.5 text-[10px] font-bold tracking-wide text-blue-100 backdrop-blur-sm sm:text-xs">
+                <MapPin className="h-3.5 w-3.5 text-cyan-300" />
+
+                NAGPUR • LOCAL • AIRPORT • OUTSTATION
               </div>
 
-              <h3 className="mt-5 text-xl font-black">
-                {service.title}
-              </h3>
-
-              <p className="mt-3 text-sm leading-7 text-gray-400">
-                {service.description}
-              </p>
-
-              <a
-                href="/book-cab"
-                className="mt-5 inline-flex rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-2.5 text-xs font-black text-cyan-300 transition hover:bg-cyan-500/20"
-              >
-                Check Booking →
-              </a>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ================= PACKAGES ================= */}
-
-      <section className="mx-auto mt-16 max-w-6xl px-5">
-        <div className="text-center">
-          <span className="text-xs font-black uppercase tracking-widest text-yellow-400">
-            LOCAL RENTAL PACKAGES
-          </span>
-
-          <h2 className="mt-2 text-3xl font-black md:text-4xl">
-            Nagpur Local Taxi Packages
-          </h2>
-
-          <p className="mx-auto mt-4 max-w-3xl text-sm leading-7 text-gray-400 md:text-base">
-            Flexible local rental options for short city requirements,
-            working days, family travel and extended local journeys.
-          </p>
-        </div>
-
-        <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
-          {packages.map((item) => (
-            <div
-              key={item.title}
-              className={`relative rounded-3xl border p-6 ${
-                item.popular
-                  ? "border-yellow-400/40 bg-yellow-400/5"
-                  : "border-slate-800 bg-slate-900"
-              }`}
-            >
-              {item.popular && (
-                <span className="absolute right-4 top-4 rounded-full bg-yellow-400 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-black">
-                  Most Popular
+              <h1 className="mt-3 max-w-[620px] text-[27px] font-extrabold leading-[1.08] tracking-tight text-white sm:mt-4 sm:text-[36px] lg:text-[42px] xl:text-[46px]">
+                Local Taxi Service
+                <span className="block">
+                  in Nagpur
                 </span>
-              )}
+              </h1>
 
-              <p className="text-xs font-black uppercase tracking-wider text-cyan-400">
-                Local Rental
+              <p className="mt-3 max-w-[600px] text-[13px] leading-6 text-blue-100/90 sm:mt-4 sm:text-base sm:leading-7">
+                Book a reliable taxi in Nagpur for local travel, airport transfers, one-way trips, round trips and hourly
+                rentals. Choose your route, date, time and preferred vehicle for a smooth and convenient booking
+                experience.
               </p>
 
-              <h3 className="mt-3 text-2xl font-black">
-                {item.title}
-              </h3>
+{/* HERO BUTTONS */}
 
-              <p className="mt-2 text-sm font-bold text-yellow-400">
-                {item.subtitle}
-              </p>
+<div className="mt-4 flex w-full flex-row gap-2 sm:mt-5 sm:w-auto sm:flex-wrap sm:gap-2.5">
 
-              <p className="mt-4 text-sm leading-7 text-gray-400">
-                {item.description}
-              </p>
+  {/* BOOK TAXI */}
+  <a
+    href="#hero-booking-form"
+    className="inline-flex min-w-0 flex-1 items-center justify-center gap-1 rounded-lg bg-white px-2 py-3 text-[10px] font-extrabold leading-none whitespace-nowrap text-[#12346f] shadow-lg transition hover:-translate-y-0.5 hover:bg-blue-50 sm:min-h-[46px] sm:flex-none sm:gap-2 sm:px-5 sm:py-0 sm:text-[13px]"
+  >
+    <CalendarDays className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
 
-              <a
-                href="/book-cab"
-                className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-white/10 px-4 py-3 text-xs font-black transition hover:bg-white/15"
-              >
-                Check Availability →
-              </a>
-            </div>
-          ))}
-        </div>
+    <span className="whitespace-nowrap">
+      Book Your Taxi
+    </span>
 
-        <p className="mt-5 text-center text-xs leading-6 text-gray-500">
-          Package availability and final pricing may vary according to vehicle,
-          booking requirement and applicable terms.
-        </p>
-      </section>
+    <ArrowRight className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+  </a>
 
-      {/* ================= FLEET ================= */}
+  {/* WHATSAPP */}
+  <a
+    href={WHATSAPP_URL}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-flex min-w-0 flex-1 items-center justify-center gap-1 rounded-lg bg-emerald-500 px-2 py-3 text-[10px] font-extrabold leading-none whitespace-nowrap text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-600 sm:min-h-[46px] sm:flex-none sm:gap-2 sm:px-5 sm:py-0 sm:text-[13px]"
+  >
+    <FaWhatsapp className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" />
 
-      <section className="mx-auto mt-16 max-w-7xl px-5">
-        <div className="mx-auto max-w-3xl text-center">
-          <span className="text-xs font-black uppercase tracking-widest text-cyan-400">
-            LOCAL TAXI FLEET
-          </span>
+    <span className="whitespace-nowrap">
+      WhatsApp Now
+    </span>
+  </a>
 
-          <h2 className="mt-2 text-3xl font-black md:text-4xl">
-            Cars for Local Taxi Booking in Nagpur
-          </h2>
+  {/* CALL */}
+  <a
+    href={`tel:${PHONE}`}
+    className="inline-flex min-w-0 flex-1 items-center justify-center gap-1 rounded-lg border border-white/30 bg-white/5 px-2 py-3 text-[10px] font-extrabold leading-none whitespace-nowrap text-white transition hover:bg-white/10 sm:min-h-[46px] sm:flex-none sm:gap-2 sm:px-5 sm:py-0 sm:text-[13px]"
+  >
+    <Phone className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
 
-          <p className="mt-4 text-sm leading-7 text-gray-400 md:text-base">
-            Select a vehicle according to your passenger count, comfort
-            requirement and local travel plan.
-          </p>
-        </div>
+    <span className="whitespace-nowrap">
+      Call Now
+    </span>
+  </a>
 
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-          {fleet.map((car) => (
-            <div
-              key={car.name}
-              className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:-translate-y-1 hover:border-cyan-500/40"
-            >
+</div>
+</div>
+
+              {/* Right Car - Desktop Only */}
+              <div className="relative z-10 mx-auto -mt-1 hidden w-full lg:ml-auto lg:mt-0 lg:block lg:max-w-[760px]">
+
+              {/* Blue glow behind car */}
+              <div className="absolute left-[56%] top-1/2 h-[210px] w-[76%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/20 blur-[80px] sm:h-[240px]" />
+
+              {/* Circular ring behind car */}
+              <div className="absolute left-[12%] top-[8%] hidden h-[78%] w-[78%] rounded-full border border-blue-400/20 lg:block" />
+
+              {/* Car */}
+              <div className="relative mx-auto aspect-[1.9/1] w-[92%] sm:w-[88%] lg:ml-auto lg:w-[90%]">
+
               <Image
-                src={car.image}
-                alt={`${car.name} local taxi in Nagpur`}
-                width={500}
-                height={300}
-                className="h-52 w-full object-cover"
+              src="/seo-hero-bg.webp"
+              alt="RC Tours and Travels taxi service in Nagpur"
+              fill
+              priority
+              sizes="(max-width: 1024px) 90vw, 58vw"
+              className="object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.45)]"
               />
 
-              <div className="p-5">
-                <h3 className="text-xl font-black">
-                  {car.name}
-                </h3>
-
-                <p className="mt-2 text-sm font-bold text-yellow-400">
-                  {car.package}
-                </p>
-
-                <p className="mt-3 text-xs leading-6 text-gray-400">
-                  {car.description}
-                </p>
-
-                <a
-                  href="/book-cab"
-                  className="mt-4 inline-flex rounded-xl bg-white/10 px-4 py-2.5 text-xs font-black transition hover:bg-white/15"
-                >
-                  Book This Cab →
-                </a>
               </div>
+
             </div>
-          ))}
+          </div>
+
+          {/* =================================================
+              TRUST FEATURES
+          ================================================= */}
+
+          <div className="relative z-20 mt-3 grid grid-cols-4 gap-1 py-2 sm:flex sm:flex-wrap sm:items-center sm:justify-start sm:gap-y-3 sm:py-2.5">
+
+            {[
+              [
+                ShieldCheck,
+                "Safe & Secure",
+                "Customer-first travel",
+              ],
+              [
+                Headphones,
+                "24/7 Support",
+                "Booking assistance",
+              ],
+              [
+                WalletCards,
+                "Fair Pricing",
+                "Clear fare process",
+              ],
+              [
+                UserRoundCheck,
+                "Professional",
+                "Travel assistance",
+              ],
+            ].map(
+              ([Icon, title, text]: any) => (
+                <div
+                  key={title}
+                  className="flex flex-col items-center justify-center gap-1 text-center sm:flex-row sm:gap-2 sm:border-r sm:border-white/15 sm:pr-5 sm:text-left"
+                >
+
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/45 bg-white/5 sm:h-9 sm:w-9">
+                    <Icon className="h-3.5 w-3.5 text-white sm:h-4 sm:w-4" />
+                  </div>
+
+                  <div>
+
+                    <p className="text-[9px] font-bold leading-tight text-white sm:text-[13px]">
+                      {title}
+                    </p>
+
+                    <p className="mt-0.5 hidden text-[9px] text-blue-100 sm:block sm:text-[10px]">
+                      {text}
+                    </p>
+
+                  </div>
+
+                </div>
+              )
+            )}
+
+          </div>
+
         </div>
 
-        <div className="mt-8 text-center">
+        {/* ===================================================
+            BOOKING ENGINE
+        =================================================== */}
+
+        <div
+        id="hero-booking-form"
+        className="absolute left-1/2 top-full z-30 w-[calc(100%-32px)] max-w-[1500px] -translate-x-1/2 -translate-y-[68px] px-0 sm:w-[calc(100%-40px)] lg:w-[calc(100%-64px)]"
+        >
+
+          <div className="rounded-2xl bg-white p-2 text-slate-900 shadow-[0_18px_50px_rgba(0,0,0,0.25)] sm:p-2.5">
+
+            {/* =================================================
+                TRIP TYPE TABS
+            ================================================= */}
+
+            <div className="grid grid-cols-4 gap-1 sm:gap-1.5">
+
+              {[
+                ["airport", "Airport", Plane],
+                [
+                  "oneway",
+                  "Outstation One-Way",
+                  Navigation,
+                ],
+                [
+                  "roundtrip",
+                  "Outstation Round-Trip",
+                  Car,
+                ],
+                [
+                  "hourly",
+                  "Hourly Rental",
+                  Clock,
+                ],
+              ].map(
+                ([value, label, Icon]: any) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() =>
+                      setTripType(
+                        value as TripType
+                      )
+                    }
+                    className={`flex h-9 items-center justify-center gap-1 rounded-lg border px-1 text-[9px] font-bold transition sm:h-10 sm:gap-1.5 sm:px-2.5 sm:text-xs ${
+                      tripType === value
+                        ? "border-blue-700 bg-[#1c4488] text-white shadow-md"
+                        : "border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-300"
+                    }`}
+                  >
+                    <Icon className="h-3 w-3 shrink-0 sm:h-3.5 sm:w-3.5" />
+
+                    <span>
+                      {label}
+                    </span>
+                  </button>
+                )
+              )}
+
+            </div>
+
+            {/* =================================================
+                HOURLY RENTAL FORM
+            ================================================= */}
+
+            {tripType === "hourly" ? (
+              <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-2 xl:grid-cols-[1.6fr_1fr_1fr_1.05fr_1.2fr_auto] xl:items-end">
+
+                <LocationInput
+                  label="From"
+                  icon={
+                    <MapPin className="h-3.5 w-3.5 text-rose-500" />
+                  }
+                  value={pickup}
+                  placeholder="Starting Location"
+                  onChange={(value) =>
+                    searchLocation(
+                      value,
+                      "pickup"
+                    )
+                  }
+                  results={pickupResults}
+                  active={
+                    activeSearch ===
+                    "pickup"
+                  }
+                  onChoose={(result) =>
+                    chooseLocation(
+                      "pickup",
+                      result
+                    )
+                  }
+                  inputClass={inputClass}
+                />
+
+                <Field
+                  label="Departure"
+                  icon={
+                    <CalendarCheck className="h-3.5 w-3.5 text-violet-600" />
+                  }
+                >
+                  <input
+                    type="date"
+                    min={getTodayString()}
+                    value={journeyDate}
+                    onChange={(event) =>
+                      setJourneyDate(
+                        event.target.value
+                      )
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <Field
+                  label="Pickup-Time"
+                  icon={
+                    <Clock className="h-3.5 w-3.5 text-orange-500" />
+                  }
+                >
+                  <input
+                    type="time"
+                    value={journeyTime}
+                    onChange={(event) =>
+                      setJourneyTime(
+                        event.target.value
+                      )
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                <Field
+                  label="Duration"
+                  icon={
+                    <Clock className="h-3.5 w-3.5 text-blue-600" />
+                  }
+                >
+                  <select
+                    value={selectedPackage}
+                    onChange={(event) =>
+                      setSelectedPackage(
+                        event.target.value
+                      )
+                    }
+                    className={`${inputClass} cursor-pointer`}
+                  >
+                    {hourlyPackages.map(
+                      (pkg) => (
+                        <option
+                          key={pkg.id}
+                          value={pkg.id}
+                        >
+                          {pkg.hours} Hours /{" "}
+                          {pkg.km} KM
+                        </option>
+                      )
+                    )}
+                  </select>
+                </Field>
+
+                <Field
+                  label="Vehicle"
+                  icon={
+                    <Car className="h-3.5 w-3.5 text-rose-500" />
+                  }
+                >
+                  <select
+                    value={vehicle}
+                    onChange={(event) =>
+                      setVehicle(
+                        event.target.value
+                      )
+                    }
+                    className={`${inputClass} cursor-pointer`}
+                  >
+                    {vehicles.map(
+                      (vehicleName) => (
+                        <option
+                          key={vehicleName}
+                          value={vehicleName}
+                        >
+                          {vehicleName}
+                        </option>
+                      )
+                    )}
+                  </select>
+                </Field>
+
+                <button
+                  type="button"
+                  onClick={submitBooking}
+                  disabled={loading}
+                  className="h-10 min-w-[82px] rounded-lg bg-gradient-to-r from-[#245ab2] to-[#1747a0] px-4 text-sm font-extrabold text-white shadow-md transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 sm:h-11"
+                >
+                  {loading
+                    ? "Opening..."
+                    : "Go"}
+
+                  {!loading && (
+                    <ArrowRight className="ml-1 inline h-3.5 w-3.5" />
+                  )}
+                </button>
+
+              </div>
+            ) : (
+
+              /* =================================================
+                 AIRPORT / ONE WAY / ROUND TRIP FORM
+              ================================================= */
+
+              <div
+              className={`mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-3 ${
+              tripType === "roundtrip"
+              ? "xl:grid-cols-7"
+              : "xl:grid-cols-6"
+              }`}
+              >
+
+                {/* PICKUP */}
+
+                <LocationInput
+                  label="Pickup"
+                  icon={
+                    <MapPin className="h-3.5 w-3.5 text-rose-500" />
+                  }
+                  value={pickup}
+                  placeholder="Pickup Location"
+                  onChange={(value) =>
+                    searchLocation(
+                      value,
+                      "pickup"
+                    )
+                  }
+                  results={pickupResults}
+                  active={
+                    activeSearch ===
+                    "pickup"
+                  }
+                  onChoose={(result) =>
+                    chooseLocation(
+                      "pickup",
+                      result
+                    )
+                  }
+                  inputClass={inputClass}
+                />
+
+                {/* DROP */}
+
+                <LocationInput
+                  label="Drop"
+                  icon={
+                    <MapPin className="h-3.5 w-3.5 text-rose-500" />
+                  }
+                  value={drop}
+                  placeholder="Drop Location"
+                  onChange={(value) =>
+                    searchLocation(
+                      value,
+                      "drop"
+                    )
+                  }
+                  results={dropResults}
+                  active={
+                    activeSearch ===
+                    "drop"
+                  }
+                  onChoose={(result) =>
+                    chooseLocation(
+                      "drop",
+                      result
+                    )
+                  }
+                  inputClass={inputClass}
+                />
+
+                {/* DATE */}
+
+                <Field
+                  label="Date"
+                  icon={
+                    <CalendarCheck className="h-3.5 w-3.5 text-violet-600" />
+                  }
+                >
+                  <input
+                    type="date"
+                    min={getTodayString()}
+                    value={journeyDate}
+                    onChange={(event) =>
+                      setJourneyDate(
+                        event.target.value
+                      )
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                {/* TIME */}
+
+                <Field
+                  label="Time"
+                  icon={
+                    <Clock className="h-3.5 w-3.5 text-orange-500" />
+                  }
+                >
+                  <input
+                    type="time"
+                    value={journeyTime}
+                    onChange={(event) =>
+                      setJourneyTime(
+                        event.target.value
+                      )
+                    }
+                    className={inputClass}
+                  />
+                </Field>
+
+                {/* RETURN DATE */}
+
+                {tripType === "roundtrip" && (
+                  <Field
+                    label="Return Date"
+                    icon={
+                      <CalendarDays className="h-3.5 w-3.5 text-violet-600" />
+                    }
+                  >
+                    <input
+                      type="date"
+                      min={
+                        journeyDate ||
+                        getTodayString()
+                      }
+                      value={returnDate}
+                      onChange={(event) =>
+                        setReturnDate(
+                          event.target.value
+                        )
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
+                )}
+
+                {/* VEHICLE */}
+
+                <Field
+                  label="Vehicle"
+                  icon={
+                    <Car className="h-3.5 w-3.5 text-rose-500" />
+                  }
+                >
+                  <select
+                    value={vehicle}
+                    onChange={(event) =>
+                      setVehicle(
+                        event.target.value
+                      )
+                    }
+                    className={`${inputClass} cursor-pointer`}
+                  >
+                    {vehicles.map(
+                      (vehicleName) => (
+                        <option
+                          key={vehicleName}
+                          value={vehicleName}
+                        >
+                          {vehicleName}
+                        </option>
+                      )
+                    )}
+                  </select>
+                </Field>
+
+                {/* BOOK */}
+
+                <button
+                  type="button"
+                  onClick={submitBooking}
+                  disabled={loading}
+                  className="h-11 rounded-lg bg-gradient-to-r from-[#245ab2] to-[#1747a0] px-4 text-sm font-extrabold text-white shadow-md transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loading
+                    ? "Calculating..."
+                    : "Book Now"}
+
+                  {!loading && (
+                    <ArrowRight className="ml-1.5 inline h-3.5 w-3.5" />
+                  )}
+                </button>
+
+              </div>
+            )}
+
+          </div>
+        </div>
+      </section>
+
+{/* =====================================================
+    NAGPUR TAXI SERVICES — SEO SERVICE SECTION
+===================================================== */}
+
+<section className="relative overflow-hidden bg-white pt-28 pb-20 sm:pt-32 sm:pb-24 lg:pt-36 lg:pb-28">
+
+  {/* Background decoration */}
+  <div className="pointer-events-none absolute -left-32 top-20 h-80 w-80 rounded-full bg-blue-50 blur-3xl" />
+  <div className="pointer-events-none absolute -right-32 bottom-10 h-96 w-96 rounded-full bg-cyan-50 blur-3xl" />
+
+  <div className="relative mx-auto max-w-7xl px-5">
+
+    {/* =================================================
+        SECTION HEADER
+    ================================================= */}
+
+    <div className="mx-auto max-w-4xl text-center">
+
+      <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-[11px] font-black uppercase tracking-wider text-blue-700">
+        <MapPin className="h-3.5 w-3.5" />
+        Trusted Taxi Services in Nagpur
+      </div>
+
+      <h2 className="mt-4 text-3xl font-black leading-tight tracking-tight text-slate-900 sm:text-4xl lg:text-[44px]">
+        Complete Taxi Services in
+        <span className="block text-blue-700">
+          Nagpur for Every Journey
+        </span>
+      </h2>
+
+      <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-slate-600 sm:text-base">
+        RC Tours &amp; Travels provides reliable taxi service in Nagpur
+        for local city travel, airport transfers, railway station pickup
+        and drop, hourly cab rentals, business travel, family journeys
+        and special occasions. Choose a suitable vehicle and book your
+        cab according to your route, timing and travel requirement.
+      </p>
+
+    </div>
+
+    {/* =================================================
+        FEATURED SERVICE CARDS
+    ================================================= */}
+
+    <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+
+      {/* =================================================
+          LOCAL TAXI
+      ================================================= */}
+
+      <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-blue-200 hover:shadow-2xl">
+
+        <div className="relative h-44 overflow-hidden bg-gradient-to-br from-blue-50 to-slate-100">
+
+          <Image
+            src="/cars/dzire.webp"
+            alt="Local taxi service in Nagpur by RC Tours and Travels"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            className="object-contain p-5 transition duration-500 group-hover:scale-105"
+          />
+
+          <div className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-black text-blue-700 shadow-sm">
+            NAGPUR LOCAL
+          </div>
+
+        </div>
+
+        <div className="flex flex-1 flex-col p-5">
+
+          <div className="flex items-center gap-2 text-blue-600">
+            <MapPin className="h-4 w-4" />
+            <span className="text-[11px] font-black uppercase tracking-wider">
+              City Travel
+            </span>
+          </div>
+
+          <h3 className="mt-3 text-xl font-black text-slate-900">
+            Local Taxi Service in Nagpur
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Book a comfortable local taxi in Nagpur for shopping,
+            office travel, meetings, appointments, family trips,
+            city visits and everyday transportation. Pickup and
+            drop service is available across major areas of Nagpur.
+          </p>
+
           <a
-            href="/fleet"
-            className="inline-flex rounded-xl border border-slate-700 bg-slate-900 px-6 py-3 text-sm font-black transition hover:border-cyan-500/40 hover:bg-slate-800"
+            href="#hero-booking-form"
+            className="mt-4 inline-flex items-center gap-2 self-start rounded-xl bg-blue-50 px-4 py-2.5 text-sm font-black text-blue-700 transition hover:bg-blue-700 hover:text-white"
           >
-            View Complete Fleet →
+            Book Local Taxi
+            <ArrowRight className="h-4 w-4" />
           </a>
+
         </div>
-      </section>
 
-      {/* ================= AREAS ================= */}
+      </article>
 
-      <section className="mx-auto mt-16 max-w-6xl px-5">
-        <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 md:p-8">
-          <div className="text-center">
-            <span className="text-xs font-black uppercase tracking-widest text-cyan-400">
-              NAGPUR LOCAL SERVICE AREA
+      {/* =================================================
+          HOURLY RENTAL
+      ================================================= */}
+
+      <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-violet-200 hover:shadow-2xl">
+
+        <div className="relative h-44 overflow-hidden bg-gradient-to-br from-violet-50 to-slate-100">
+
+          <Image
+            src="/ertiga.webp"
+            alt="Hourly cab rental in Nagpur for multiple stops"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            className="object-contain p-5 transition duration-500 group-hover:scale-105"
+          />
+
+          <div className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-black text-violet-700 shadow-sm">
+            HOURLY RENTAL
+          </div>
+
+        </div>
+
+        <div className="flex flex-1 flex-col p-5">
+
+          <div className="flex items-center gap-2 text-violet-600">
+            <Clock className="h-4 w-4" />
+            <span className="text-[11px] font-black uppercase tracking-wider">
+              Multiple Stops
             </span>
+          </div>
 
-            <h2 className="mt-2 text-3xl font-black md:text-4xl">
-              Local Taxi Service Across Nagpur
-            </h2>
+          <h3 className="mt-3 text-xl font-black text-slate-900">
+            Hourly Cab Rental in Nagpur
+          </h3>
 
-            <p className="mx-auto mt-4 max-w-3xl text-sm leading-7 text-gray-400 md:text-base">
-              RC Tours & Travels serves customers across major areas of Nagpur,
-              subject to vehicle availability and booking requirements.
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Need a taxi for several hours? Choose an hourly cab
+            rental in Nagpur for shopping, meetings, appointments,
+            multiple stops, events and extended city travel with
+            convenient hourly packages.
+          </p>
+
+          <a
+            href="#hero-booking-form"
+            className="mt-4 inline-flex items-center gap-2 self-start rounded-xl bg-violet-50 px-4 py-2.5 text-sm font-black text-violet-700 transition hover:bg-violet-700 hover:text-white"
+          >
+            Book Hourly Cab
+            <ArrowRight className="h-4 w-4" />
+          </a>
+
+        </div>
+
+      </article>
+
+      {/* =================================================
+          AIRPORT TAXI
+      ================================================= */}
+
+      <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-cyan-200 hover:shadow-2xl">
+
+        <div className="relative h-44 overflow-hidden bg-gradient-to-br from-cyan-50 to-slate-100">
+
+          <Image
+            src="/cars/crysta.webp"
+            alt="Nagpur Airport taxi pickup and drop service"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            className="object-contain p-5 transition duration-500 group-hover:scale-105"
+          />
+
+          <div className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-black text-cyan-700 shadow-sm">
+            AIRPORT TRANSFER
+          </div>
+
+        </div>
+
+        <div className="flex flex-1 flex-col p-5">
+
+          <div className="flex items-center gap-2 text-cyan-600">
+            <Plane className="h-4 w-4" />
+            <span className="text-[11px] font-black uppercase tracking-wider">
+              Pickup &amp; Drop
+            </span>
+          </div>
+
+          <h3 className="mt-3 text-xl font-black text-slate-900">
+            Nagpur Airport Taxi Service
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Travel comfortably to or from Nagpur Airport with a
+            dependable airport taxi. Ideal for early morning flights,
+            late-night arrivals, family travel, business trips and
+            scheduled airport pickup and drop requirements.
+          </p>
+
+          <a
+            href="#hero-booking-form"
+            className="mt-4 inline-flex items-center gap-2 self-start rounded-xl bg-cyan-50 px-4 py-2.5 text-sm font-black text-cyan-700 transition hover:bg-cyan-600 hover:text-white"
+          >
+            Book Airport Taxi
+            <ArrowRight className="h-4 w-4" />
+          </a>
+
+        </div>
+
+      </article>
+
+      {/* =================================================
+          RAILWAY STATION
+      ================================================= */}
+
+      <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-orange-200 hover:shadow-2xl">
+
+        <div className="relative h-44 overflow-hidden bg-gradient-to-br from-orange-50 to-slate-100">
+
+          <Image
+            src="/cars/rumion.webp"
+            alt="Nagpur railway station taxi pickup and drop"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            className="object-contain p-5 transition duration-500 group-hover:scale-105"
+          />
+
+          <div className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-black text-orange-700 shadow-sm">
+            RAILWAY TRANSFER
+          </div>
+
+        </div>
+
+        <div className="flex flex-1 flex-col p-5">
+
+          <div className="flex items-center gap-2 text-orange-600">
+            <Navigation className="h-4 w-4" />
+            <span className="text-[11px] font-black uppercase tracking-wider">
+              Station Pickup
+            </span>
+          </div>
+
+          <h3 className="mt-3 text-xl font-black text-slate-900">
+            Railway Station Taxi in Nagpur
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Book a taxi for Nagpur Railway Station pickup and drop.
+            Our cab service connects the railway station with homes,
+            hotels, offices, residential areas and other destinations
+            across Nagpur.
+          </p>
+
+          <a
+            href="#hero-booking-form"
+            className="mt-4 inline-flex items-center gap-2 self-start rounded-xl bg-orange-50 px-4 py-2.5 text-sm font-black text-orange-700 transition hover:bg-orange-600 hover:text-white"
+          >
+            Book Station Taxi
+            <ArrowRight className="h-4 w-4" />
+          </a>
+
+        </div>
+
+      </article>
+
+      {/* =================================================
+          CORPORATE
+      ================================================= */}
+
+      <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-emerald-200 hover:shadow-2xl">
+
+        <div className="relative h-44 overflow-hidden bg-gradient-to-br from-emerald-50 to-slate-100">
+
+          <Image
+            src="/cars/crysta.webp"
+            alt="Corporate taxi service in Nagpur for business travel"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            className="object-contain p-5 transition duration-500 group-hover:scale-105"
+          />
+
+          <div className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-black text-emerald-700 shadow-sm">
+            BUSINESS TRAVEL
+          </div>
+
+        </div>
+
+        <div className="flex flex-1 flex-col p-5">
+
+          <div className="flex items-center gap-2 text-emerald-600">
+            <WalletCards className="h-4 w-4" />
+            <span className="text-[11px] font-black uppercase tracking-wider">
+              Professional Travel
+            </span>
+          </div>
+
+          <h3 className="mt-3 text-xl font-black text-slate-900">
+            Corporate Taxi Service in Nagpur
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Reliable corporate cab service in Nagpur for office visits,
+            client meetings, business appointments, employee travel
+            and professional schedules. Choose a comfortable vehicle
+            according to your business travel requirement.
+          </p>
+
+          <a
+            href="#hero-booking-form"
+            className="mt-4 inline-flex items-center gap-2 self-start rounded-xl bg-emerald-50 px-4 py-2.5 text-sm font-black text-emerald-700 transition hover:bg-emerald-600 hover:text-white"
+          >
+            Book Business Cab
+            <ArrowRight className="h-4 w-4" />
+          </a>
+
+        </div>
+
+      </article>
+
+      {/* =================================================
+          FAMILY & EVENTS
+      ================================================= */}
+
+      <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-pink-200 hover:shadow-2xl">
+
+        <div className="relative h-44 overflow-hidden bg-gradient-to-br from-pink-50 to-slate-100">
+
+          <Image
+            src="/cars/rumion.webp"
+            alt="Family taxi service in Nagpur for events and outings"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            className="object-contain p-5 transition duration-500 group-hover:scale-105"
+          />
+
+          <div className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-black text-pink-700 shadow-sm">
+            FAMILY &amp; EVENTS
+          </div>
+
+        </div>
+
+        <div className="flex flex-1 flex-col p-5">
+
+          <div className="flex items-center gap-2 text-pink-600">
+            <Car className="h-4 w-4" />
+            <span className="text-[11px] font-black uppercase tracking-wider">
+              Comfortable Travel
+            </span>
+          </div>
+
+          <h3 className="mt-3 text-xl font-black text-slate-900">
+            Family &amp; Event Taxi Service
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Comfortable taxi options for family outings, weddings,
+            functions, shopping trips, events and special occasions
+            in Nagpur. Select a suitable sedan, SUV or premium vehicle
+            based on your group and travel needs.
+          </p>
+
+          <a
+            href="#hero-booking-form"
+            className="mt-4 inline-flex items-center gap-2 self-start rounded-xl bg-pink-50 px-4 py-2.5 text-sm font-black text-pink-700 transition hover:bg-pink-600 hover:text-white"
+          >
+            Book Family Cab
+            <ArrowRight className="h-4 w-4" />
+          </a>
+
+        </div>
+
+      </article>
+
+    </div>
+
+    {/* =================================================
+        SEO CONTENT / WHY RC TOURS
+    ================================================= */}
+
+    <div className="mt-8 overflow-hidden rounded-2xl bg-[#071a3a] px-5 py-6 text-white shadow-xl sm:px-8 lg:px-10">
+
+      <div className="grid gap-6 lg:grid-cols-[1.35fr_1fr] lg:items-center">
+
+        <div>
+
+          <p className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-300">
+            Why Choose RC Tours &amp; Travels
+          </p>
+
+          <h3 className="mt-2 text-2xl font-black sm:text-3xl">
+            A Reliable Cab Partner for Travel Across Nagpur
+          </h3>
+
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-blue-100 sm:text-base">
+            Whether you need a local taxi for a few hours, an airport
+            transfer, railway station pickup, business cab or family
+            vehicle, RC Tours &amp; Travels offers practical travel
+            options from Nagpur. Our booking panel makes it easy to
+            select your pickup, destination, date, time and preferred
+            vehicle before continuing with your booking.
+          </p>
+
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <ShieldCheck className="h-6 w-6 text-cyan-300" />
+            <p className="mt-3 text-sm font-black">
+              Safe &amp; Reliable
+            </p>
+            <p className="mt-1 text-xs text-blue-100">
+              Customer-first travel
             </p>
           </div>
 
-          <div className="mt-7 flex flex-wrap justify-center gap-2">
-            {areas.map((area) => (
-              <span
-                key={area}
-                className="rounded-full border border-slate-700 bg-slate-950 px-4 py-2 text-xs font-bold text-gray-300"
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <Headphones className="h-6 w-6 text-cyan-300" />
+            <p className="mt-3 text-sm font-black">
+              24/7 Support
+            </p>
+            <p className="mt-1 text-xs text-blue-100">
+              Booking assistance
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <WalletCards className="h-6 w-6 text-cyan-300" />
+            <p className="mt-3 text-sm font-black">
+              Clear Pricing
+            </p>
+            <p className="mt-1 text-xs text-blue-100">
+              Simple fare process
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <Car className="h-6 w-6 text-cyan-300" />
+            <p className="mt-3 text-sm font-black">
+              Multiple Vehicles
+            </p>
+            <p className="mt-1 text-xs text-blue-100">
+              Sedan, SUV &amp; premium
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    {/* =================================================
+        FINAL LOCAL SEO PARAGRAPH
+    ================================================= */}
+
+    <div className="mx-auto mt-7 max-w-4xl text-center">
+
+      <h3 className="text-2xl font-black text-slate-900 sm:text-3xl">
+        Book a Taxi in Nagpur for Local &amp; Daily Travel
+      </h3>
+
+      <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
+        Looking for a taxi service in Nagpur for local travel?
+        RC Tours &amp; Travels provides cab booking options for
+        Dighori, Manish Nagar, Wardha Road, Sitabuldi, Dharampeth,
+        Sadar, Civil Lines, Besa, MIHAN and other parts of Nagpur.
+        Book a local cab, hourly taxi, airport transfer or railway
+        station taxi according to your travel requirement.
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+{/* ===================================================
+    LOCAL CAB PACKAGES
+=================================================== */}
+
+<section className="-mt-10 sm:-mt-14">
+  <LocalCabPackages />
+</section>
+
+        {/* ===================================================
+            FLEET
+        =================================================== */}
+
+        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-5 sm:py-12">
+
+          <div className="text-center">
+
+            <p className="text-xs font-black uppercase tracking-widest text-blue-600">
+              Local Taxi Fleet
+            </p>
+
+            <h2 className="mt-2 text-3xl font-black sm:text-4xl">
+              Cars for Local Taxi Booking in Nagpur
+            </h2>
+
+            <p className="mx-auto mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+              Choose a vehicle according to
+              passenger count, comfort and
+              travel requirement.
+            </p>
+
+          </div>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
+            {fleet.map((car) => (
+              <div
+                key={car.name}
+                className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
-                📍 {area}
-              </span>
+
+                <div className="relative h-52">
+
+                  <Image
+                    src={car.image}
+                    alt={`${car.name} local taxi in Nagpur`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1280px) 50vw, 25vw"
+                  />
+
+                </div>
+
+                <div className="p-5">
+
+                  <h3 className="text-xl font-black">
+                    {car.name}
+                  </h3>
+
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                    {car.text}
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setVehicle(
+                        car.vehicleValue
+                      );
+
+                      document
+                        .getElementById(
+                          "hero-booking-form"
+                        )
+                        ?.scrollIntoView({
+                          behavior:
+                            "smooth",
+                          block:
+                            "center",
+                        });
+                    }}
+                    className="mt-4 inline-flex items-center gap-1 font-black text-blue-700"
+                  >
+                    Select Vehicle
+
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+
+                </div>
+
+              </div>
             ))}
-          </div>
-        </div>
-      </section>
 
-      {/* ================= SEO CONTENT ================= */}
-
-      <section className="mx-auto mt-16 max-w-5xl px-5">
-        <div className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 md:p-9">
-          <div className="text-center">
-            <span className="text-xs font-black uppercase tracking-widest text-cyan-400">
-              NAGPUR LOCAL CAB GUIDE
-            </span>
-
-            <h2 className="mt-2 text-3xl font-black md:text-4xl">
-              Reliable Local Taxi and Cab Service in Nagpur
-            </h2>
           </div>
 
-          <div className="mt-8 space-y-6 text-sm leading-8 text-gray-300 md:text-base">
-            <p>
-              RC Tours & Travels provides local taxi service in Nagpur for
-              customers who need convenient transportation within the city.
-              Whether you are travelling for work, shopping, appointments,
-              family requirements, meetings or events, a local cab can make
-              travelling between multiple locations easier.
-            </p>
+          <div className="mt-7 text-center">
 
-            <p>
-              Our local taxi service is designed for both short and extended
-              city travel. Customers can choose suitable local rental packages
-              such as 4 Hr / 40 KM, 8 Hr / 80 KM and 12 Hr / 120 KM according
-              to their requirement and vehicle availability.
-            </p>
-
-            <p>
-              We provide different vehicle options including Swift Dzire,
-              Ertiga, Toyota Rumion and Innova Crysta. This allows customers to
-              select a practical vehicle for individual travel, families,
-              business requirements or groups.
-            </p>
-
-            <p>
-              Local taxi bookings can be useful for railway station transfers,
-              airport transfers, business meetings, shopping trips, family
-              outings, weddings, events and multiple-stop city journeys.
-              Customers can contact RC Tours & Travels through WhatsApp or
-              phone to check availability and booking details.
-            </p>
-
-            <p>
-              RC Tours & Travels serves major parts of Nagpur including Dighori,
-              Manish Nagar, Wardha Road, Sitabuldi, Dharampeth, Medical Square,
-              Hingna, Sadar, Civil Lines, Besa, Mihan and surrounding areas,
-              subject to availability.
-            </p>
-
-            <p>
-              If you need a broader taxi service for airport travel or
-              outstation journeys, you can also explore our{" "}
-              <a
-                href="/taxi-service-in-nagpur"
-                className="font-bold text-cyan-400 hover:underline"
-              >
-                taxi service in Nagpur
-              </a>
-              . For airport-specific travel, visit our{" "}
-              <a
-                href="/nagpur-airport-taxi"
-                className="font-bold text-cyan-400 hover:underline"
-              >
-                Nagpur airport taxi
-              </a>{" "}
-              page.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ================= RELATED SERVICES ================= */}
-
-      <section className="mx-auto mt-16 max-w-7xl px-5">
-        <div className="text-center">
-          <span className="text-xs font-black uppercase tracking-widest text-cyan-400">
-            EXPLORE RC TOURS & TRAVELS
-          </span>
-
-          <h2 className="mt-2 text-3xl font-black md:text-4xl">
-            More Taxi Services
-          </h2>
-        </div>
-
-        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {relatedLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="group rounded-2xl border border-slate-800 bg-slate-900 p-5 transition hover:-translate-y-1 hover:border-cyan-500/40"
+            <Link
+              href="/fleet"
+              className="inline-flex rounded-xl border border-slate-300 px-6 py-3 text-sm font-black transition hover:bg-slate-50"
             >
-              <h3 className="text-base font-black text-white">
-                {link.title}
-              </h3>
+              View Complete Fleet
 
-              <p className="mt-2 text-xs leading-6 text-gray-400">
-                {link.description}
+              <ArrowRight className="ml-1.5 h-4 w-4" />
+            </Link>
+
+          </div>
+
+        </section>
+
+        {/* ===================================================
+            SERVICE AREA
+        =================================================== */}
+
+        <section className="bg-slate-50 py-10 sm:py-12">
+
+          <div className="mx-auto max-w-6xl px-4 sm:px-5">
+
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+
+              <div className="text-center">
+
+                <p className="text-xs font-black uppercase tracking-widest text-blue-600">
+                  Nagpur Service Area
+                </p>
+
+                <h2 className="mt-2 text-3xl font-black sm:text-4xl">
+                  Local Taxi Service Across Nagpur
+                </h2>
+
+                <p className="mx-auto mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+                  RC Tours & Travels serves
+                  customers across major Nagpur
+                  areas, subject to availability
+                  and booking requirements.
+                </p>
+
+              </div>
+
+              <div className="mt-6 flex flex-wrap justify-center gap-2">
+
+                {areas.map((area) => (
+                  <span
+                    key={area}
+                    className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-bold text-slate-700"
+                  >
+                    📍 {area}
+                  </span>
+                ))}
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* ===================================================
+            WHY CHOOSE / BOOKING PROCESS
+        =================================================== */}
+
+        <section className="mx-auto max-w-5xl px-4 py-10 sm:px-5 sm:py-12">
+
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+
+            <p className="text-center text-xs font-black uppercase tracking-widest text-blue-600">
+              Why RC Tours & Travels
+            </p>
+
+            <h2 className="mt-2 text-center text-3xl font-black sm:text-4xl">
+              A Simple Way to Book Your Nagpur Taxi
+            </h2>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+
+              {[
+                "Choose Airport, One-Way, Round-Trip or Hourly Rental.",
+                "Search and select pickup and drop locations from location suggestions.",
+                "Choose your travel date, pickup time and vehicle.",
+                "Round-trip minimum billing logic is applied by the existing fare flow.",
+                "Hourly rental uses the selected duration and included-kilometre package.",
+                "Continue to the existing /book-cab booking flow for customer details and confirmation.",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="flex gap-3 rounded-2xl bg-slate-50 p-4"
+                >
+
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
+
+                  <p className="text-sm leading-6 text-slate-700">
+                    {item}
+                  </p>
+
+                </div>
+              ))}
+
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* ===================================================
+            SEO CONTENT
+        =================================================== */}
+        <section className="mx-auto max-w-5xl px-4 pb-10 sm:px-5 sm:pb-12">
+          <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+            <p className="text-xs font-black uppercase tracking-widest text-blue-600">
+              Nagpur Local Cab Guide
+            </p>
+
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+              Reliable Local Taxi Service in Nagpur
+            </h2>
+
+            <div className="mt-4 space-y-4 text-sm leading-7 text-slate-600 sm:text-base">
+              <p>
+                RC Tours &amp; Travels provides local taxi service in Nagpur for
+                city travel, office visits, shopping, appointments, family
+                journeys, meetings, events and multiple-stop trips. Customers
+                can choose a suitable cab based on the number of passengers,
+                comfort requirements and expected travel duration.
               </p>
 
-              <span className="mt-4 inline-flex text-xs font-black text-cyan-400 transition group-hover:translate-x-1">
-                Explore →
-              </span>
-            </a>
-          ))}
-        </div>
-      </section>
+              <p>
+                For customers who need a car for several hours, our local
+                hourly taxi rental options include 4 Hr / 40 KM, 6 Hr / 60 KM,
+                8 Hr / 80 KM and 12 Hr / 120 KM packages. These packages are
+                useful when you need the same vehicle for multiple stops around
+                Nagpur instead of booking separate rides.
+              </p>
 
-      {/* ================= FAQ ================= */}
+              <p>
+                The booking panel on this page also supports airport transfers,
+                outstation one-way trips and round-trip travel. You can enter
+                your pickup and destination, select your travel date and time,
+                choose a vehicle, and continue to the existing booking flow.
+              </p>
 
-      <section className="mx-auto mt-16 max-w-5xl px-5">
-        <div className="text-center">
-          <span className="text-xs font-black uppercase tracking-widest text-cyan-400">
-            LOCAL TAXI FAQ
-          </span>
+              <p>
+                Local taxi bookings are available across areas such as Dighori,
+                Manish Nagar, Wardha Road, Sitabuldi, Dharampeth, Sadar, Civil
+                Lines, Besa, MIHAN and other parts of Nagpur, subject to
+                availability and booking requirements.
+              </p>
 
-          <h2 className="mt-2 text-3xl font-black md:text-4xl">
-            Frequently Asked Questions
-          </h2>
-
-          <p className="mt-4 text-sm text-gray-400">
-            Common questions about local taxi booking in Nagpur.
-          </p>
-        </div>
-
-        <div className="mt-8 space-y-4">
-          {faqs.map((faq) => (
-            <div
-              key={faq.question}
-              className="rounded-2xl border border-slate-800 bg-slate-900 p-5"
-            >
-              <h3 className="text-base font-black text-white md:text-lg">
-                {faq.question}
-              </h3>
-
-              <p className="mt-2 text-sm leading-7 text-gray-300">
-                {faq.answer}
+              <p>
+                Available vehicle choices include Swift Dzire, Ertiga, Toyota
+                Rumion, Innova Crysta and larger vehicles such as Tempo
+                Traveller and Force Urbania, subject to availability. For
+                assistance with a local cab, hourly rental or airport taxi,
+                customers can contact RC Tours &amp; Travels by phone or
+                WhatsApp.
               </p>
             </div>
-          ))}
-        </div>
-      </section>
+          </article>
+        </section>
 
-      {/* ================= FINAL LEAD CTA ================= */}
+        {/* ===================================================
+            FAQ
+        =================================================== */}
 
-      <section className="mx-auto mt-16 max-w-5xl px-5 text-center">
-        <div className="rounded-3xl border border-cyan-500/20 bg-gradient-to-br from-slate-900 to-slate-950 p-8 shadow-2xl md:p-12">
-          <div className="text-4xl">🚕</div>
+        <section className="bg-slate-50 py-10 sm:py-12">
 
-          <h2 className="mt-4 text-3xl font-black md:text-4xl">
-            Need a Local Taxi in Nagpur?
-          </h2>
+          <div className="mx-auto max-w-5xl px-5">
 
-          <p className="mx-auto mt-4 max-w-3xl text-sm leading-7 text-gray-300 md:text-base">
-            Get a comfortable cab for city travel, meetings, shopping,
-            railway station transfers, events or multiple local stops.
-            Contact RC Tours & Travels to check availability.
-          </p>
+            <div className="text-center">
 
-          <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-            <a
-              href="/book-cab"
-              className="rounded-xl bg-yellow-500 px-7 py-3.5 text-sm font-black text-black transition hover:bg-yellow-400 active:scale-95"
-            >
-              🚕 Book Local Taxi
-            </a>
+              <p className="text-xs font-black uppercase tracking-widest text-blue-600">
+                Local Taxi FAQ
+              </p>
 
-            <a
-              href="https://wa.me/919172271464"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-xl bg-green-600 px-7 py-3.5 text-sm font-black text-white transition hover:bg-green-500 active:scale-95"
-            >
-              💬 WhatsApp Now
-            </a>
+              <h2 className="mt-2 text-3xl font-black sm:text-4xl">
+                Frequently Asked Questions
+              </h2>
 
-            <a
-              href="tel:+919172271464"
-              className="rounded-xl border border-slate-700 bg-white/5 px-7 py-3.5 text-sm font-black text-white transition hover:bg-white/10 active:scale-95"
-            >
-              📞 Call Now
-            </a>
+            </div>
+
+            <div className="mt-6 space-y-3">
+
+              {faqs.map(
+                ([question, answer]) => (
+                  <details
+                    key={question}
+                    className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                  >
+
+                    <summary className="cursor-pointer list-none text-base font-black sm:text-lg">
+                      {question}
+                    </summary>
+
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      {answer}
+                    </p>
+
+                  </details>
+                )
+              )}
+
+            </div>
+
           </div>
 
-          <p className="mt-5 text-xs font-medium text-gray-500">
-            Booking support available through phone and WhatsApp.
-          </p>
-        </div>
-      </section>
+        </section>
+
+        {/* ===================================================
+            FINAL CTA
+        =================================================== */}
+
+        <section className="mx-auto max-w-5xl px-4 py-10 sm:px-5 sm:py-12">
+
+          <div className="rounded-3xl bg-[#071a3a] p-6 text-center text-white sm:p-10 shadow-xl sm:p-12">
+
+            <div className="text-4xl">
+              🚕
+            </div>
+
+            <h2 className="mt-4 text-3xl font-black sm:text-4xl">
+              Need a Local Taxi in Nagpur?
+            </h2>
+
+            <p className="mx-auto mt-3 max-w-3xl text-sm leading-6 text-blue-100 sm:text-base">
+              Choose your service, vehicle,
+              date and time, then continue to
+              booking. You can also contact
+              RC Tours & Travels directly through
+              WhatsApp or phone.
+            </p>
+
+            <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
+
+              <a
+                href="#hero-booking-form"
+                className="rounded-xl bg-white px-7 py-3.5 text-sm font-black text-[#12346f] transition hover:bg-blue-50"
+              >
+                Book Local Taxi
+              </a>
+
+              <a
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-lg bg-emerald-500 px-5 text-[13px] font-extrabold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-600"
+                >
+                  <FaWhatsapp className="h-5 w-5" />
+
+                  WhatsApp Now
+                </a>
+              <a
+                href={`tel:${PHONE}`}
+                className="rounded-xl border border-white/20 bg-white/5 px-7 py-3.5 text-sm font-black transition hover:bg-white/10"
+              >
+                Call Now
+              </a>
+
+            </div>
+
+          </div>
+
+        </section>
+
+      {/* =====================================================
+          WEBPAGE + SERVICE JSON-LD
+      ===================================================== */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "WebPage",
+                "@id": `${PAGE_URL}#webpage`,
+                url: PAGE_URL,
+                name: "Local Taxi Service in Nagpur | RC Tours & Travels",
+                description:
+                  "Book a local taxi in Nagpur for city travel, hourly cab rental, airport transfer, railway station pickup and outstation trips.",
+                isPartOf: {
+                  "@type": "WebSite",
+                  name: "RC Tours & Travels",
+                  url: WEBSITE_URL,
+                },
+                breadcrumb: {
+                  "@id": `${PAGE_URL}#breadcrumb`,
+                },
+              },
+              {
+                "@type": "Service",
+                "@id": `${PAGE_URL}#service`,
+                name: "Local Taxi Service in Nagpur",
+                serviceType: [
+                  "Local Taxi Service",
+                  "Hourly Cab Rental",
+                  "Airport Taxi",
+                  "Railway Station Taxi",
+                  "Outstation Taxi Service",
+                ],
+                provider: {
+                  "@type": "TaxiService",
+                  name: "RC Tours & Travels",
+                  url: WEBSITE_URL,
+                  telephone: PHONE,
+                },
+                areaServed: {
+                  "@type": "City",
+                  name: "Nagpur",
+                },
+                url: PAGE_URL,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* =====================================================
+          FAQ JSON-LD
+      ===================================================== */}
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context":
+              "https://schema.org",
+
+            "@type": "FAQPage",
+
+            mainEntity:
+              faqs.map(
+                ([question, answer]) => ({
+                  "@type":
+                    "Question",
+
+                  name: question,
+
+                  acceptedAnswer: {
+                    "@type":
+                      "Answer",
+
+                    text: answer,
+                  },
+                })
+              ),
+          }),
+        }}
+      />
+
+      {/* =====================================================
+          BREADCRUMB JSON-LD
+      ===================================================== */}
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context":
+              "https://schema.org",
+
+            "@type":
+              "BreadcrumbList",
+            "@id": `${PAGE_URL}#breadcrumb`,
+
+            itemListElement: [
+              {
+                "@type":
+                  "ListItem",
+
+                position: 1,
+
+                name: "Home",
+
+                item:
+                  `${WEBSITE_URL}/`,
+              },
+
+              {
+                "@type":
+                  "ListItem",
+
+                position: 2,
+
+                name:
+                  "Nagpur Local Taxi",
+
+                item:
+                  PAGE_URL,
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* =====================================================
+          TAXI SERVICE JSON-LD
+      ===================================================== */}
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context":
+              "https://schema.org",
+
+            "@type":
+              "TaxiService",
+
+            name:
+              "RC Tours & Travels",
+
+            image:
+              `${WEBSITE_URL}/logo.png`,
+
+            url:
+              PAGE_URL,
+
+            telephone:
+              PHONE,
+
+            address: {
+              "@type":
+                "PostalAddress",
+
+              streetAddress:
+                "New Narsala Rd, Beldar Nagar, Dighori",
+
+              addressLocality:
+                "Nagpur",
+
+              addressRegion:
+                "Maharashtra",
+
+              postalCode:
+                "440034",
+
+              addressCountry:
+                "IN",
+            },
+
+            areaServed: {
+              "@type":
+                "City",
+
+              name:
+                "Nagpur",
+            },
+
+            serviceType: [
+              "Local Taxi Service",
+              "Local Cab Service",
+              "Hourly Taxi Rental",
+              "City Taxi Service",
+              "Airport Taxi Service",
+              "Outstation Taxi Service",
+            ],
+
+            priceRange:
+              "₹₹",
+
+            openingHours:
+              "Mo-Su 00:00-23:59",
+          }),
+        }}
+      />
+
+    </main>
+
+    <Footer />
+  </>
+  );
+}
+
+/* ============================================================
+   FIELD COMPONENT
+============================================================ */
+
+function Field({
+  label,
+  icon,
+  children,
+}: {
+  label: string;
+  icon: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <div className="min-w-0">
+
+      <label className="mb-1 flex items-center gap-1.5 text-[10px] font-black text-slate-800 sm:mb-1.5 sm:text-xs">
+        {icon}
+        {label}
+      </label>
+
+      {children}
+
+    </div>
+  );
+}
+
+/* ============================================================
+   LOCATION INPUT COMPONENT
+============================================================ */
+
+function LocationInput({
+  label,
+  icon,
+  value,
+  placeholder,
+  onChange,
+  results,
+  active,
+  onChoose,
+  inputClass,
+}: {
+  label: string;
+  icon: ReactNode;
+  value: string;
+  placeholder: string;
+  onChange: (value: string) => void;
+  results: LocationResult[];
+  active: boolean;
+  onChoose: (
+    location: LocationResult
+  ) => void;
+  inputClass: string;
+}) {
+  return (
+    <div className="relative min-w-0">
+
+      <label className="mb-1 flex items-center gap-1.5 text-[10px] font-black text-slate-800 sm:mb-1.5 sm:text-xs">
+        {icon}
+        {label}
+      </label>
+
+      <div className="relative">
+
+        <input
+          type="text"
+          value={value}
+          onChange={(event) =>
+            onChange(
+              event.target.value
+            )
+          }
+          placeholder={placeholder}
+          autoComplete="off"
+          className={`${inputClass} pr-9`}
+        />
+
+        <Navigation className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-blue-600 sm:h-4 sm:w-4" />
+
+      </div>
+
+      {/* =====================================================
+          LOCATION SUGGESTIONS
+      ===================================================== */}
+
+      {active &&
+        results.length > 0 && (
+          <div className="absolute left-0 right-0 top-[62px] z-[100] max-h-64 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-2xl">
+
+            {results.map(
+              (
+                location,
+                index
+              ) => (
+                <button
+                  key={`${location.display_name || location.name || "location"}-${index}`}
+                  type="button"
+                  onMouseDown={(event) =>
+                    event.preventDefault()
+                  }
+                  onClick={() =>
+                    onChoose(
+                      location
+                    )
+                  }
+                  className="block w-full border-b border-slate-100 px-3 py-3 text-left transition last:border-0 hover:bg-blue-50"
+                >
+
+                  <div className="text-sm font-bold text-slate-800">
+                    {location.name ||
+                      location.display_name ||
+                      "Location"}
+                  </div>
+
+                  <div className="mt-0.5 text-xs leading-5 text-slate-500">
+                    {location.full_address ||
+                      location.display_name ||
+                      ""}
+                  </div>
+
+                </button>
+              )
+            )}
+
+          </div>
+        )}
+
     </div>
   );
 }

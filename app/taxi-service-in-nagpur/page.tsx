@@ -372,6 +372,8 @@ export default async function TaxiServiceInNagpurPage({
             </span>
           </div>
 
+          
+
 {/* Main Hero */}
 <div className="grid items-center gap-1 lg:grid-cols-[0.95fr_1.05fr] lg:gap-3">
   {/* Left */}
@@ -404,13 +406,14 @@ export default async function TaxiServiceInNagpurPage({
       </Link>
 
       <a
-        href={WHATSAPP_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-emerald-500 px-5 text-[13px] font-bold text-white shadow-lg transition duration-300 hover:-translate-y-0.5 hover:bg-emerald-600"
+      href={WHATSAPP_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-lg bg-emerald-500 px-5 text-[13px] font-extrabold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-600"
       >
-        <MessageCircle className="h-4 w-4" />
-        WhatsApp Now
+      <FaWhatsapp className="h-5 w-5" />
+      
+      WhatsApp Now
       </a>
 
       <a
@@ -452,24 +455,31 @@ export default async function TaxiServiceInNagpurPage({
 </div>
   </div>
 
-  {/* Right Car - Desktop Only */}
-  <div className="relative z-10 mx-auto -mt-1 hidden w-full lg:ml-auto lg:mt-0 lg:block lg:max-w-[680px]">
-    <div className="absolute left-[56%] top-1/2 h-[180px] w-[68%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/20 blur-[75px] sm:h-[210px]" />
+              {/* Right Car - Desktop Only */}
+              <div className="relative z-10 mx-auto -mt-1 hidden w-full lg:ml-auto lg:mt-0 lg:block lg:max-w-[760px]">
 
-    <div className="absolute left-[18%] top-[16%] hidden h-[66%] w-[66%] rounded-full border border-blue-400/20 lg:block" />
+              {/* Blue glow behind car */}
+              <div className="absolute left-[56%] top-1/2 h-[210px] w-[76%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/20 blur-[80px] sm:h-[240px]" />
 
-    <div className="relative mx-auto aspect-[1.9/1] w-[82%] sm:w-[78%] lg:ml-auto">
-      <Image
-        src="/seo-hero-bg.webp"
-        alt="RC Tours and Travels taxi service in Nagpur"
-        fill
-        priority
-        sizes="(max-width: 1024px) 90vw, 50vw"
-        className="object-contain drop-shadow-[0_18px_25px_rgba(0,0,0,0.42)]"
-      />
-    </div>
-  </div>
-</div>
+              {/* Circular ring behind car */}
+              <div className="absolute left-[12%] top-[8%] hidden h-[78%] w-[78%] rounded-full border border-blue-400/20 lg:block" />
+
+              {/* Car */}
+              <div className="relative mx-auto aspect-[1.9/1] w-[92%] sm:w-[88%] lg:ml-auto lg:w-[90%]">
+
+              <Image
+              src="/seo-hero-bg.webp"
+              alt="RC Tours and Travels taxi service in Nagpur"
+              fill
+              priority
+              sizes="(max-width: 1024px) 90vw, 58vw"
+              className="object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.45)]"
+              />
+
+              </div>
+
+            </div>
+          </div>
 
 {/* Trust Features */}
 <div className="relative z-20 mt-2 grid grid-cols-4 gap-1 py-2 sm:flex sm:flex-wrap sm:items-center sm:justify-start sm:gap-y-4 sm:py-2.5">

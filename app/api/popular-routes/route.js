@@ -46,7 +46,7 @@ const popularRoutes = [
   {
   destination: "Tadoba",
   pickup: "Nagpur, Maharashtra",
-  drop: "Moharli Gate, Tadoba Andhari Tiger Reserve, Maharashtra",
+  drop: "Tadoba Andhari Tiger Reserve, Moharli, Maharashtra",
   tripType: "One Way Trip",
   },
   {

@@ -135,15 +135,25 @@ const [distance, setDistance] = useState(
   Number(searchParams.get("distance")) || 0
 );
 
-const [fare, setFare] = useState(
-  Number(searchParams.get("fare")) || 0
-);
+const [fare, setFare] = useState(0);
 
 const [hasSearched, setHasSearched] = useState(() => {
   const initialDistance = Number(searchParams.get("distance")) || 0;
   const initialFare = Number(searchParams.get("fare")) || 0;
 
-  return initialDistance > 0 || initialFare > 0;
+  const initialPickup = searchParams.get("pickup") || "";
+  const initialDrop = searchParams.get("drop") || "";
+
+  // Home Popular Route se pickup/drop aaye hain
+  const fromHome =
+    initialPickup.trim() !== "" &&
+    initialDrop.trim() !== "";
+
+  return (
+    fromHome ||
+    initialDistance > 0 ||
+    initialFare > 0
+  );
 });
 
 
@@ -953,11 +963,10 @@ useEffect(() => {
     return;
   }
 
-  // User ne pickup/drop change kiya hai.
-  // Ab naya distance aur fare sirf Search button click ke baad calculate hoga.
-  if (!hasSearched) {
-    return;
-  }
+// Search ke baad ya Home Popular Route se aane par calculation hogi.
+if (!hasSearched) {
+  return;
+}
 
   const getDistance = async () => {
 
@@ -1268,7 +1277,6 @@ const isFormComplete =
   return cab.rate;
 };
 
-
   const getCabFare = (cab: typeof cabs[number]) => {
   if (
   (!isFormComplete && tripType !== "Local Rental") ||
@@ -1320,6 +1328,7 @@ if (tripType === "Airport Pick-Up & Drop") {
     if (cab.name === "Toyota Rumion") return 2700;
     if (cab.name === "Innova Crysta") return 3400;
   }
+  
 
   // 51–60 KM
   if (distance <= 60) {
@@ -1331,22 +1340,30 @@ if (tripType === "Airport Pick-Up & Drop") {
 
   // 61–70 KM
   if (distance <= 70) {
-    if (cab.name === "Swift Dzire") return 3100;
-    if (cab.name === "Ertiga") return 3400;
-    if (cab.name === "Toyota Rumion") return 3500;
-    if (cab.name === "Innova Crysta") return 4400;
+    if (cab.name === "Swift Dzire") return 2800;
+    if (cab.name === "Ertiga") return 3100;
+    if (cab.name === "Toyota Rumion") return 3200;
+    if (cab.name === "Innova Crysta") return 4200;
   }
 
-  // 71–80 KM
-  if (distance <= 80) {
-    if (cab.name === "Swift Dzire") return 3500;
-    if (cab.name === "Ertiga") return 3800;
-    if (cab.name === "Toyota Rumion") return 3900;
-    if (cab.name === "Innova Crysta") return 4900;
-  }
+// 71–100 KM — SAME FIXED FARE
 
-  // 80 KM ke baad normal fallback
-  return Math.round(distance * cab.rate * 2);
+if (distance <= 100) {
+  if (cab.name === "Swift Dzire") return 2900;
+  if (cab.name === "Ertiga") return 3200;
+  if (cab.name === "Toyota Rumion") return 3300;
+  if (cab.name === "Innova Crysta") return 4500;
+}
+
+// 101–149 KM — 150 KM ka One Way rate
+
+if (distance < 150) {
+  return Math.round(150 * cab.rate * 2);
+}
+
+// 150 KM ke baad — actual distance ka One Way rate
+
+return Math.round(distance * cab.rate * 2);
 }
 
 
@@ -1452,7 +1469,7 @@ if (
     if (cab.name === "Swift Dzire") return 1100;
     if (cab.name === "Ertiga") return 1400;
     if (cab.name === "Toyota Rumion") return 1500;
-    if (cab.name === "Innova Crysta") return 1900;
+    if (cab.name === "Innova Crysta") return 2000;
   }
 
   // 11–20 KM
@@ -1460,7 +1477,7 @@ if (
     if (cab.name === "Swift Dzire") return 1200;
     if (cab.name === "Ertiga") return 1500;
     if (cab.name === "Toyota Rumion") return 1600;
-    if (cab.name === "Innova Crysta") return 2000;
+    if (cab.name === "Innova Crysta") return 2500;
   }
 
   // 21–30 KM
@@ -1468,38 +1485,55 @@ if (
     if (cab.name === "Swift Dzire") return 1500;
     if (cab.name === "Ertiga") return 1800;
     if (cab.name === "Toyota Rumion") return 1900;
-    if (cab.name === "Innova Crysta") return 2400;
+    if (cab.name === "Innova Crysta") return 3000;
   }
 
-  // 31–40 KM
-  if (distance <= 40) {
-    if (cab.name === "Swift Dzire") return 1900;
-    if (cab.name === "Ertiga") return 2200;
-    if (cab.name === "Toyota Rumion") return 2300;
-    if (cab.name === "Innova Crysta") return 2900;
-  }
+ // 31–40 KM
+if (distance <= 40) {
+  if (cab.name === "Swift Dzire") return 1900;
+  if (cab.name === "Ertiga") return 2200;
+  if (cab.name === "Toyota Rumion") return 2300;
+  if (cab.name === "Innova Crysta") return 3500;
+}
 
-  // 41–50 KM
-  if (distance <= 50) {
-    if (cab.name === "Swift Dzire") return 2300;
-    if (cab.name === "Ertiga") return 2600;
-    if (cab.name === "Toyota Rumion") return 2700;
-    if (cab.name === "Innova Crysta") return 3400;
-  }
+// 41–50 KM
+if (distance <= 50) {
+  if (cab.name === "Swift Dzire") return 2300;
+  if (cab.name === "Ertiga") return 2600;
+  if (cab.name === "Toyota Rumion") return 2700;
+  if (cab.name === "Innova Crysta") return 3800;
+}
 
-  // 51–99 KM → existing discounted rate
-  if (distance < 100) {
-    return Math.round(
-      distance * getDiscountedRate(cab) * 2
-    );
-  }
+// 51–60 KM
+if (distance <= 60) {
+  if (cab.name === "Swift Dzire") return 2700;
+  if (cab.name === "Ertiga") return 3000;
+  if (cab.name === "Toyota Rumion") return 3200;
+  if (cab.name === "Innova Crysta") return 3900;
+}
 
-  // 100–149 KM → 150 KM billing
-  if (distance < 150) {
-    return Math.round(
-      150 * getDiscountedRate(cab) * 2
-    );
-  }
+// 61–70 KM
+if (distance <= 70) {
+  if (cab.name === "Swift Dzire") return 2700;
+  if (cab.name === "Ertiga") return 3000;
+  if (cab.name === "Toyota Rumion") return 3200;
+  if (cab.name === "Innova Crysta") return 4000;
+}
+
+// 71–100 KM → 61–70 KM wala same fare
+if (distance <= 100) {
+  if (cab.name === "Swift Dzire") return 2800;
+  if (cab.name === "Ertiga") return 3400;
+  if (cab.name === "Toyota Rumion") return 3500;
+  if (cab.name === "Innova Crysta") return 4500;
+}
+
+// 100–149 KM → 150 KM billing
+if (distance < 150) {
+  return Math.round(
+    150 * getDiscountedRate(cab) * 2
+  );
+}
 
   // 150 KM+ → actual distance
   return Math.round(
@@ -1513,8 +1547,17 @@ return Math.round(
 );
 };
 
+// Airport ke liye crossed/original fare
+// final fare ko 8% discount se reverse calculate karta hai
+const getOriginalFare = (cab: typeof cabs[number]) => {
+  const finalFare = getFinalCabFare(cab);
+
+  // 8% discount reverse calculation
+  return Math.ceil((finalFare / 0.92) / 50) * 50;
+};
+
 const getCabDiscount = (cab: typeof cabs[number]) => {
-  const originalFare = getCabFare(cab);
+  const originalFare = getOriginalFare(cab);
   const finalFare = getFinalCabFare(cab);
 
   return Math.max(0, originalFare - finalFare);
@@ -2470,10 +2513,10 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
   {/* Price Area */}
   <div className="mt-3">
 
-    {/* Original Fare */}
-    <p className="text-lg md:text-xl text-gray-400 line-through font-semibold leading-none">
-      ₹{getCabFare(cab)}
-    </p>
+    {/* Original Fare */} 
+<p className="text-lg md:text-xl text-gray-400 line-through font-semibold leading-none"> 
+  ₹{getOriginalFare(cab)} 
+</p>
 
     {/* Final Fare */}
     <h3 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-none mt-1">
@@ -2481,9 +2524,8 @@ const getCabDiscount = (cab: typeof cabs[number]) => {
     </h3>
 
     {/* Saving */}
-    {tripType !== "Local Rental" &&
-      getCabDiscount(cab) > 0 && (
-        <div className="inline-flex items-center gap-2 mt-2 bg-green-50 border border-green-100 text-green-600 px-3 py-2 rounded-xl">
+    {getCabDiscount(cab) > 0 && (
+    <div className="inline-flex items-center gap-2 mt-2 bg-green-50 border border-green-100 text-green-600 px-3 py-2 rounded-xl">
 
           <Gift
             size={17}
