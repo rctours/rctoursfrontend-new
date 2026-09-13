@@ -1,34 +1,69 @@
 import Link from "next/link";
+import { headers } from "next/headers";
+
+async function getBaseUrl() {
+  const headersList = await headers();
+
+  const host = headersList.get("host");
+
+  const protocol =
+    headersList.get("x-forwarded-proto") ||
+    (process.env.NODE_ENV === "development" ? "http" : "https");
+
+  return `${protocol}://${host}`;
+}
 
 async function getSingleBlog(slug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/blogs?slug=${slug}`, {
-      cache: "no-store", 
-    });
+    const baseUrl = await getBaseUrl();
+
+    const res = await fetch(
+      `${baseUrl}/api/blogs?slug=${encodeURIComponent(slug)}`,
+      {
+        cache: "no-store",
+      }
+    );
+
+    if (!res.ok) {
+      return null;
+    }
+
     const data = await res.json();
-    if (data.success && data.blogs) {
+
+    if (data.success && Array.isArray(data.blogs)) {
       return data.blogs.find((b) => b.slug === slug) || null;
     }
-    return data.success ? data.blog : null;
+
+    return null;
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching single blog:", error);
     return null;
   }
 }
 
 async function getRelatedBlogs(currentSlug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    const baseUrl = await getBaseUrl();
+
     const res = await fetch(`${baseUrl}/api/blogs`, {
       cache: "no-store",
     });
-    const data = await res.json();
-    if (data.success && data.blogs) {
-      return data.blogs.filter((b) => b.slug !== currentSlug).slice(0, 2);
+
+    if (!res.ok) {
+      return [];
     }
+
+    const data = await res.json();
+
+    if (data.success && Array.isArray(data.blogs)) {
+      return data.blogs
+        .filter((b) => b.slug !== currentSlug)
+        .slice(0, 2);
+    }
+
     return [];
   } catch (error) {
+    console.error("Error fetching related blogs:", error);
     return [];
   }
 }
@@ -43,19 +78,30 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const finalTitle = blog.metaTitle || `${blog.title} | RC Tours & Travels`;
-  const finalDesc = blog.metaDescription || blog.excerpt || (blog.content ? blog.content.substring(0, 160) : "");
+  const finalTitle =
+    blog.metaTitle || `${blog.title} | RC Tours & Travels`;
+
+  const finalDesc =
+    blog.metaDescription ||
+    blog.excerpt ||
+    (blog.content ? blog.content.substring(0, 160) : "");
 
   return {
     title: finalTitle,
     description: finalDesc,
-    keywords: blog.keywords || "cab service in nagpur, taxi service nagpur",
+    keywords:
+      blog.keywords ||
+      "cab service in nagpur, taxi service nagpur",
+
     openGraph: {
       title: finalTitle,
       description: finalDesc,
-      images: [blog.image || "/blogs/local-taxi-nagpur.webp"],
+      images: [
+        blog.image || "/blogs/local-taxi-nagpur.webp",
+      ],
       type: "article",
     },
+
     alternates: {
       canonical: `https://www.rctoursandtravels.in/blog/${slug}`,
     },
@@ -64,14 +110,21 @@ export async function generateMetadata({ params }) {
 
 export default async function BlogDetailsPage({ params }) {
   const { slug } = await params;
+
   const blog = await getSingleBlog(slug);
 
   if (!blog) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">Blog Post Not Found</h1>
-          <Link href="/blog" className="text-blue-600 font-bold hover:underline">
+          <h1 className="text-3xl font-bold text-gray-800 mb-4">
+            Blog Post Not Found
+          </h1>
+
+          <Link
+            href="/blog"
+            className="text-blue-600 font-bold hover:underline"
+          >
             ← Back to All Blogs
           </Link>
         </div>
@@ -80,7 +133,10 @@ export default async function BlogDetailsPage({ params }) {
   }
 
   const relatedBlogs = await getRelatedBlogs(slug);
-  const publishDate = blog.createdAt ? new Date(blog.createdAt).toISOString().split('T')[0] : "2026-06-12";
+
+  const publishDate = blog.createdAt
+    ? new Date(blog.createdAt).toISOString().split("T")[0]
+    : "2026-06-12";
 
   return (
     <div className="min-h-screen bg-white">
@@ -90,25 +146,37 @@ export default async function BlogDetailsPage({ params }) {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "BlogPosting",
-            "headline": blog.title,
-            "description": blog.metaDescription || blog.excerpt || blog.content?.substring(0, 160),
-            "image": blog.image || "https://www.rctoursandtravels.in/blogs/local-taxi-nagpur.webp",
-            "author": {
+
+            headline: blog.title,
+
+            description:
+              blog.metaDescription ||
+              blog.excerpt ||
+              blog.content?.substring(0, 160),
+
+            image:
+              blog.image ||
+              "https://www.rctoursandtravels.in/blogs/local-taxi-nagpur.webp",
+
+            author: {
               "@type": "Organization",
-              "name": "RC Tours & Travels",
-              "url": "https://www.rctoursandtravels.in"
+              name: "RC Tours & Travels",
+              url: "https://www.rctoursandtravels.in",
             },
-            "publisher": {
+
+            publisher: {
               "@type": "Organization",
-              "name": "RC Tours & Travels",
-              "logo": {
+              name: "RC Tours & Travels",
+              logo: {
                 "@type": "ImageObject",
-                "url": "https://www.rctoursandtravels.in/logo.png"
-              }
+                url: "https://www.rctoursandtravels.in/logo.png",
+              },
             },
-            "datePublished": publishDate,
-            "dateModified": publishDate,
-            "mainEntityOfPage": {
+
+            datePublished: publishDate,
+            dateModified: publishDate,
+
+            mainEntityOfPage: {
               "@type": "WebPage",
               "@id": `https://www.rctoursandtravels.in/blog/${slug}`,
             },
@@ -125,14 +193,31 @@ export default async function BlogDetailsPage({ params }) {
           <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-md font-bold">
             {blog.category || "Taxi Service"}
           </span>
+
           <span>•</span>
+
           <span>By RC Tours & Travels</span>
+
           <span>•</span>
-          <span>Updated {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString('en-US', {month: 'long', year: 'numeric'}) : "Recent"}</span>
+
+          <span>
+            Updated{" "}
+            {blog.createdAt
+              ? new Date(blog.createdAt).toLocaleDateString(
+                  "en-US",
+                  {
+                    month: "long",
+                    year: "numeric",
+                  }
+                )
+              : "Recent"}
+          </span>
         </div>
 
         <img
-          src={blog.image || "/blogs/local-taxi-nagpur.webp"}
+          src={
+            blog.image || "/blogs/local-taxi-nagpur.webp"
+          }
           alt={blog.title}
           loading="eager"
           className="w-full h-[220px] md:h-[480px] object-cover rounded-3xl mb-10 shadow-md bg-gray-100"
@@ -166,9 +251,13 @@ export default async function BlogDetailsPage({ params }) {
           <h2 className="text-3xl font-black text-slate-900 mb-3">
             Need a Reliable Taxi Service in Nagpur?
           </h2>
+
           <p className="text-gray-600 max-w-2xl mx-auto mb-6 text-lg">
-            Get premium airport transfers, local city packages, and outstation rides at transparent per-km rates with RC Tours & Travels.
+            Get premium airport transfers, local city packages,
+            and outstation rides at transparent per-km rates with
+            RC Tours & Travels.
           </p>
+
           <a
             href="tel:9172271464"
             className="bg-blue-600 hover:bg-blue-700 shadow-md transition text-white px-8 py-4 rounded-xl font-bold inline-block"
@@ -200,17 +289,23 @@ export default async function BlogDetailsPage({ params }) {
                   className="group border rounded-3xl overflow-hidden bg-white shadow-sm hover:shadow-md transition flex flex-col"
                 >
                   <img
-                    src={item.image || "/blogs/local-taxi-nagpur.webp"}
+                    src={
+                      item.image ||
+                      "/blogs/local-taxi-nagpur.webp"
+                    }
                     alt={item.title}
                     className="w-full h-52 object-cover group-hover:scale-101 transition duration-300"
                   />
+
                   <div className="p-6">
                     <span className="text-blue-600 font-bold text-sm bg-blue-50 px-2.5 py-1 rounded">
                       {item.category || "Taxi Fare"}
                     </span>
+
                     <h3 className="text-xl font-bold text-slate-900 mt-3 mb-2 line-clamp-2">
                       {item.title}
                     </h3>
+
                     <p className="text-blue-600 font-bold text-sm mt-4 inline-flex items-center group-hover:translate-x-1 transition-transform">
                       Read Article →
                     </p>
@@ -220,7 +315,6 @@ export default async function BlogDetailsPage({ params }) {
             </div>
           </div>
         )}
-
       </div>
     </div>
   );
