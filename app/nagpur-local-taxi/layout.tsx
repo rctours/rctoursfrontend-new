@@ -3,25 +3,12 @@ import type { Metadata } from "next";
 const SITE_URL = "https://www.rctoursandtravels.in";
 
 export const metadata: Metadata = {
-  title:
-    "Local Taxi Service in Nagpur | Hourly Cab & Car Rental",
+  title: "Local Taxi Service in Nagpur | Cab Booking & Hourly Rental",
 
   description:
-    "Book a local taxi service in Nagpur with RC Tours & Travels. Choose 4 Hr / 40 KM, 8 Hr / 80 KM or 12 Hr / 120 KM local cab packages for city travel, shopping, meetings, family trips and multiple stops.",
+    "Book a reliable local taxi in Nagpur with RC Tours & Travels. Get local cab booking, hourly taxi rental, airport transfers and comfortable cars for city travel, meetings, shopping and family trips.",
 
-  keywords: [
-    "local taxi service in nagpur",
-    "local taxi in nagpur",
-    "nagpur local taxi",
-    "local cab service in nagpur",
-    "hourly taxi nagpur",
-    "hourly cab in nagpur",
-    "local car rental nagpur",
-    "car rental in nagpur",
-    "cab booking nagpur",
-    "taxi booking nagpur",
-    "nagpur taxi service",
-  ],
+  metadataBase: new URL(SITE_URL),
 
   authors: [
     {
@@ -33,7 +20,7 @@ export const metadata: Metadata = {
   publisher: "RC Tours & Travels",
 
   alternates: {
-    canonical: `${SITE_URL}/nagpur-local-taxi`,
+    canonical: "/nagpur-local-taxi",
   },
 
   robots: {
@@ -56,10 +43,10 @@ export const metadata: Metadata = {
     siteName: "RC Tours & Travels",
 
     title:
-      "Local Taxi Service in Nagpur | Hourly Cab & Car Rental",
+      "Local Taxi Service in Nagpur | Cab Booking & Hourly Rental",
 
     description:
-      "Book local taxi and hourly cab service in Nagpur with flexible local rental packages for city travel, shopping, meetings, family trips and multiple stops.",
+      "Book a reliable local taxi in Nagpur with RC Tours & Travels. Local cab booking, hourly taxi rental, airport transfers and comfortable cars for city travel.",
 
     images: [
       {
@@ -78,7 +65,7 @@ export const metadata: Metadata = {
       "Local Taxi Service in Nagpur | RC Tours & Travels",
 
     description:
-      "Book local taxi and hourly cab service in Nagpur with RC Tours & Travels.",
+      "Book a reliable local taxi in Nagpur with RC Tours & Travels for local cab booking, hourly rental and airport transfers.",
 
     images: [`${SITE_URL}/og-image.webp`],
   },

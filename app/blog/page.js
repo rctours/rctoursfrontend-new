@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import {
   BookOpen,
   ArrowRight,
@@ -42,12 +43,18 @@ export const dynamic = "force-dynamic";
 
 async function getBlogs() {
   try {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const headersList = await headers();
 
-    const res = await fetch(`${baseUrl}/api/blogs`, {
-      cache: "no-store",
-    });
+const host = headersList.get("host");
+const protocol =
+  headersList.get("x-forwarded-proto") ||
+  (process.env.NODE_ENV === "development" ? "http" : "https");
+
+const baseUrl = `${protocol}://${host}`;
+
+const res = await fetch(`${baseUrl}/api/blogs`, {
+  cache: "no-store",
+});
 
     if (!res.ok) {
       return [];
