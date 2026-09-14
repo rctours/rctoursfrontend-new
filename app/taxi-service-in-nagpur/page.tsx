@@ -218,7 +218,7 @@ const taxiServiceSchema = {
     "RC Tours & Travels provides taxi service in Nagpur including local taxi, airport transfer, railway station pickup, one-way cab and outstation taxi services.",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "New Narsala Rd, Beldar Nagar, Dighori",
+    streetAddress: "No. 171, Umred Rd, Near Maruti Mandir, Dighori",
     addressLocality: "Nagpur",
     addressRegion: "Maharashtra",
     postalCode: "440034",

@@ -192,7 +192,7 @@ export default function ContactPage() {
             </div>
             <h3 className="mt-5 text-xl font-black text-slate-950">Office Location</h3>
             <p className="mx-auto mt-2 max-w-xs text-sm leading-6 text-slate-500">
-              New Narsala Rd, Beldar Nagar, Dighori, Nagpur, Maharashtra - 440034
+              No. 171, Umred Rd, Near Maruti Mandir, Dighori, Nagpur, Maharashtra - 440034
             </p>
             <a
               href="https://maps.google.com/?q=RC+Tours+%26+Travels+Nagpur"
@@ -386,7 +386,7 @@ export default function ContactPage() {
 
         <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
           <iframe
-            src="https://www.google.com/maps?q=New+Narsala+Road+Beldar+Nagar+Dighori+Nagpur&output=embed"
+            src="https://www.google.com/maps?q=No.+171,+Umred+Rd,+Near+Maruti+Mandir,+Dighori,+Nagpur&output=embed"
             width="100%"
             height="420"
             style={{ border: 0 }}

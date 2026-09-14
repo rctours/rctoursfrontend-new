@@ -541,7 +541,7 @@ export default function ServicesPage() {
               </h3>
 
               <p className="text-gray-600 text-sm leading-6">
-                New Narsala Rd, Beldar Nagar,
+                No. 171, Umred Rd, Near Maruti Mandir,
                 <br />
                 Dighori, Nagpur,
                 <br />

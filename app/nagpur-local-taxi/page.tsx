@@ -2560,7 +2560,7 @@ export default function NagpurLocalTaxiPage() {
                 "PostalAddress",
 
               streetAddress:
-                "New Narsala Rd, Beldar Nagar, Dighori",
+                "No. 171, Umred Rd, Near Maruti Mandir, Dighori",
 
               addressLocality:
                 "Nagpur",

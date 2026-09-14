@@ -137,7 +137,7 @@ const organizationSchema = {
 
   address: {
     "@type": "PostalAddress",
-    streetAddress: "New Narsala Rd, Beldar Nagar, Dighori",
+    streetAddress: "No. 171, Umred Rd, Near Maruti Mandir, Dighori",
     addressLocality: "Nagpur",
     addressRegion: "Maharashtra",
     postalCode: "440034",
@@ -162,7 +162,7 @@ const localBusinessSchema = {
 
   address: {
     "@type": "PostalAddress",
-    streetAddress: "New Narsala Rd, Beldar Nagar, Dighori",
+    streetAddress: "No. 171, Umred Rd, Near Maruti Mandir, Dighori",
     addressLocality: "Nagpur",
     addressRegion: "Maharashtra",
     postalCode: "440034",
