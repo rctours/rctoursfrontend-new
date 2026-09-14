@@ -2941,6 +2941,14 @@ setPaymentType("full")
 
       </div>
 
+      <div className="flex justify-between">
+
+  <span>Toll Charges</span>
+
+  <span>₹{tollAmount}</span>
+
+</div>
+
       {petRide && (
 
         <div className="flex justify-between">
