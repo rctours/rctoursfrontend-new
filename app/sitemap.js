@@ -1,7 +1,7 @@
 const baseUrl = "https://www.rctoursandtravels.in";
 
 // Current SEO update date
-const siteLastModified = new Date("2026-08-28");
+const siteLastModified = new Date("2026-09-16");
 
 export default function sitemap() {
   return [
@@ -84,11 +84,25 @@ export default function sitemap() {
       changeFrequency: "weekly",
       priority: 1,
     },
+
+    // ==========================================
+    // 9. LOCAL TAXI SEO LANDING PAGE
+    // ==========================================
     {
-    url: `${baseUrl}/nagpur-local-taxi`,
-    lastModified: siteLastModified,
-    changeFrequency: "weekly",
-    priority: 0.9,
-  },
+      url: `${baseUrl}/nagpur-local-taxi`,
+      lastModified: siteLastModified,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+
+    // ==========================================
+    // 10. CAR RENTAL SEO LANDING PAGE
+    // ==========================================
+    {
+      url: `${baseUrl}/car-rental-in-nagpur`,
+      lastModified: siteLastModified,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
   ];
 }
