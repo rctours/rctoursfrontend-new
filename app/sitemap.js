@@ -104,5 +104,15 @@ export default function sitemap() {
       changeFrequency: "weekly",
       priority: 0.9,
     },
+
+    // ==========================================
+    // 11. AIRPORT TAXI SEO LANDING PAGE
+    // ==========================================
+    {
+      url: `${baseUrl}/nagpur-airport-taxi`,
+      lastModified: siteLastModified,
+      changeFrequency: "weekly",
+      priority: 1,
+    },
   ];
 }

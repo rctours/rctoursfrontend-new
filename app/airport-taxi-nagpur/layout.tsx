@@ -1,46 +1,74 @@
 import type { Metadata } from "next";
 
+const PAGE_URL =
+  "https://www.rctoursandtravels.in/nagpur-airport-taxi";
+
 export const metadata: Metadata = {
-  title: "Nagpur Airport Taxi | 24x7 Airport Cab Service | RC Tours & Travels",
+  title:
+    "Nagpur Airport Taxi | Airport Cab Service in Nagpur | RC Tours & Travels",
 
   description:
-    "Book 24x7 Nagpur Airport Taxi with RC Tours & Travels. Reliable airport pickup and drop, local and outstation cabs at affordable fares.",
+    "Book a reliable Nagpur Airport Taxi for airport pickup and drop, airport transfers, local travel and outstation trips. RC Tours & Travels offers comfortable cars, professional drivers and easy online booking in Nagpur.",
 
   keywords: [
     "Nagpur Airport Taxi",
+    "Airport Taxi Nagpur",
     "Nagpur Airport Cab",
+    "Nagpur Airport Taxi Service",
+    "Airport Cab Service in Nagpur",
     "Airport Pickup Nagpur",
     "Airport Drop Nagpur",
-    "24x7 Airport Taxi",
-    "Cab from Nagpur Airport",
+    "Nagpur Airport Transfer",
     "Taxi to Nagpur Airport",
-    "Airport Transfer Nagpur",
+    "Taxi from Nagpur Airport",
+    "Cab from Nagpur Airport",
+    "Taxi Near Nagpur Airport",
+    "Nagpur Cab Service",
+    "Nagpur Local Taxi",
     "RC Tours & Travels",
   ],
 
   alternates: {
-    canonical: "https://www.rctoursandtravels.in/airport-taxi-nagpur",
+    canonical: PAGE_URL,
   },
 
   openGraph: {
-    title: "Nagpur Airport Taxi | RC Tours & Travels",
+    title:
+      "Nagpur Airport Taxi | Airport Cab Service in Nagpur",
+
     description:
-      "24x7 airport taxi service in Nagpur with reliable pickup and drop.",
-    url: "https://www.rctoursandtravels.in/airport-taxi-nagpur",
+      "Reliable Nagpur Airport Taxi for pickup, drop, airport transfers, local travel and outstation trips. Book RC Tours & Travels online.",
+
+    url: PAGE_URL,
+
     siteName: "RC Tours & Travels",
+
     type: "website",
+
+    locale: "en_IN",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "Nagpur Airport Taxi | RC Tours & Travels",
+
+    title:
+      "Nagpur Airport Taxi | Airport Cab Service in Nagpur",
+
     description:
-      "Book reliable airport taxi service in Nagpur for pickup and drop.",
+      "Book a reliable Nagpur Airport Taxi for pickup, drop and airport transfers with RC Tours & Travels.",
   },
 
   robots: {
-  index: false,
-  follow: false,
+    index: true,
+    follow: true,
+
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
 };
 
