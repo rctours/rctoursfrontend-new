@@ -255,8 +255,8 @@ export default function GoogleAdsPage() {
     safariGate: "",
   });
 
-  const phoneNumber = "9172271464";
-  const phoneUrl = `tel:+${phoneNumber}`;
+  const phoneNumber = "+91 9172271464";
+  const phoneUrl = "tel:+919172271464";
 
   const content = SERVICES[service];
 
